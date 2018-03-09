@@ -1,0 +1,16 @@
+{
+  "labels": {
+    "required": [
+      "maintainer"
+    ],
+    "optional": []
+  },
+  "dockerfile": {
+    "required": [
+      "from_tag",
+      "maintainer_deprecated",
+      "layered_run"
+    ],
+    "optional": []
+  }
+}
