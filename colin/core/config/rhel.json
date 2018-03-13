@@ -2,7 +2,8 @@
   "labels": {
     "required": [
       "maintainer",
-      "name"
+      "name",
+      "com_redhat_component"
     ],
     "optional": []
   },
