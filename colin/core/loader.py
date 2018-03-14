@@ -1,2 +1,3 @@
-def load_check_implementation(path_name, target_type):
+def load_check_implementation(path_name):
+    # TODO
     return None
