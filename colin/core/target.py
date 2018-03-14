@@ -5,7 +5,7 @@ from colin.checks.abstract.dockerfile import DockerfileCheck
 from colin.checks.abstract.images import ImageCheck
 
 
-class CheckingTarget(object):
+class Target(object):
 
     def __init__(self, name):
         self.name = name
@@ -15,14 +15,14 @@ class CheckingTarget(object):
         return None
 
 
-class CheckingTargetType(enum.Enum):
+class TargetType(enum.Enum):
     DOCKERFILE = 0
-    CONTAINER = 1
+    CONTAINER_IMAGE = 1
     IMAGE = 2
 
 
 def is_compatible(target_type, check_class, severity, tags):
     # TODO take severity and tags into consideration
-    return (target_type == CheckingTargetType.DOCKERFILE and isinstance(check_class, DockerfileCheck)) \
-           or (target_type == CheckingTargetType.CONTAINER and isinstance(check_class, ContainerCheck)) \
-           or (target_type == CheckingTargetType.IMAGE and isinstance(check_class, ImageCheck))
+    return (target_type == TargetType.DOCKERFILE and isinstance(check_class, DockerfileCheck)) \
+           or (target_type == TargetType.CONTAINER_IMAGE and isinstance(check_class, ContainerCheck)) \
+           or (target_type == TargetType.IMAGE and isinstance(check_class, ImageCheck))
