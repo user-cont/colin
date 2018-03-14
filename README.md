@@ -8,16 +8,14 @@ Initial plan is to validate containers/images/dockerfiles against different ecos
  - CentOS
  - Atomic Container Best Practices
 
-*Colin* will also provide generic checks for maintainers or users of containerized content,
+*Colin* will also provide generic checks for maintainers or users of containerized content.
 
 
 ## Technical details
 
-*Colin* will be available as a Python API, and the command line interface.
+*Colin* will be available as a Python API, and will provide command line interface so you can easily use it locally.
 
-Each ecosystem defines set of checks for validation and their severity.
-The check itself is a python class inherited from the abstract classes for each type of checks (dockerfile x image x container).
-
+Each ecosystem will define a set of checks to validate the artifacts. Checks will have different severity level so that we can classify checks as required or optional.
 
 ## TODO
 
