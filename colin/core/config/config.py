@@ -39,9 +39,10 @@ class Config(object):
                                             severity=severity)
         checks = []
         for check_file in check_files:
-            check_class = load_check_implementation(check_file)
-            if is_compatible(target_type, check_class, severity, tags):
-                checks.append(check_class)
+            check_classes = load_check_implementation(check_file)
+            for check_class in check_classes:
+                if is_compatible(target_type, check_class, severity, tags):
+                    checks.append(check_class)
         return checks
 
     @staticmethod
