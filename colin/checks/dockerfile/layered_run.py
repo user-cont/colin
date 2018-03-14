@@ -11,5 +11,5 @@ class LayeredRunCheck(DockerfileCheck):
                          tags=["run", "dockerfile"]
                          )
 
-    def check(self):
+    def check(self, target):
         pass
