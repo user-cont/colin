@@ -20,6 +20,6 @@ def run(name_of_target, group=None, severity=None, tags=None, config_name=None):
                                       severity=severity,
                                       tags=tags,
                                       target_type=target.target_type)
-    result = go_through_checks(object_to_check=target,
+    result = go_through_checks(target=target,
                                checks=checks_to_run)
     return result

@@ -28,3 +28,9 @@ class ImageCheckResult(AbstractResult):
     def __init__(self, ok, status, description, message, logs):
         super().__init__(ok, status, description, message)
         self.logs = logs
+
+
+class CheckResults(object):
+
+    def __init__(self, results):
+        self.results = results
