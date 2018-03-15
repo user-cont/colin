@@ -13,7 +13,7 @@ class InstructionCheck(AbstractCheck):
         self.regex = regex
         self.required = required
 
-    def check(self):
+    def check(self, target):
         pass
 
 
@@ -25,17 +25,5 @@ class InstructionCountCheck(AbstractCheck):
         self.min_count = min_count
         self.max_count = max_count
 
-    def check(self):
-        pass
-
-
-class LabelCheck(AbstractCheck):
-
-    def __init__(self, name, message, description, reference_url, tags, label, required, value_regex=None):
-        super().__init__(name, message, description, reference_url, tags)
-        self.label = label
-        self.required = required
-        self.value_regex = value_regex
-
-    def check(self):
+    def check(self, target):
         pass

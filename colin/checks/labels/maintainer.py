@@ -1,4 +1,4 @@
-from colin.checks.abstract.dockerfile import LabelCheck
+from colin.checks.abstract.labels import LabelCheck
 
 
 class MaintainerCheck(LabelCheck):

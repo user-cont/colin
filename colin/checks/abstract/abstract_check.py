@@ -4,9 +4,9 @@ class AbstractCheck(object):
         super().__init__()
         self.name = name
         self.message = message
-        self.desription = description
+        self.description = description
         self.reference_url = reference_url
         self.tags = tags
 
-    def check(self):
+    def check(self, target):
         pass
