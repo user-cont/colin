@@ -3,10 +3,9 @@ import os
 
 from six import iteritems
 
+from colin.core.constant import CONFIG_DIRECTORY, JSON
 from colin.core.loader import load_check_implementation
 from colin.core.target import is_compatible
-
-CONFIG_DIRECTORY = "/usr/share/colin/"
 
 
 class Config(object):
@@ -18,7 +17,7 @@ class Config(object):
         :param name: str (name of the config file (without .json), default is "default"
         """
         self.name = name or "default"
-        config_path = os.path.join(CONFIG_DIRECTORY, self.name + ".json")
+        config_path = os.path.join(CONFIG_DIRECTORY, self.name + JSON)
         try:
             with open(config_path, mode='r') as config_file:
                 self.config_dict = json.load(config_file)

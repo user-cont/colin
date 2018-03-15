@@ -3,7 +3,7 @@ import inspect
 from importlib.util import module_from_spec
 from importlib.util import spec_from_file_location
 
-MODULE_NAME_IMPORTED_CHECKS = "colin.checks.imported"
+from colin.core.constant import MODULE_NAME_IMPORTED_CHECKS
 
 
 def load_check_implementation(path):
