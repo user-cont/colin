@@ -14,10 +14,17 @@ class Target(object):
 
     def __init__(self, name):
         self.name = name
-        self.instance = Target._get_conu_instance(name)
+        self.instance = Target._get_target_instance(name)
 
     @staticmethod
-    def _get_conu_instance(target_name):
+    def _get_target_instance(target_name):
+        """
+        Get the Container/Image instance for the given name.
+        (Container is the first choice.)
+
+        :param target_name: str
+        :return: Container/Image
+        """
         with DockerBackend() as backend:
 
             try:
