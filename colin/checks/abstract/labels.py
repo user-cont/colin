@@ -35,4 +35,5 @@ class LabelCheck(ContainerCheck, ImageCheck):
                                 description=self.description,
                                 message=self.message,
                                 reference_url=self.reference_url,
+                                check_name=self.name,
                                 logs=[])

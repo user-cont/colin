@@ -10,9 +10,9 @@ class AbstractResult(object):
         self.check_name = check_name
 
     def __str__(self):
-        return "{}:{} -> {}".format(" ok" if self.ok else "nok",
-                                    self.status,
-                                    self.message)
+        return "{}:{}:{}".format("ok " if self.ok else "nok",
+                                 self.status,
+                                 self.check_name)
 
 
 class DockerfileCheckResult(AbstractResult):
