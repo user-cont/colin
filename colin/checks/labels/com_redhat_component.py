@@ -5,9 +5,9 @@ class ComRedhatComponentCheck(LabelCheck):
 
     def __init__(self):
         super().__init__(name="com_redhat_component_label_required",
-                         message="",
-                         description="",
-                         reference_url="",
+                         message="Label 'com.redhat.component' has to be specified.",
+                         description="The Bugzilla component name where bugs against this container should be reported by users.",
+                         reference_url="http://url-to-upstream-documentation/com.redhat.component",
                          tags=["com.redhat.component", "label", "required"],
                          label="com.redhat.component",
                          required=True,
