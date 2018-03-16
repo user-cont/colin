@@ -10,6 +10,7 @@ Initial plan is to validate containers/images/dockerfiles against different ecos
 
 *Colin* will also provide generic checks for maintainers or users of containerized content.
 
+![example](./docs/example.gif)
 
 ## Technical details
 
