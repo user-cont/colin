@@ -6,9 +6,9 @@ from conu.apidefs.container import Container
 from conu.apidefs.image import Image
 from docker.errors import NotFound
 
-from colin.checks.abstract.containers import ContainerCheck
-from colin.checks.abstract.dockerfile import DockerfileCheck
-from colin.checks.abstract.images import ImageCheck
+from ..checks.abstract.containers import ContainerCheck
+from ..checks.abstract.dockerfile import DockerfileCheck
+from ..checks.abstract.images import ImageCheck
 
 
 class Target(object):

@@ -1,4 +1,4 @@
-from colin.checks.abstract.abstract_check import AbstractCheck
+from .abstract_check import AbstractCheck
 
 
 class ImageCheck(AbstractCheck):
