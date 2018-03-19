@@ -1,6 +1,6 @@
-from colin.core.check_runner import go_through_checks
-from colin.core.config.config import Config
-from colin.core.target import Target
+from .check_runner import go_through_checks
+from .config.config import Config
+from .target import Target
 
 
 def run(name_of_target, group=None, severity=None, tags=None, config_name=None):

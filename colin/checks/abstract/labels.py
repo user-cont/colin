@@ -1,9 +1,9 @@
 import re
 
-from colin.checks.abstract.containers import ContainerCheck
-from colin.checks.abstract.images import ImageCheck
-from colin.checks.result import ImageCheckResult
-from colin.core.constant import PASSED, FAILED
+from .containers import ContainerCheck
+from .images import ImageCheck
+from ..result import ImageCheckResult
+from ...core.constant import PASSED, FAILED
 
 
 class LabelCheck(ContainerCheck, ImageCheck):

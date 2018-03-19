@@ -3,9 +3,9 @@ import os
 
 from six import iteritems
 
-from colin.core.constant import CONFIG_DIRECTORY, JSON
-from colin.core.loader import load_check_implementation
-from colin.core.target import is_compatible
+from ..constant import CONFIG_DIRECTORY, JSON
+from ..loader import load_check_implementation
+from ..target import is_compatible
 
 
 class Config(object):

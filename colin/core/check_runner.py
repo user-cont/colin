@@ -1,4 +1,4 @@
-from colin.checks.result import CheckResults
+from ..checks.result import CheckResults
 
 
 def go_through_checks(target, checks):
