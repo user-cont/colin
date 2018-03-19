@@ -9,11 +9,12 @@ setup(
         'six',
         'conu'
     ],
-    entry_points='''
-        [console_scripts]
-        colin=colin.cli.colin:cli
-    ''',
-    data_files=[("/usr/share/colin/", ["colin/core/config/default.json",
-                                       "colin/core/config/fedora.json",
-                                       "colin/core/config/rhel.json"])],
+    entry_points={
+        'console_scripts': [
+            'colin = colin.cli.colin:cli',
+        ],
+    },
+    data_files=[("/usr/share/colin/", ["config/default.json",
+                                       "config/fedora.json",
+                                       "config/rhel.json"])],
 )
