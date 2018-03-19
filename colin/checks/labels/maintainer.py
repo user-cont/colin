@@ -7,7 +7,7 @@ class MaintainerCheck(LabelCheck):
         super().__init__(name="maintainer_label_required",
                          message="Label 'maintainer' has to be specified.",
                          description="The name and email of the maintainer (usually the submitter).",
-                         reference_url="http://url-to-upstream-documentation/maintainer",
+                         reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                          tags=["maintainer", "label", "required"],
                          label="maintainer",
                          required=True,

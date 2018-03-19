@@ -7,7 +7,7 @@ class ComRedhatComponentCheck(LabelCheck):
         super().__init__(name="com_redhat_component_label_required",
                          message="Label 'com.redhat.component' has to be specified.",
                          description="The Bugzilla component name where bugs against this container should be reported by users.",
-                         reference_url="http://url-to-upstream-documentation/com.redhat.component",
+                         reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                          tags=["com.redhat.component", "label", "required"],
                          label="com.redhat.component",
                          required=True,
