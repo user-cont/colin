@@ -1,4 +1,5 @@
 import enum
+import logging
 
 from conu import DockerBackend, DockerImagePullPolicy
 from conu.apidefs.container import Container
@@ -25,7 +26,7 @@ class Target(object):
         :param target_name: str
         :return: Container/Image
         """
-        with DockerBackend() as backend:
+        with DockerBackend(logging_level=logging.NOTSET) as backend:
 
             try:
                 cont = backend.ContainerClass(image=None,
@@ -35,12 +36,13 @@ class Target(object):
                 name_split = target_name.split(':')
                 if len(name_split) == 2:
                     name, tag = name_split
+                    image = backend.ImageClass(repository=name,
+                                               tag=tag,
+                                               pull_policy=DockerImagePullPolicy.NEVER)
                 else:
-                    name, tag = target_name, None
+                    image = backend.ImageClass(repository=target_name,
+                                               pull_policy=DockerImagePullPolicy.NEVER)
 
-                image = backend.ImageClass(repository=name,
-                                           tag=tag,
-                                           pull_policy=DockerImagePullPolicy.NEVER)
                 if image.is_present():
                     return image
         return None
