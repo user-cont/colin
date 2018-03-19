@@ -3,7 +3,10 @@
     "required": [
       "maintainer",
       "name",
-      "com_redhat_component"
+      "com_redhat_component",
+      "summary",
+      "version",
+      "usage"
     ],
     "optional": []
   },
