@@ -17,7 +17,7 @@ class Config(object):
         :param name: str (name of the config file (without .json), default is "default"
         """
         self.name = name or "default"
-        config_path = os.path.join(CONFIG_DIRECTORY, self.name + JSON)
+        config_path = os.path.join(get_config_directory(), self.name + JSON)
         try:
             with open(config_path, mode='r') as config_file:
                 self.config_dict = json.load(config_file)
@@ -113,3 +113,22 @@ def get_checks_path():
     """
     rel_path = os.path.join(os.pardir, os.pardir, os.pardir, "checks")
     return os.path.abspath(os.path.join(__file__, rel_path))
+
+
+def get_config_directory():
+    """
+    Get the directory with config files
+
+    :return: str
+    """
+    local_share = os.path.join(os.path.expanduser("~"),
+                               ".local",
+                               CONFIG_DIRECTORY)
+    if os.path.isdir(local_share) and os.path.exists(local_share):
+        return local_share
+
+    usr_local_share = os.path.join("/usr/local", CONFIG_DIRECTORY)
+    if os.path.isdir(usr_local_share) and os.path.exists(usr_local_share):
+        return usr_local_share
+
+    raise Exception("Config directory cannot be found.")
