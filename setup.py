@@ -13,7 +13,7 @@ setup(
         [console_scripts]
         colin=colin.cli.colin:cli
     ''',
-    data_files=[("/usr/share/colin/", ["config/default.json",
-                                       "config/fedora.json",
-                                       "config/rhel.json"])],
+    data_files=[("share/colin/", ["config/default.json",
+                                  "config/fedora.json",
+                                  "config/rhel.json"])],
 )
