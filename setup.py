@@ -9,8 +9,9 @@ setup(
         'six',
         'conu'
     ],
-    entry_points='''
-        [console_scripts]
-        colin=colin.cli.colin:cli
-    ''',
+    entry_points={
+        'console_scripts': [
+            'colin = colin.cli.colin:cli',
+        ],
+    },
 )
