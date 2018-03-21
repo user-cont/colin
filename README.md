@@ -21,8 +21,8 @@ Each ecosystem will define a set of checks to validate the artifacts. Checks wil
 ## Installation
 
 ```bash
-git clone https://github.com/user-cont/colin.git
-pip3 install ./colin --user
+$ git clone https://github.com/user-cont/colin.git
+$ pip3 install ./colin --user
 ```
 
 ## TODO
