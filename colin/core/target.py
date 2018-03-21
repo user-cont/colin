@@ -6,6 +6,7 @@ from conu.apidefs.container import Container
 from conu.apidefs.image import Image
 from docker.errors import NotFound
 
+from ..core.exceptions import ColinException
 from ..checks.abstract.containers import ContainerCheck
 from ..checks.abstract.dockerfile import DockerfileCheck
 from ..checks.abstract.images import ImageCheck
@@ -53,7 +54,7 @@ class Target(object):
             return TargetType.CONTAINER_IMAGE
         elif isinstance(self.instance, Container):
             return TargetType.CONTAINER
-        raise Exception("Target not found.")
+        raise ColinException("Target not found.")
 
 
 class TargetType(enum.Enum):
