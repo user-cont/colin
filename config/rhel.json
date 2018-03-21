@@ -6,7 +6,9 @@
       "com_redhat_component",
       "summary",
       "version",
-      "usage"
+      "usage",
+      "io.k8s.display-name",
+      "io.openshift.tags"
     ],
     "optional": []
   },
