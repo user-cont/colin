@@ -18,6 +18,13 @@ Initial plan is to validate containers/images/dockerfiles against different ecos
 
 Each ecosystem will define a set of checks to validate the artifacts. Checks will have different severity level so that we can classify checks as required or optional.
 
+## Installation
+
+```bash
+git clone https://github.com/user-cont/colin.git
+pip3 install ./colin --user
+```
+
 ## TODO
 
 - [ ] Provide cli.
