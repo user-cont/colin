@@ -7,8 +7,8 @@
       "summary",
       "version",
       "usage",
-      "io.k8s.display-name",
-      "io.openshift.tags"
+      "io_k8s_display-name",
+      "io_openshift_tags"
     ],
     "optional": []
   },
