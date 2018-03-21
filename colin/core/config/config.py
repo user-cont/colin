@@ -3,6 +3,7 @@ import os
 
 from six import iteritems
 
+from ..exceptions import ColinConfigException
 from ..constant import CONFIG_DIRECTORY, JSON
 from ..loader import load_check_implementation
 from ..target import is_compatible
@@ -22,7 +23,7 @@ class Config(object):
             with open(config_path, mode='r') as config_file:
                 self.config_dict = json.load(config_file)
         except Exception as ex:
-            pass
+            raise ColinConfigException("Config file '{}' cannot be loaded.".format(config_path))
 
     def get_checks(self, target_type, group=None, severity=None, tags=None):
         """
@@ -131,4 +132,4 @@ def get_config_directory():
     if os.path.isdir(usr_local_share) and os.path.exists(usr_local_share):
         return usr_local_share
 
-    raise Exception("Config directory cannot be found.")
+    raise ColinConfigException("Config directory cannot be found.")
