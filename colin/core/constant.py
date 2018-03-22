@@ -14,3 +14,9 @@ COLOURS = {
     WARNING: "yellow",
     FAILED: "red",
 }
+
+OUTPUT_CHARS = {
+    PASSED: ".",
+    WARNING: "!",
+    FAILED: "x",
+}
