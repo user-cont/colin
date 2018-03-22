@@ -20,5 +20,12 @@
     "optional": [
       "layered_run"
     ]
+  },
+  "best_practices": {
+    "required": [
+      "help_file"
+    ],
+    "optional": [
+    ]
   }
 }
