@@ -31,7 +31,7 @@ class LabelCheck(ContainerCheck, ImageCheck):
             passed = not self.required
 
         return ImageCheckResult(ok=passed,
-                                status=PASSED if passed else FAILED,
+                                severity=self.severity,
                                 description=self.description,
                                 message=self.message,
                                 reference_url=self.reference_url,

@@ -37,13 +37,18 @@ class Config(object):
         """
         check_files = self._get_check_files(group=group,
                                             severity=severity)
-        checks = []
-        for check_file in check_files:
-            check_classes = load_check_implementation(check_file)
-            for check_class in check_classes:
-                if is_compatible(target_type, check_class, severity, tags):
-                    checks.append(check_class)
-        return checks
+        groups = {}
+        for (group, check_files) in iteritems(check_files):
+            checks = []
+            for severity, check_file in check_files:
+
+                check_classes = load_check_implementation(path=check_file, severity=severity)
+                for check_class in check_classes:
+                    if is_compatible(target_type, check_class, severity, tags):
+                        checks.append(check_class)
+
+            groups[group] = checks
+        return groups
 
     @staticmethod
     def get_check_file(group, name):
@@ -57,18 +62,20 @@ class Config(object):
         return os.path.join(get_checks_path(), group, name + ".py")
 
     @staticmethod
-    def get_check_files(group, names):
+    def get_check_files(group, names, severity):
         """
         Get the check files from given group with given names.
 
+        :param severity: str
         :param group: str
         :param names: list of str
         :return: list of str (paths)
         """
         check_files = []
         for f in names:
-            check_files.append(Config.get_check_file(group=group,
-                                                     name=f))
+            check_file = Config.get_check_file(group=group,
+                                               name=f)
+            check_files.append((severity, check_file))
         return check_files
 
     def _get_check_groups(self, group=None):
@@ -96,14 +103,16 @@ class Config(object):
         :param severity: str (if None, all severities will be used)
         :return: list of str (absolute paths)
         """
-        check_files = []
+        groups = {}
         for g in self._get_check_groups(group):
-
+            check_files = []
             for sev, files in iteritems(self.config_dict[g]):
                 if (not severity) or severity == sev:
                     check_files += Config.get_check_files(group=g,
-                                                          names=files)
-        return check_files
+                                                          names=files,
+                                                          severity=sev)
+            groups[g] = check_files
+        return groups
 
 
 def get_checks_path():
