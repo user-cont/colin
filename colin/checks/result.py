@@ -62,6 +62,11 @@ class CheckResults(object):
 
     @property
     def _dict_of_results(self):
+        """
+        Get the dictionary representation of results
+
+        :return: dict (str -> dict (str -> str))
+        """
         result_json = {}
         for group, results in self.results:
             result_list = []
@@ -73,17 +78,27 @@ class CheckResults(object):
                     'description': r.description,
                     'message': r.message,
                     'reference_url': r.reference_url,
-                    'severity': r.severity
+                    'severity': r.severity,
                 })
             result_json[group] = result_list
         return result_json
 
     @property
     def json(self):
+        """
+        Get the json representation of results
+
+        :return: str
+        """
         return json.dumps(self._dict_of_results, indent=4)
 
     @property
     def all_results(self):
+        """
+        Get the list of all results
+
+        :return: list of Result instances
+        """
         result = []
         for _, checks in self.results:
             result += checks
@@ -96,12 +111,22 @@ class CheckResults(object):
 
     @property
     def results(self):
+        """
+        Get the result generator
+
+        :return: Generator of group generator of results
+        """
         if self._generated:
             return iteritems(self._generated_result)
         else:
             return self._group_generator()
 
     def _group_generator(self):
+        """
+        Forward original generator of result groups, but saves the value for the future use.
+
+        :return: yields the group generator
+        """
         for group, group_result in self._results:
             self._generated_result.setdefault(group, [])
             yield group, self._result_generator(group=group,
@@ -109,6 +134,13 @@ class CheckResults(object):
         self._generated = True
 
     def _result_generator(self, group, results):
+        """
+        Forward the result from one generator and saves the value for the future use.
+
+        :param group: str
+        :param results: Result object generator
+        :return: yields the values from original generator
+        """
         for r in results:
             self._generated_result[group].append(r)
             yield r
