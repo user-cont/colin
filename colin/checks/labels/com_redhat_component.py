@@ -12,3 +12,4 @@ class ComRedhatComponentCheck(LabelCheck):
                          label="com.redhat.component",
                          required=True,
                          value_regex=None)
+        # TODO: Check the format

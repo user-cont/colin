@@ -8,9 +8,22 @@
       "version",
       "usage",
       "io_k8s_display-name",
-      "io_openshift_tags"
+      "io_openshift_tags",
+      "architecture",
+      "com_redhat_build-host",
+      "authoritative-source-url",
+      "url",
+      "vendor",
+      "release",
+      "build-date",
+      "distribution-scope",
+      "vcs-ref",
+      "vcs-type",
+      "description"
     ],
-    "optional": []
+    "optional": [
+      "io_k8s_description"
+    ]
   },
   "dockerfile": {
     "required": [

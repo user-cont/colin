@@ -6,9 +6,20 @@
       "com_redhat_component",
       "summary",
       "version",
-      "usage"
+      "usage",
+      "release"
     ],
-    "optional": []
+    "optional": [
+      "architecture",
+      "url",
+      "help",
+      "build-date",
+      "distribution-scope",
+      "vcs-ref",
+      "vcs-type",
+      "description",
+      "io_k8s_description"
+    ]
   },
   "dockerfile": {
     "required": [
