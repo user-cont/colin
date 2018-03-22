@@ -2,8 +2,7 @@ import re
 
 from .containers import ContainerCheck
 from .images import ImageCheck
-from ..result import ImageCheckResult
-from ...core.constant import PASSED, FAILED
+from ..result import CheckResult
 
 
 class LabelCheck(ContainerCheck, ImageCheck):
@@ -30,10 +29,10 @@ class LabelCheck(ContainerCheck, ImageCheck):
         else:
             passed = not self.required
 
-        return ImageCheckResult(ok=passed,
-                                severity=self.severity,
-                                description=self.description,
-                                message=self.message,
-                                reference_url=self.reference_url,
-                                check_name=self.name,
-                                logs=[])
+        return CheckResult(ok=passed,
+                           severity=self.severity,
+                           description=self.description,
+                           message=self.message,
+                           reference_url=self.reference_url,
+                           check_name=self.name,
+                           logs=[])
