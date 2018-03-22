@@ -21,7 +21,7 @@
   },
   "best_practices": {
     "required": [
-      "help_file"
+      "help_file_or_readme"
     ],
     "optional": [
     ]
