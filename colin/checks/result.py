@@ -1,13 +1,13 @@
 import json
 
-from six import itervalues, iteritems
+from six import iteritems
 
 from ..core.constant import REQUIRED, PASSED, FAILED, WARNING, OPTIONAL
 
 
-class AbstractResult(object):
+class CheckResult(object):
 
-    def __init__(self, ok, description, message, reference_url, check_name, severity):
+    def __init__(self, ok, description, message, reference_url, check_name, severity, logs):
         super().__init__()
         self.ok = ok
         self.description = description
@@ -15,6 +15,7 @@ class AbstractResult(object):
         self.reference_url = reference_url
         self.check_name = check_name
         self.severity = severity
+        self.logs = logs
 
     @property
     def status(self):
@@ -30,27 +31,13 @@ class AbstractResult(object):
                                  self.check_name)
 
 
-class DockerfileCheckResult(AbstractResult):
+class DockerfileCheckResult(CheckResult):
 
     def __init__(self, ok, description, message, reference_url, check_name, severity, lines=None,
                  correction_diff=None):
         super().__init__(ok, description, message, reference_url, check_name, severity)
         self.lines = lines
         self.correction_diff = correction_diff
-
-
-class ContainerCheckResult(AbstractResult):
-
-    def __init__(self, ok, description, message, reference_url, check_name, severity, logs):
-        super().__init__(ok, description, message, reference_url, check_name, severity)
-        self.logs = logs
-
-
-class ImageCheckResult(AbstractResult):
-
-    def __init__(self, ok, description, message, reference_url, check_name, severity, logs):
-        super().__init__(ok, description, message, reference_url, check_name, severity)
-        self.logs = logs
 
 
 class CheckResults(object):
@@ -79,6 +66,7 @@ class CheckResults(object):
                     'message': r.message,
                     'reference_url': r.reference_url,
                     'severity': r.severity,
+                    'logs': r.logs,
                 })
             result_json[group] = result_list
         return result_json
