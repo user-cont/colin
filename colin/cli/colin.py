@@ -13,11 +13,13 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
               help="Select a predefined configuration.")
 @click.option('--config-file', '-f', type=click.File(mode='r'),
               help="Path to a file to use for validation (by default they are placed in /usr/share/colin).")
+@click.option('--debug', default=False, is_flag=True,
+              help="Enable debugging mode (debugging logs, full tracebacks).")
 @click.option('--json', type=click.File(mode='w'),
               help="File to save the output as json to.")
 @click.option('--stat', '-s', is_flag=True,
               help="Print statistics instead of full results.")
-def cli(target, config, config_file, json, stat):
+def cli(target, config, config_file, debug, json, stat):
     if config and config_file:
         raise click.BadOptionUsage("Options '--config' and '--file-config' cannot be used together.")
 
@@ -29,11 +31,20 @@ def cli(target, config, config_file, json, stat):
 
         if json:
             results.save_json_to_file(file=json)
-
     except ColinException as ex:
-        raise click.ClickException(str(ex))
+        # TODO: error log goes here
+        # logger.error("An error occured: %r", ex)
+        if debug:
+            raise
+        else:
+            raise click.ClickException(str(ex))
     except Exception as ex:
-        raise click.ClickException(str(ex))
+        # TODO: error log goes here
+        # logger.error("An error occured: %r", ex)
+        if debug:
+            raise
+        else:
+            raise click.ClickException(str(ex))
 
 
 def _print_results(results, stat=False):
