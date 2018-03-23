@@ -7,10 +7,10 @@
       "summary",
       "version",
       "usage",
-      "release"
+      "release",
+      "architecture"
     ],
     "optional": [
-      "architecture",
       "url",
       "help",
       "build-date",

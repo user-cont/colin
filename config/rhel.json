@@ -19,10 +19,10 @@
       "distribution-scope",
       "vcs-ref",
       "vcs-type",
-      "description"
+      "description",
+      "io_k8s_description"
     ],
     "optional": [
-      "io_k8s_description"
     ]
   },
   "dockerfile": {
