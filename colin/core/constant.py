@@ -1,4 +1,4 @@
-CONFIG_DIRECTORY = "share/colin/"
+CONFIG_DIRECTORY = "share/colin/config/"
 JSON = ".json"
 MODULE_NAME_IMPORTED_CHECKS = "colin.checks.imported"
 

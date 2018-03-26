@@ -128,9 +128,11 @@ def get_checks_path():
 def get_config_directory():
     """
     Get the directory with config files
-
+    First directory to check:  $HOME/.local/share/colin/config
+    Second directory to check: /usr/local/share/colin/config
     :return: str
     """
+
     local_share = os.path.join(os.path.expanduser("~"),
                                ".local",
                                CONFIG_DIRECTORY)
