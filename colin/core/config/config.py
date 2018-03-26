@@ -11,14 +11,14 @@ from ..target import is_compatible
 
 class Config(object):
 
-    def __init__(self, name=None):
+    def __init__(self, config=None):
         """
         Load config for colin.
 
-        :param name: str (name of the config file (without .json), default is "default"
+        :param config: str (name of the config file (without .json), default is "default"
         """
-        self.name = name or "default"
-        config_path = os.path.join(get_config_directory(), self.name + JSON)
+        self.name = config or "default"
+        config_path = get_config_file(config=config)
         try:
             with open(config_path, mode='r') as config_file:
                 self.config_dict = json.load(config_file)
@@ -123,6 +123,24 @@ def get_checks_path():
     """
     rel_path = os.path.join(os.pardir, os.pardir, os.pardir, "checks")
     return os.path.abspath(os.path.join(__file__, rel_path))
+
+
+def get_config_file(config):
+    """
+    Get the config file from name or path
+
+    :param config: str (name or path)
+    :return: str
+    """
+    if os.path.exists(config) and os.path.isfile(config):
+        return config
+
+    config_directory = get_config_directory()
+    config_file = os.path.join(config_directory, config + JSON)
+
+    if os.path.exists(config) and os.path.isfile(config):
+        return config_file
+    raise ColinConfigException("Config '{}' cannot be found.".format(config))
 
 
 def get_config_directory():

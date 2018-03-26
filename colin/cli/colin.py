@@ -10,7 +10,7 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.command(context_settings=CONTEXT_SETTINGS)
 @click.argument('target', type=click.STRING)
 @click.option('--config', '-c', type=click.STRING,
-              help="Configuration name.")
+              help="Name of the configuration or path.")
 @click.option('--json', type=click.File(mode='w'),
               help="File to save the output as json to.")
 @click.option('--stat', '-s', is_flag=True,

@@ -15,7 +15,7 @@ def run(name_of_target, group=None, severity=None, tags=None, config_name=None):
     :return: Results instance
     """
     target = Target(name=name_of_target)
-    config = Config(name=config_name)
+    config = Config(config=config_name)
     checks_to_run = config.get_checks(group=group,
                                       severity=severity,
                                       tags=tags,
