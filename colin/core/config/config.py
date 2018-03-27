@@ -17,7 +17,7 @@ class Config(object):
 
         :param config: str (name of the config file (without .json), default is "default"
         """
-        self.name = config or "default"
+        config = config or "default"
         config_path = get_config_file(config=config)
         try:
             with open(config_path, mode='r') as config_file:
@@ -138,7 +138,7 @@ def get_config_file(config):
     config_directory = get_config_directory()
     config_file = os.path.join(config_directory, config + JSON)
 
-    if os.path.exists(config) and os.path.isfile(config):
+    if os.path.exists(config_file) and os.path.isfile(config_file):
         return config_file
     raise ColinConfigException("Config '{}' cannot be found.".format(config))
 
