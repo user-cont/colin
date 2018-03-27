@@ -3,7 +3,7 @@ from .config.config import Config
 from .target import Target
 
 
-def run(name_of_target, group=None, severity=None, tags=None, config_name=None):
+def run(name_of_target, group=None, severity=None, tags=None, config_name=None, config_file=None):
     """
     Runs the sanity checks for the target.
 
@@ -12,10 +12,12 @@ def run(name_of_target, group=None, severity=None, tags=None, config_name=None):
     :param severity: str (if not None, only those checks will be run -- optional x required x warn ...)
     :param tags: list of str (if not None, the checks will be filtered by tags.)
     :param config_name: str (e.g. fedora; if None, default would be used)
+    :param config_file: str (path)
     :return: Results instance
     """
     target = Target(name=name_of_target)
-    config = Config(config=config_name)
+    config = Config(config_name=config_name,
+                    config_file=config_file)
     checks_to_run = config.get_checks(group=group,
                                       severity=severity,
                                       tags=tags,
