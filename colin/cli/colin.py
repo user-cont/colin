@@ -9,7 +9,7 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 @click.command(context_settings=CONTEXT_SETTINGS)
 @click.argument('target', type=click.STRING)
-@click.option('--config', '-c', type=click.Choice(['rhel', 'fedora']),
+@click.option('--config', '-c', type=click.Choice(['redhat', 'fedora']),
               help="Select a predefined configuration.")
 @click.option('--config-file', '-f', type=click.File(mode='r'),
               help="Path to a file to use for validation (by default they are placed in /usr/share/colin).")

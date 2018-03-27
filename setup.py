@@ -16,5 +16,5 @@ setup(
     },
     data_files=[("share/colin/config/", ["config/default.json",
                                   "config/fedora.json",
-                                  "config/rhel.json"])],
+                                  "config/redhat.json"])],
 )
