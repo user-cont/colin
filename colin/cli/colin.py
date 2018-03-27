@@ -9,16 +9,22 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 @click.command(context_settings=CONTEXT_SETTINGS)
 @click.argument('target', type=click.STRING)
-@click.option('--config', '-c', type=click.STRING,
-              help="Configuration name.")
+@click.option('--config', '-c', type=click.Choice(['redhat', 'fedora']),
+              help="Select a predefined configuration.")
+@click.option('--config-file', '-f', type=click.File(mode='r'),
+              help="Path to a file to use for validation (by default they are placed in /usr/share/colin).")
 @click.option('--json', type=click.File(mode='w'),
               help="File to save the output as json to.")
 @click.option('--stat', '-s', is_flag=True,
               help="Print statistics instead of full results.")
-def cli(target, config, json, stat):
+def cli(target, config, config_file, json, stat):
+    if config and config_file:
+        raise click.BadOptionUsage("Options '--config' and '--file-config' cannot be used together.")
+
     try:
         results = run(name_of_target=target,
-                      config_name=config)
+                      config_name=config,
+                      config_file=config_file)
         _print_results(results=results, stat=stat)
 
         if json:

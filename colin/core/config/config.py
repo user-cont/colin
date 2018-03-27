@@ -11,19 +11,28 @@ from ..target import is_compatible
 
 class Config(object):
 
-    def __init__(self, name=None):
+    def __init__(self, config_name=None, config_file=None):
         """
         Load config for colin.
 
-        :param name: str (name of the config file (without .json), default is "default"
+        :param config_name: str (name of the config file (without .json), default is "default"
+        :param config_file: fileobj
         """
-        self.name = name or "default"
-        config_path = os.path.join(get_config_directory(), self.name + JSON)
-        try:
-            with open(config_path, mode='r') as config_file:
+        if config_file:
+            try:
                 self.config_dict = json.load(config_file)
-        except Exception as ex:
-            raise ColinConfigException("Config file '{}' cannot be loaded.".format(config_path))
+            except Exception as ex:
+                raise ColinConfigException("Config file '{}' cannot be loaded.".format(config_file.name))
+        else:
+            try:
+                config_path = config_file or get_config_file(config=config_name)
+                with open(config_path, mode='r') as config_file_obj:
+                    self.config_dict = json.load(config_file_obj)
+            except ColinConfigException as ex:
+                raise ex
+            except Exception as ex:
+                file_name = config_path if config_path else config_name
+                raise ColinConfigException("Configuration '{}' cannot be loaded.".format(file_name))
 
     def get_checks(self, target_type, group=None, severity=None, tags=None):
         """
@@ -123,6 +132,23 @@ def get_checks_path():
     """
     rel_path = os.path.join(os.pardir, os.pardir, os.pardir, "checks")
     return os.path.abspath(os.path.join(__file__, rel_path))
+
+
+def get_config_file(config=None):
+    """
+    Get the config file from name
+
+    :param config: str
+    :return: str
+    """
+    config = config or "default"
+
+    config_directory = get_config_directory()
+    config_file = os.path.join(config_directory, config + JSON)
+
+    if os.path.exists(config_file) and os.path.isfile(config_file):
+        return config_file
+    raise ColinConfigException("Configuration with the name '{}' cannot be found.".format(config))
 
 
 def get_config_directory():
