@@ -15,6 +15,7 @@
 #
 
 import json
+import logging
 import os
 
 from six import iteritems
@@ -23,6 +24,8 @@ from ..exceptions import ColinConfigException
 from ..constant import CONFIG_DIRECTORY, JSON
 from ..loader import load_check_implementation
 from ..target import is_compatible
+
+logger = logging.getLogger(__name__)
 
 
 class Config(object):
@@ -36,11 +39,15 @@ class Config(object):
         """
         if config_file:
             try:
+                logger.debug("Loading configuration from file '{}'.".format(config_file.name))
                 self.config_dict = json.load(config_file)
             except Exception as ex:
-                raise ColinConfigException("Config file '{}' cannot be loaded.".format(config_file.name))
+                msg = "Config file '{}' cannot be loaded.".format(config_file.name)
+                logger.error(msg)
+                raise ColinConfigException(msg)
         else:
             try:
+                logger.debug("Loading configuration with the name '{}'.".format(config_name))
                 config_path = config_file or get_config_file(config=config_name)
                 with open(config_path, mode='r') as config_file_obj:
                     self.config_dict = json.load(config_file_obj)
@@ -48,7 +55,10 @@ class Config(object):
                 raise ex
             except Exception as ex:
                 file_name = config_path if config_path else config_name
-                raise ColinConfigException("Configuration '{}' cannot be loaded.".format(file_name))
+                msg = "Configuration '{}' cannot be loaded.".format(file_name)
+
+                logger.error(msg)
+                raise ColinConfigException(msg)
 
     def get_checks(self, target_type, group=None, severity=None, tags=None):
         """
@@ -118,6 +128,7 @@ class Config(object):
                 check_groups = []
         else:
             check_groups = groups
+        logger.debug("Found groups: {}.".format(check_groups))
         return check_groups
 
     def _get_check_files(self, group=None, severity=None):
@@ -130,6 +141,7 @@ class Config(object):
         """
         groups = {}
         for g in self._get_check_groups(group):
+            logger.debug("Getting checks for group '{}'.".format(g))
             check_files = []
             for sev, files in iteritems(self.config_dict[g]):
                 if (not severity) or severity == sev:
@@ -163,7 +175,11 @@ def get_config_file(config=None):
     config_file = os.path.join(config_directory, config + JSON)
 
     if os.path.exists(config_file) and os.path.isfile(config_file):
+        logger.debug("Configuration file '{}' found.".format(config_file))
         return config_file
+
+    logger.warning("Configuration with the name '{}' cannot be found at '{}'."
+                   .format(config, config_file))
     raise ColinConfigException("Configuration with the name '{}' cannot be found.".format(config))
 
 
@@ -179,10 +195,14 @@ def get_config_directory():
                                ".local",
                                CONFIG_DIRECTORY)
     if os.path.isdir(local_share) and os.path.exists(local_share):
+        logger.debug("Local configuration directory found ('{}').".format(local_share))
         return local_share
 
     usr_local_share = os.path.join("/usr/local", CONFIG_DIRECTORY)
     if os.path.isdir(usr_local_share) and os.path.exists(usr_local_share):
+        logger.debug("Global configuration directory found ('{}').".format(usr_local_share))
         return usr_local_share
 
-    raise ColinConfigException("Config directory cannot be found.")
+    msg = "Config directory cannot be found."
+    logger.warning(msg)
+    raise ColinConfigException(msg)

@@ -14,12 +14,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import logging
+
 from six import iteritems
 
 from ..checks.result import CheckResults
 
+logger = logging.getLogger(__name__)
+
 
 def go_through_checks(target, checks):
+    logger.debug("Going through checks.")
     results = _group_generator(target=target,
                                checks=checks)
     return CheckResults(results=results)
@@ -27,10 +32,12 @@ def go_through_checks(target, checks):
 
 def _result_generator(target, checks):
     for check in checks:
+        logger.debug("Checking {}".format(check.name))
         yield check.check(target)
 
 
 def _group_generator(target, checks):
     for (group, group_checks) in iteritems(checks):
+        logger.debug("Checking group: {}".format(group))
         yield group, _result_generator(target=target,
                                        checks=group_checks)

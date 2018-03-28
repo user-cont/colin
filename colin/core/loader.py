@@ -21,11 +21,16 @@ if six.PY3:
 
     from importlib.util import module_from_spec
     from importlib.util import spec_from_file_location
+    import logging
 
     from colin.core.constant import MODULE_NAME_IMPORTED_CHECKS
 
+    logger = logging.getLogger(__name__)
+
 
     def load_check_implementation(path, severity):
+        logger.debug("Getting check(s) from the file '{}'.".format(path))
+
         s = spec_from_file_location(MODULE_NAME_IMPORTED_CHECKS, path)
         m = module_from_spec(s)
         s.loader.exec_module(m)

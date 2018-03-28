@@ -77,7 +77,8 @@ class Target(object):
             return TargetType.CONTAINER_IMAGE
         elif isinstance(self.instance, Container):
             return TargetType.CONTAINER
-        raise ColinException("Target not found.")
+        logger.debug("Target type not found.")
+        raise ColinException("Target type not found.")
 
 
 class TargetType(enum.Enum):

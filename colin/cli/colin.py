@@ -62,15 +62,13 @@ def cli(target, config, config_file, debug, json, stat, verbose):
         if json:
             results.save_json_to_file(file=json)
     except ColinException as ex:
-        # TODO: error log goes here
-        # logger.error("An error occured: %r", ex)
+        logger.error("An error occurred: %r", ex)
         if debug:
             raise
         else:
             raise click.ClickException(str(ex))
     except Exception as ex:
-        # TODO: error log goes here
-        # logger.error("An error occured: %r", ex)
+        logger.error("An error occurred: %r", ex)
         if debug:
             raise
         else:
