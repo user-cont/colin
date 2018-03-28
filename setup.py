@@ -3,6 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='colin',
     version='0.0.1',
+    description="Tool to check generic rules/best-practices for containers/images/dockerfiles.",
     packages=find_packages(),
     install_requires=[
         'Click',
@@ -29,4 +30,8 @@ setup(
         'Topic :: Software Development :: Quality Assurance',
         'Topic :: Utilities',
     ],
+    keywords='containers,sanity',
+    author='Red Hat',
+    author_email='user-cont@redhat.com',
+    url='https://github.com/user-cont/colin',
 )
