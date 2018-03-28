@@ -30,8 +30,8 @@ setup(
         'Topic :: Software Development :: Quality Assurance',
         'Topic :: Utilities',
     ],
-    keywords='containers,sanity',
+    keywords='containers,sanity,linter',
     author='Red Hat',
-    author_email='user-cont@redhat.com',
+    author_email='flachman@redhat.com',
     url='https://github.com/user-cont/colin',
 )
