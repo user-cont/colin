@@ -3,6 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='colin',
     version='0.0.1',
+    description="Tool to check generic rules/best-practices for containers/images/dockerfiles.",
     packages=find_packages(),
     install_requires=[
         'Click',
@@ -18,4 +19,19 @@ setup(
                                          "config/fedora.json",
                                          "config/redhat.json"])],
     license='GPLv3+',
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python :: 3',
+        'Topic :: Software Development',
+        'Topic :: Software Development :: Quality Assurance',
+        'Topic :: Utilities',
+    ],
+    keywords='containers,sanity,linter',
+    author='Red Hat',
+    author_email='flachman@redhat.com',
+    url='https://github.com/user-cont/colin',
 )
