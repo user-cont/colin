@@ -1,4 +1,7 @@
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+![PyPI](https://img.shields.io/pypi/v/colin.svg)
+![PyPI - License](https://img.shields.io/pypi/l/colin.svg)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/colin.svg)
+![PyPI - Status](https://img.shields.io/pypi/status/colin.svg)
 
 # Colin
 
@@ -20,11 +23,12 @@ Initial plan is to validate containers/images/dockerfiles against different ecos
 
 ### Installing via `pip`
 
-We haven't released colin on PyPI yet, in the meantime, you can install it directly from git:
 
 ```bash
-$ pip3 install --user git+https://github.com/user-cont/colin.git
+$ pip3 install --user colin
 ```
+
+> You may need to install also rpm packages `python3-devel` and `python3-pyxattr`.
 
 This is how you can use colin afterwards:
 
@@ -39,6 +43,7 @@ Options:
                                 default they are placed in /usr/share/colin).
   --json FILENAME               File to save the output as json to.
   -s, --stat                    Print statistics instead of full results.
+  -v, --verbose                 Verbose mode.
   -h, --help                    Show this message and exit.
 ```
 
@@ -98,6 +103,7 @@ Options:
                                 default they are placed in /usr/share/colin).
   --json FILENAME               File to save the output as json to.
   -s, --stat                    Print statistics instead of full results.
+  -v, --verbose                 Verbose mode.
   -h, --help                    Show this message and exit.
 ```
 
@@ -145,4 +151,4 @@ Each ecosystem will define a set of checks to validate the artifacts. Checks wil
 
 - [ ] Provide cli.
 - [ ] Implement basic checks.
-- [ ] Packaging (pypi, rpm, ...)
+- [ ] Packaging (rpm, ...)
