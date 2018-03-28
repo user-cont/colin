@@ -71,7 +71,8 @@ nok:failed:maintainer_label_required
    -> The name and email of the maintainer (usually the submitter).
    -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
 
-$ docker run --name my-fedora -l maintainer=me -d fedora sleep 300
+$ docker run --name my-fedora -l maintainer=myname -d fedora sleep 300
+# Adding maintainer name fixes the check:
 $ colin -f ./config/default.json  my-fedora
 LABELS:
 ok :passed:maintainer_label_required
