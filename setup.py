@@ -15,6 +15,7 @@ setup(
         ],
     },
     data_files=[("share/colin/config/", ["config/default.json",
-                                  "config/fedora.json",
-                                  "config/redhat.json"])],
+                                         "config/fedora.json",
+                                         "config/redhat.json"])],
+    license='GPLv3+',
 )
