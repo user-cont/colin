@@ -18,4 +18,15 @@ setup(
                                          "config/fedora.json",
                                          "config/redhat.json"])],
     license='GPLv3+',
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python :: 3',
+        'Topic :: Software Development',
+        'Topic :: Software Development :: Quality Assurance',
+        'Topic :: Utilities',
+    ],
 )
