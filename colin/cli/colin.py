@@ -14,11 +14,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import logging
+
 import click as click
 
 from ..core.constant import COLOURS, OUTPUT_CHARS
 from ..core.exceptions import ColinException
 from ..core.colin import run
+
+logger = logging.getLogger(__name__)
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
@@ -35,28 +39,36 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
               help="File to save the output as json to.")
 @click.option('--stat', '-s', is_flag=True,
               help="Print statistics instead of full results.")
-def cli(target, config, config_file, debug, json, stat):
+@click.option('--verbose', '-v', is_flag=True,
+              help="Verbose mode.")
+def cli(target, config, config_file, debug, json, stat, verbose):
     if config and config_file:
         raise click.BadOptionUsage("Options '--config' and '--file-config' cannot be used together.")
 
     try:
+        if debug:
+            log_level = logging.DEBUG
+        elif verbose:
+            log_level = logging.INFO
+        else:
+            log_level = logging.WARNING
+
         results = run(name_of_target=target,
                       config_name=config,
-                      config_file=config_file)
+                      config_file=config_file,
+                      logging_level=log_level)
         _print_results(results=results, stat=stat)
 
         if json:
             results.save_json_to_file(file=json)
     except ColinException as ex:
-        # TODO: error log goes here
-        # logger.error("An error occured: %r", ex)
+        logger.error("An error occurred: %r", ex)
         if debug:
             raise
         else:
             raise click.ClickException(str(ex))
     except Exception as ex:
-        # TODO: error log goes here
-        # logger.error("An error occured: %r", ex)
+        logger.error("An error occurred: %r", ex)
         if debug:
             raise
         else:
