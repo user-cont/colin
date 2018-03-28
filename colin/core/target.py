@@ -27,15 +27,17 @@ from ..checks.abstract.containers import ContainerCheck
 from ..checks.abstract.dockerfile import DockerfileCheck
 from ..checks.abstract.images import ImageCheck
 
+logger = logging.getLogger(__name__)
+
 
 class Target(object):
 
-    def __init__(self, name):
+    def __init__(self, name, logging_level):
         self.name = name
-        self.instance = Target._get_target_instance(name)
+        self.instance = Target._get_target_instance(name, logging_level=logging_level)
 
     @staticmethod
-    def _get_target_instance(target_name):
+    def _get_target_instance(target_name, logging_level):
         """
         Get the Container/Image instance for the given name.
         (Container is the first choice.)
@@ -43,11 +45,14 @@ class Target(object):
         :param target_name: str
         :return: Container/Image
         """
-        with DockerBackend(logging_level=logging.NOTSET) as backend:
+        logger.debug("Finding target '{}'.".format(target_name))
+
+        with DockerBackend(logging_level=logging_level) as backend:
 
             try:
                 cont = backend.ContainerClass(image=None,
                                               container_id=target_name)
+                logger.debug("Target is a container.")
                 return cont
             except NotFound:
                 name_split = target_name.split(':')
@@ -61,7 +66,9 @@ class Target(object):
                                                pull_policy=DockerImagePullPolicy.NEVER)
 
                 if image.is_present():
+                    logger.debug("Target is an image.")
                     return image
+        logger.warning("Target is neither image nor container.")
         return None
 
     @property
