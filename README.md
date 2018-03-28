@@ -61,6 +61,22 @@ ok :passed:io_openshift_tags_label_required
 ok :passed:architecture_label
 ```
 
+We can also check containers:
+```
+$ docker run --name some-fedora -d fedora sleep 300
+$ colin -f ./config/default.json some-fedora
+LABELS:
+nok:failed:maintainer_label_required
+   -> Label 'maintainer' has to be specified.
+   -> The name and email of the maintainer (usually the submitter).
+   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
+
+$ docker run --name my-fedora -l maintainer=me -d fedora sleep 300
+$ colin -f ./config/default.json  my-fedora
+LABELS:
+ok :passed:maintainer_label_required
+```
+
 
 ### Directly from git
 
