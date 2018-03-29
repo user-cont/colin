@@ -14,9 +14,9 @@ class NoRootCheck(ContainerCheck, ImageCheck):
 
     def check(self, target):
         metadata = target.instance.get_metadata()["Config"]
-        root_present = "User" in metadata and metadata["User"] and metadata["User"] != "root"
+        root_present = "User" in metadata and metadata["User"] in ["", "0", "root"]
 
-        return CheckResult(ok=root_present,
+        return CheckResult(ok=not root_present,
                            severity=self.severity,
                            description=self.description,
                            message=self.message,
