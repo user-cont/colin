@@ -41,15 +41,51 @@ def run(name_of_target, group=None, severity=None, tags=None, config_name=None, 
     logger.debug("Checking started.")
     target = Target(name=name_of_target,
                     logging_level=logging_level)
-    config = Config(config_name=config_name,
-                    config_file=config_file)
-    checks_to_run = config.get_checks(group=group,
-                                      severity=severity,
-                                      tags=tags,
-                                      target_type=target.target_type)
+    checks_to_run = _get_checks(target=target,
+                                group=group,
+                                severity=severity,
+                                tags=tags,
+                                config_name=config_name,
+                                config_file=config_file)
     result = go_through_checks(target=target,
                                checks=checks_to_run)
     return result
+
+
+def get_checks(name_of_target, group=None, severity=None, tags=None, config_name=None, config_file=None,
+               logging_level=logging.WARNING):
+    """
+    Get the sanity checks for the target.
+
+    :param name_of_target: str (name of the container or image, dockerfile will be added in the future)
+    :param group: str (name of the folder with group of checks, if None, all of them will be checked.)
+    :param severity: str (if not None, only those checks will be run -- optional x required x warn ...)
+    :param tags: list of str (if not None, the checks will be filtered by tags.)
+    :param config_name: str (e.g. fedora; if None, default would be used)
+    :param config_file: str (path)
+    :param logging_level: logging level (default logging.WARNING)
+    :return: list of groups of checks
+    """
+    _set_logging(level=logging_level)
+    logger.debug("Finding checks started.")
+    target = Target(name=name_of_target,
+                    logging_level=logging_level)
+    return _get_checks(target=target,
+                       group=group,
+                       severity=severity,
+                       tags=tags,
+                       config_name=config_name,
+                       config_file=config_file)
+
+
+def _get_checks(target, group=None, severity=None, tags=None, config_name=None, config_file=None):
+    logger.debug("Checking started.")
+    config = Config(config_name=config_name,
+                    config_file=config_file)
+    return config.get_checks(group=group,
+                             severity=severity,
+                             tags=tags,
+                             target_type=target.target_type)
 
 
 def _set_logging(
