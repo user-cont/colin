@@ -18,7 +18,10 @@
       "vcs-ref",
       "vcs-type",
       "description",
-      "io_k8s_description"
+      "io_k8s_description",
+      "vcs-url",
+      "maintainer",
+      "io_openshift_expose-services"
     ]
   },
   "dockerfile": {

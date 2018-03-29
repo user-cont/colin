@@ -1,7 +1,6 @@
 {
   "labels": {
     "required": [
-      "maintainer",
       "name",
       "com_redhat_component",
       "summary",
@@ -30,6 +29,10 @@
       "release_capital_deprecated"
     ],
     "optional": [
+      "vcs-url",
+      "maintainer",
+      "io_openshift_expose-services",
+      "maintainer"
     ]
   },
   "dockerfile": {
