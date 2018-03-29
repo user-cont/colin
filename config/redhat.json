@@ -46,7 +46,8 @@
   },
   "best_practices": {
     "required": [
-      "help_file"
+      "help_file",
+      "cmd_or_entrypoint"
     ],
     "optional": [
     ]
