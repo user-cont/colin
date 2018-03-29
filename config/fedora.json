@@ -18,7 +18,10 @@
       "vcs-ref",
       "vcs-type",
       "description",
-      "io_k8s_description"
+      "io_k8s_description",
+      "vcs-url",
+      "maintainer",
+      "io_openshift_expose-services"
     ]
   },
   "dockerfile": {
@@ -32,7 +35,9 @@
   },
   "best_practices": {
     "required": [
-      "help_file_or_readme"
+      "help_file_or_readme",
+      "cmd_or_entrypoint",
+      "no_root"
     ],
     "optional": [
     ]

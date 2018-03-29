@@ -1,7 +1,6 @@
 {
   "labels": {
     "required": [
-      "maintainer",
       "name",
       "com_redhat_component",
       "summary",
@@ -30,6 +29,10 @@
       "release_capital_deprecated"
     ],
     "optional": [
+      "vcs-url",
+      "maintainer",
+      "io_openshift_expose-services",
+      "maintainer"
     ]
   },
   "dockerfile": {
@@ -43,7 +46,9 @@
   },
   "best_practices": {
     "required": [
-      "help_file"
+      "help_file",
+      "cmd_or_entrypoint",
+      "no_root"
     ],
     "optional": [
     ]
