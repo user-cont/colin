@@ -28,7 +28,7 @@ Initial plan is to validate containers/images/dockerfiles against different ecos
 $ pip3 install --user colin
 ```
 
-> You may need to install also rpm packages `python3-devel` and `python3-pyxattr`.
+> If you are on Fedora distribution, please install python3-pyxattr so you don't have to compile yourself when getting it from PyPI.
 
 This is how you can use colin afterwards:
 
