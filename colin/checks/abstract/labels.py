@@ -52,3 +52,25 @@ class LabelCheck(ContainerCheck, ImageCheck):
                            reference_url=self.reference_url,
                            check_name=self.name,
                            logs=[])
+
+
+class DeprecatedLabelCheck(ContainerCheck, ImageCheck):
+
+    def __init__(self, name, message, description, reference_url, tags, old_label, new_label):
+        super().__init__(name, message, description, reference_url, tags)
+        self.old_label = old_label
+        self.new_label = new_label
+
+    def check(self, target):
+        labels = target.instance.get_metadata()["Config"]["Labels"]
+        old_present = labels is not None and self.old_label in labels
+
+        passed = (not old_present) or (self.new_label in labels)
+
+        return CheckResult(ok=passed,
+                           severity=self.severity,
+                           description=self.description,
+                           message=self.message,
+                           reference_url=self.reference_url,
+                           check_name=self.name,
+                           logs=[])
