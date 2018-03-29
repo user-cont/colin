@@ -149,6 +149,4 @@ Each ecosystem will define a set of checks to validate the artifacts. Checks wil
 
 ## TODO
 
-- [ ] Provide cli.
-- [ ] Implement basic checks.
-- [ ] Packaging (rpm, ...)
+- [ ] support Fedora infrastructure ([see issue about GSoC project for more information](https://github.com/user-cont/colin/issues/3))
