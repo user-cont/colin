@@ -47,7 +47,8 @@
   "best_practices": {
     "required": [
       "help_file",
-      "cmd_or_entrypoint"
+      "cmd_or_entrypoint",
+      "no_root"
     ],
     "optional": [
     ]

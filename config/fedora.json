@@ -36,7 +36,8 @@
   "best_practices": {
     "required": [
       "help_file_or_readme",
-      "cmd_or_entrypoint"
+      "cmd_or_entrypoint",
+      "no_root"
     ],
     "optional": [
     ]
