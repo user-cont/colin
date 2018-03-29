@@ -17,10 +17,12 @@
 import logging
 
 import click as click
+from six import iteritems
 
+from colin.checks.abstract.abstract_check import AbstractCheck
 from ..core.constant import COLOURS, OUTPUT_CHARS
 from ..core.exceptions import ColinException
-from ..core.colin import run
+from ..core.colin import run, get_checks
 
 logger = logging.getLogger(__name__)
 
@@ -39,9 +41,11 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
               help="File to save the output as json to.")
 @click.option('--stat', '-s', is_flag=True,
               help="Print statistics instead of full results.")
+@click.option('--print-checks', is_flag=True,
+              help="Print the checks without running them.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-def cli(target, config, config_file, debug, json, stat, verbose):
+def cli(target, config, config_file, debug, json, stat, print_checks, verbose):
     if config and config_file:
         raise click.BadOptionUsage("Options '--config' and '--file-config' cannot be used together.")
 
@@ -53,14 +57,27 @@ def cli(target, config, config_file, debug, json, stat, verbose):
         else:
             log_level = logging.WARNING
 
-        results = run(name_of_target=target,
-                      config_name=config,
-                      config_file=config_file,
-                      logging_level=log_level)
-        _print_results(results=results, stat=stat)
+        if print_checks:
+            checks = get_checks(name_of_target=target,
+                                config_name=config,
+                                config_file=config_file,
+                                logging_level=log_level)
+            _print_checks(checks=checks)
 
-        if json:
-            results.save_json_to_file(file=json)
+            if json:
+                AbstractCheck.save_checks_to_json(file=json, checks=checks)
+
+
+        else:
+            results = run(name_of_target=target,
+                          config_name=config,
+                          config_file=config_file,
+                          logging_level=log_level)
+            _print_results(results=results, stat=stat)
+
+            if json:
+                results.save_json_to_file(file=json)
+
     except ColinException as ex:
         logger.error("An error occurred: %r", ex)
         if debug:
@@ -108,6 +125,19 @@ def _print_results(results, stat=False):
 
         if group_title_printed and stat:
             click.echo()
+
+
+def _print_checks(checks):
+    for (group, group_checks) in iteritems(checks):
+
+        group_title_printed = False
+        for check in group_checks:
+
+            if not group_title_printed:
+                click.secho("{}:".format(group.upper()))
+                group_title_printed = True
+
+            click.echo(str(check))
 
 
 if __name__ == '__main__':
