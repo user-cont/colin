@@ -8,7 +8,7 @@ setup(
     install_requires=[
         'Click',
         'six',
-        'conu'
+        'conu>=0.3.0rc0'
     ],
     entry_points={
         'console_scripts': [
