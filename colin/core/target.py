@@ -18,7 +18,7 @@ import enum
 import logging
 
 from conu import DockerBackend, DockerImagePullPolicy
-from conu.apidefs.container import Container
+from conu.apidefs.container import Container, Image
 from conu.apidefs.image import Image
 from docker.errors import NotFound
 
@@ -37,39 +37,47 @@ class Target(object):
         self.instance = Target._get_target_instance(name, logging_level=logging_level)
 
     @staticmethod
-    def _get_target_instance(target_name, logging_level):
+    def _get_target_instance(target, logging_level):
         """
         Get the Container/Image instance for the given name.
         (Container is the first choice.)
 
-        :param target_name: str
+        :param target: str or instance of Image/Container
         :return: Container/Image
         """
-        logger.debug("Finding target '{}'.".format(target_name))
+        logger.debug("Finding target '{}'.".format(target))
+
+        if isinstance(target, Image):
+            return target
+        if isinstance(target, Container):
+            return target
 
         with DockerBackend(logging_level=logging_level) as backend:
 
             try:
                 cont = backend.ContainerClass(image=None,
-                                              container_id=target_name)
+                                              container_id=target)
                 logger.debug("Target is a container.")
                 return cont
             except NotFound:
-                name_split = target_name.split(':')
-                if len(name_split) == 2:
-                    name, tag = name_split
-                    image = backend.ImageClass(repository=name,
-                                               tag=tag,
+
+                image_name = ImageName.parse(target)
+                logger.debug(str(image_name))
+
+                logger.debug("Finding image '{}' with tag '{}'.".format(image_name.name, image_name.tag))
+                if image_name.tag:
+                    image = backend.ImageClass(repository=image_name.name,
+                                               tag=image_name.tag,
                                                pull_policy=DockerImagePullPolicy.NEVER)
                 else:
-                    image = backend.ImageClass(repository=target_name,
+                    image = backend.ImageClass(repository=image_name.name,
                                                pull_policy=DockerImagePullPolicy.NEVER)
 
                 if image.is_present():
                     logger.debug("Target is an image.")
                     return image
-        logger.warning("Target is neither image nor container.")
-        return None
+        logger.error("Target is neither image nor container.")
+        raise ColinException("Target not found.")
 
     @property
     def target_type(self):
