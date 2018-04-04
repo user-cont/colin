@@ -102,15 +102,21 @@ def is_compatible(target_type, check_class, severity, tags):
 
 
 class ImageName(object):
-    def __init__(self, registry=None, namespace=None, repository=None, tag=None, image_id=None):
+    def __init__(self, registry=None, namespace=None, repository=None, tag=None, digest=None):
         self.registry = registry
         self.namespace = namespace
         self.repository = repository
         self.tag = tag
-        self.image_id = image_id
+        self.digest = digest
 
     @classmethod
     def parse(cls, image_name):
+        """
+        Get the instance of ImageName from the string representation.
+
+        :param image_name: str (any possible form of image name)
+        :return: ImageName instance
+        """
         result = cls()
 
         # registry.org/namespace/repo:tag
@@ -126,12 +132,15 @@ class ImageName(object):
             result.namespace = s[1]
         result.repository = s[-1]
 
-        for sep in '@:':
-            try:
-                result.repository, result.tag = result.repository.rsplit(sep, 1)
-            except ValueError:
-                continue
-            break
+        try:
+            result.repository, result.tag = result.repository.rsplit(":", 1)
+        except ValueError:
+            pass
+
+        try:
+            result.repository, result.digest = result.repository.rsplit("@", 1)
+        except ValueError:
+            pass
 
         return result
 
@@ -143,6 +152,11 @@ class ImageName(object):
 
     @property
     def name(self):
+        """
+        Get the string representation of the image (registry, namespace and repository together).
+
+        :return: str
+        """
         name_parts = []
         if self.registry:
             name_parts.append(self.registry)
