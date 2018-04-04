@@ -133,22 +133,24 @@ class ImageName(object):
         result.repository = s[-1]
 
         try:
-            result.repository, result.tag = result.repository.rsplit(":", 1)
+            result.repository, result.digest = result.repository.rsplit("@", 1)
         except ValueError:
             pass
 
         try:
-            result.repository, result.digest = result.repository.rsplit("@", 1)
+            result.repository, result.tag = result.repository.rsplit(":", 1)
         except ValueError:
             pass
 
         return result
 
     def __str__(self):
-        return "Image: registry='{}' namespace='{}' repository='{}' tag='{}'".format(self.registry,
-                                                                                     self.namespace,
-                                                                                     self.repository,
-                                                                                     self.tag)
+        return "Image: registry='{}' namespace='{}' " \
+               "repository='{}' tag='{}' digest='{}'".format(self.registry,
+                                                             self.namespace,
+                                                             self.repository,
+                                                             self.tag,
+                                                             self.digest)
 
     @property
     def name(self):
