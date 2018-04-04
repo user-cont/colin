@@ -1,0 +1,11 @@
+FROM fedora:latest
+
+RUN dnf install -y make python3-pytest python3-devel gcc libattr-devel redhat-rpm-config \
+    && dnf clean all
+
+COPY ./tests /tests
+
+COPY . /src
+WORKDIR /src
+
+RUN pip3 install --user .
