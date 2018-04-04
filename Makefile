@@ -1,7 +1,7 @@
 .PHONY: check build-test-container test-in-container exec-test
 
 TEST_IMAGE_NAME = colin-test
-TEST_TARGET = ./tests/integration/fedora_latest.py
+TEST_TARGET = ./tests/integration/colin_tests.py
 
 check: build-test-container test-in-container
 

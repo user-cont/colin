@@ -1,6 +1,6 @@
 FROM fedora:latest
 
-RUN dnf install -y make python3-pytest python3-devel gcc libattr-devel redhat-rpm-config \
+RUN dnf install -y make python3-pytest python3-pyxattr docker \
     && dnf clean all
 
 COPY ./tests /tests
