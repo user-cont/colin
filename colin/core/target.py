@@ -92,3 +92,58 @@ def is_compatible(target_type, check_class, severity, tags):
     return (target_type == TargetType.DOCKERFILE and isinstance(check_class, DockerfileCheck)) \
            or (target_type == TargetType.CONTAINER and isinstance(check_class, ContainerCheck)) \
            or (target_type == TargetType.CONTAINER_IMAGE and isinstance(check_class, ImageCheck))
+
+
+class ImageName(object):
+    def __init__(self, registry=None, namespace=None, repository=None, tag=None, image_id=None):
+        self.registry = registry
+        self.namespace = namespace
+        self.repository = repository
+        self.tag = tag
+        self.image_id = image_id
+
+    @classmethod
+    def parse(cls, image_name):
+        result = cls()
+
+        # registry.org/namespace/repo:tag
+        s = image_name.split('/', 2)
+
+        if len(s) == 2:
+            if '.' in s[0] or ':' in s[0]:
+                result.registry = s[0]
+            else:
+                result.namespace = s[0]
+        elif len(s) == 3:
+            result.registry = s[0]
+            result.namespace = s[1]
+        result.repository = s[-1]
+
+        for sep in '@:':
+            try:
+                result.repository, result.tag = result.repository.rsplit(sep, 1)
+            except ValueError:
+                continue
+            break
+
+        return result
+
+    def __str__(self):
+        return "Image: registry='{}' namespace='{}' repository='{}' tag='{}'".format(self.registry,
+                                                                                     self.namespace,
+                                                                                     self.repository,
+                                                                                     self.tag)
+
+    @property
+    def name(self):
+        name_parts = []
+        if self.registry:
+            name_parts.append(self.registry)
+
+        if self.namespace:
+            name_parts.append(self.namespace)
+
+        if self.repository:
+            name_parts.append(self.repository)
+        name = "/".join(name_parts)
+        return name
