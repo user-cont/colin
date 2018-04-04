@@ -61,9 +61,8 @@ class Target(object):
             except NotFound:
 
                 image_name = ImageName.parse(target)
-                logger.debug(str(image_name))
-
                 logger.debug("Finding image '{}' with tag '{}'.".format(image_name.name, image_name.tag))
+
                 if image_name.tag:
                     image = backend.ImageClass(repository=image_name.name,
                                                tag=image_name.tag,
