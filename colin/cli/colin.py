@@ -23,10 +23,18 @@ from colin.checks.abstract.abstract_check import AbstractCheck
 from ..core.constant import COLOURS, OUTPUT_CHARS
 from ..core.exceptions import ColinException
 from ..core.colin import run, get_checks
+from ..version import __version__
 
 logger = logging.getLogger(__name__)
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+
+
+def _print_version(ctx, param, value):
+    if not value or ctx.resilient_parsing:
+        return
+    click.echo(__version__)
+    ctx.exit()
 
 
 @click.command(context_settings=CONTEXT_SETTINGS)
@@ -45,7 +53,10 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
               help="Print the checks without running them.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-def cli(target, config, config_file, debug, json, stat, print_checks, verbose):
+@click.option('--version', "-V", is_flag=True, callback=_print_version,
+              expose_value=False, is_eager=True,
+              help="Print version.")
+def cli(target, config, config_file, debug, json, stat, print_checks, verbose, version):
     if config and config_file:
         raise click.BadOptionUsage("Options '--config' and '--file-config' cannot be used together.")
 
