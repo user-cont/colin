@@ -32,9 +32,8 @@ logger = logging.getLogger(__name__)
 
 class Target(object):
 
-    def __init__(self, name, logging_level):
-        self.name = name
-        self.instance = Target._get_target_instance(name, logging_level=logging_level)
+    def __init__(self, target, logging_level):
+        self.instance = Target._get_target_instance(target, logging_level=logging_level)
 
     @staticmethod
     def _get_target_instance(target, logging_level):

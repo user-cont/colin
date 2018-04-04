@@ -80,7 +80,7 @@ def cli(target, config, config_file, debug, json, stat, print_checks, verbose):
 
 
         else:
-            results = run(name_of_target=target,
+            results = run(target=target,
                           config_name=config,
                           config_file=config_file,
                           logging_level=log_level)
