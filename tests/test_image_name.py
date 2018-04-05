@@ -18,23 +18,31 @@ import pytest
 from colin.core.target import ImageName
 
 
-@pytest.mark.parametrize("string_input,image_str", [
-    ("fedora", "Image: registry='None' namespace='None' repository='fedora' tag='None' digest='None'"),
-    ("fedora:27", "Image: registry='None' namespace='None' repository='fedora' tag='27' digest='None'"),
-    ("docker.io/fedora", "Image: registry='docker.io' namespace='None' repository='fedora' tag='None' digest='None'"),
-    ("docker.io/fedora:latest",
-     "Image: registry='docker.io' namespace='None' repository='fedora' tag='latest' digest='None'"),
-    ("docker.io/modularitycontainers/conu",
-     "Image: registry='docker.io' namespace='modularitycontainers' repository='conu' tag='None' digest='None'"),
+@pytest.mark.parametrize("string_input,image_result", [
+    ("fedora", (None, None, 'fedora', None, None)),
+    ("fedora:27", (None, None, 'fedora', '27', None)),
+    ("docker.io/fedora", ('docker.io', None, 'fedora', None, None)),
+    ("docker.io/fedora:latest", ('docker.io', None, 'fedora', 'latest', None)),
+    ("docker.io/modularitycontainers/conu", ('docker.io', 'modularitycontainers', 'conu', None, None)),
     ("docker.io/centos/postgresql-96-centos7",
-     "Image: registry='docker.io' namespace='centos' repository='postgresql-96-centos7' tag='None' digest='None'"),
-    ("brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/rhel6",
-     "Image: registry='brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888' namespace='None' repository='rhel6' tag='None' digest='None'"),
-    ("brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/rhel6:guest-rhel-6.10-docker-26365-20180322014912",
-     "Image: registry='brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888' namespace='None' repository='rhel6' tag='guest-rhel-6.10-docker-26365-20180322014912' digest='None'"),
+     ('docker.io', 'centos', 'postgresql-96-centos7', None, None)),
+    ("some-registry.example.com:8888/rhel6",
+     ('some-registry.example.com:8888', None, 'rhel6', None, None)),
+    ("some-registry.example.com:8888/rhel6:some-example-6.10-something-26365-20180322014912",
+     ('some-registry.example.com:8888', None, 'rhel6', 'some-example-6.10-something-26365-20180322014912', None)),
     ("fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "Image: registry='None' namespace='None' repository='fedora' tag='None' digest='sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'"),
+     (None, None, 'fedora', None, 'sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')),
+    ("docker.io/fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     ('docker.io', None, 'fedora', None, 'sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')),
+    ("docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     ('docker.io', 'centos', 'postgresql-96-centos7', None,
+      'sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')),
 ])
-def test_image_class(string_input, image_str):
+def test_image_class(string_input, image_result):
     image_name = ImageName.parse(string_input)
-    assert str(image_name) == image_str
+    registry, namespace, repository, tag, digest = image_result
+    assert image_name.registry == registry
+    assert image_name.namespace == namespace
+    assert image_name.repository == repository
+    assert image_name.tag == tag
+    assert image_name.digest == digest
