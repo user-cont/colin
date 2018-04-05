@@ -1,8 +1,13 @@
 from setuptools import setup, find_packages
 
+# https://packaging.python.org/guides/single-sourcing-package-version/
+version = {}
+with open("./colin/version.py") as fp:
+    exec(fp.read(), version)
+
 setup(
     name='colin',
-    version='0.0.2',
+    version=version["__version__"],
     description="Tool to check generic rules/best-practices for containers/images/dockerfiles.",
     packages=find_packages(),
     install_requires=[
