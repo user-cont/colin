@@ -56,7 +56,7 @@ def _print_version(ctx, param, value):
 @click.option('--version', "-V", is_flag=True, callback=_print_version,
               expose_value=False, is_eager=True,
               help="Print version.")
-def cli(target, config, config_file, debug, json, stat, print_checks, verbose, version):
+def cli(target, config, config_file, debug, json, stat, print_checks, verbose):
     if config and config_file:
         raise click.BadOptionUsage("Options '--config' and '--file-config' cannot be used together.")
 
