@@ -15,11 +15,10 @@ setup(
         'six',
         'conu>=0.3.0rc0'
     ],
-    entry_points={
-        'console_scripts': [
-            'colin = colin.cli.colin:cli',
-        ],
-    },
+    entry_points='''
+        [console_scripts]
+        colin=colin.cli.colin:cli
+    ''',
     data_files=[("share/colin/config/", ["config/default.json",
                                          "config/fedora.json",
                                          "config/redhat.json"])],
