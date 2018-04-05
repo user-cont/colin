@@ -46,9 +46,7 @@ class Target(object):
         """
         logger.debug("Finding target '{}'.".format(target))
 
-        if isinstance(target, Image):
-            return target
-        if isinstance(target, Container):
+        if isinstance(target, (Image, Container)):
             return target
 
         with DockerBackend(logging_level=logging_level) as backend:
