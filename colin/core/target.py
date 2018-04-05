@@ -152,7 +152,8 @@ class ImageName(object):
     @property
     def name(self):
         """
-        Get the string representation of the image (registry, namespace and repository together).
+        Get the string representation of the image
+        (registry, namespace, repository and digest together).
 
         :return: str
         """
@@ -166,4 +167,8 @@ class ImageName(object):
         if self.repository:
             name_parts.append(self.repository)
         name = "/".join(name_parts)
+
+        if self.digest:
+            name += "@{}".format(self.digest)
+
         return name
