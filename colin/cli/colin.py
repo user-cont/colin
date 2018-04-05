@@ -62,6 +62,9 @@ def check(target, config, config_file, debug, json, stat, verbose):
     if config and config_file:
         raise click.BadOptionUsage("Options '--config' and '--file-config' cannot be used together.")
 
+    if debug and verbose:
+        raise click.BadOptionUsage("Options '--debug' and '--verbose' cannot be used together.")
+
     try:
 
         results = run(target=target,
@@ -106,6 +109,9 @@ def list_checks(config, config_file, debug, json, verbose):
     """
     if config and config_file:
         raise click.BadOptionUsage("Options '--config' and '--file-config' cannot be used together.")
+
+    if debug and verbose:
+        raise click.BadOptionUsage("Options '--debug' and '--verbose' cannot be used together.")
 
     checks = get_checks(config_name=config,
                         config_file=config_file,
@@ -185,7 +191,7 @@ def _print_checks(checks):
 def _get_log_level(debug, verbose):
     if debug:
         return logging.DEBUG
-    elif verbose:
+    if verbose:
         return logging.INFO
     return logging.WARNING
 
