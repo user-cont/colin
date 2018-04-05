@@ -1,6 +1,6 @@
 include MANIFEST.in
 include README.md
-include bash-complete
+include bash-complete/colin
 recursive-include config *
 recursive-include colin *
 recursive-include docs *
