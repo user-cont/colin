@@ -29,7 +29,8 @@ setup(
     ''',
     data_files=[("share/colin/config/", ["config/default.json",
                                          "config/fedora.json",
-                                         "config/redhat.json"])],
+                                         "config/redhat.json"]),
+                ("/usr/share/bash-completion/completions/colin", ["bash-complete"])],
     license='GPLv3+',
     classifiers=[
         'Development Status :: 4 - Beta',
