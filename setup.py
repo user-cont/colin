@@ -1,14 +1,22 @@
+import os
+
 from setuptools import setup, find_packages
+
+BASE_PATH = os.path.dirname(__file__)
 
 # https://packaging.python.org/guides/single-sourcing-package-version/
 version = {}
 with open("./colin/version.py") as fp:
     exec(fp.read(), version)
 
+long_description = ''.join(open('README.md').readlines())
+
 setup(
     name='colin',
     version=version["__version__"],
     description="Tool to check generic rules/best-practices for containers/images/dockerfiles.",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     packages=find_packages(),
     install_requires=[
         'Click',
