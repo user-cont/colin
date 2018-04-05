@@ -26,10 +26,10 @@ from colin.core.target import ImageName
     ("docker.io/modularitycontainers/conu", ('docker.io', 'modularitycontainers', 'conu', None, None)),
     ("docker.io/centos/postgresql-96-centos7",
      ('docker.io', 'centos', 'postgresql-96-centos7', None, None)),
-    ("some-registry.example.com:8888/rhel6",
-     ('some-registry.example.com:8888', None, 'rhel6', None, None)),
-    ("some-registry.example.com:8888/rhel6:some-example-6.10-something-26365-20180322014912",
-     ('some-registry.example.com:8888', None, 'rhel6', 'some-example-6.10-something-26365-20180322014912', None)),
+    ("some-registry.example.com:8888/image6",
+     ('some-registry.example.com:8888', None, 'image6', None, None)),
+    ("some-registry.example.com:8888/image6:some-example-6.10-something-26365-20180322014912",
+     ('some-registry.example.com:8888', None, 'image6', 'some-example-6.10-something-26365-20180322014912', None)),
     ("fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
      (None, None, 'fedora', None, 'sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')),
     ("docker.io/fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -46,3 +46,28 @@ def test_image_class(string_input, image_result):
     assert image_name.repository == repository
     assert image_name.tag == tag
     assert image_name.digest == digest
+
+
+@pytest.mark.parametrize("string_input, name_result, tag_result", [
+    ("fedora", "fedora", None),
+    ("fedora:27", "fedora", "27"),
+    ("docker.io/fedora", "docker.io/fedora", None),
+    ("docker.io/fedora:latest", "docker.io/fedora", "latest"),
+    ("docker.io/modularitycontainers/conu", "docker.io/modularitycontainers/conu", None),
+    ("docker.io/centos/postgresql-96-centos7",
+     "docker.io/centos/postgresql-96-centos7", None),
+    ("some-registry.example.com:8888/image6",
+     "some-registry.example.com:8888/image6", None),
+    ("some-registry.example.com:8888/image6:some-example-6.10-something-26365-20180322014912",
+     "some-registry.example.com:8888/image6", 'some-example-6.10-something-26365-20180322014912'),
+    ("fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", None),
+    ("docker.io/fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "docker.io/fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", None),
+    ("docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", None),
+])
+def test_image_class_name_tag(string_input, name_result, tag_result):
+    image_name = ImageName.parse(string_input)
+    assert image_name.name == name_result
+    assert image_name.tag == tag_result
