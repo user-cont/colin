@@ -9,18 +9,13 @@ version = {}
 with open("./colin/version.py") as fp:
     exec(fp.read(), version)
 
-
-def get_long_description():
-    with open(os.path.join(BASE_PATH, 'README.md'), 'r') as req:
-        req_contents = req.read()
-    return req_contents
-
+long_description = ''.join(open('README.md').readlines())
 
 setup(
     name='colin',
     version=version["__version__"],
     description="Tool to check generic rules/best-practices for containers/images/dockerfiles.",
-    long_description=get_long_description(),
+    long_description=long_description,
     long_description_content_type='text/markdown',
     packages=find_packages(),
     install_requires=[
