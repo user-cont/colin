@@ -1,0 +1,11 @@
+FROM fedora:28
+
+RUN dnf install -y make python3-pytest python3-pyxattr docker \
+    && dnf clean all
+
+WORKDIR /src
+
+COPY ./tests /tests
+COPY . /src
+
+RUN pip3 install --user .
