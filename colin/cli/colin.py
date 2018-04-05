@@ -37,7 +37,19 @@ def _print_version(ctx, param, value):
     ctx.exit()
 
 
-@click.command(context_settings=CONTEXT_SETTINGS)
+@click.group(context_settings=CONTEXT_SETTINGS)
+@click.option('--version', "-V", is_flag=True, callback=_print_version,
+              expose_value=False, is_eager=True,
+              help="Print version.")
+def cli():
+    """
+    COLIN -- Container Linter
+    """
+    pass
+
+
+@click.command(name="check",
+               context_settings=CONTEXT_SETTINGS)
 @click.argument('target', type=click.STRING)
 @click.option('--config', '-c', type=click.Choice(['redhat', 'fedora']),
               help="Select a predefined configuration.")
@@ -49,45 +61,26 @@ def _print_version(ctx, param, value):
               help="File to save the output as json to.")
 @click.option('--stat', '-s', is_flag=True,
               help="Print statistics instead of full results.")
-@click.option('--print-checks', is_flag=True,
-              help="Print the checks without running them.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-@click.option('--version', "-V", is_flag=True, callback=_print_version,
-              expose_value=False, is_eager=True,
-              help="Print version.")
-def cli(target, config, config_file, debug, json, stat, print_checks, verbose):
+def check(target, config, config_file, debug, json, stat, verbose):
+    """
+    Check the image/container.
+    """
     if config and config_file:
         raise click.BadOptionUsage("Options '--config' and '--file-config' cannot be used together.")
 
     try:
-        if debug:
-            log_level = logging.DEBUG
-        elif verbose:
-            log_level = logging.INFO
-        else:
-            log_level = logging.WARNING
 
-        if print_checks:
-            checks = get_checks(name_of_target=target,
-                                config_name=config,
-                                config_file=config_file,
-                                logging_level=log_level)
-            _print_checks(checks=checks)
+        results = run(name_of_target=target,
+                      config_name=config,
+                      config_file=config_file,
+                      logging_level=_get_log_level(debug=debug,
+                                                   verbose=verbose))
+        _print_results(results=results, stat=stat)
 
-            if json:
-                AbstractCheck.save_checks_to_json(file=json, checks=checks)
-
-
-        else:
-            results = run(target=target,
-                          config_name=config,
-                          config_file=config_file,
-                          logging_level=log_level)
-            _print_results(results=results, stat=stat)
-
-            if json:
-                results.save_json_to_file(file=json)
+        if json:
+            results.save_json_to_file(file=json)
 
     except ColinException as ex:
         logger.error("An error occurred: %r", ex)
@@ -101,6 +94,51 @@ def cli(target, config, config_file, debug, json, stat, print_checks, verbose):
             raise
         else:
             raise click.ClickException(str(ex))
+
+
+@click.command(name="list-check",
+               context_settings=CONTEXT_SETTINGS)
+@click.option('--config', '-c', type=click.Choice(['redhat', 'fedora']),
+              help="Select a predefined configuration.")
+@click.option('--config-file', '-f', type=click.File(mode='r'),
+              help="Path to a file to use for validation (by default they are placed in /usr/share/colin).")
+@click.option('--debug', default=False, is_flag=True,
+              help="Enable debugging mode (debugging logs, full tracebacks).")
+@click.option('--json', type=click.File(mode='w'),
+              help="File to save the output as json to.")
+@click.option('--verbose', '-v', is_flag=True,
+              help="Verbose mode.")
+def list_check(config, config_file, debug, json, verbose):
+    """
+    Print the checks.
+    """
+    if config and config_file:
+        raise click.BadOptionUsage("Options '--config' and '--file-config' cannot be used together.")
+
+    checks = get_checks(config_name=config,
+                        config_file=config_file,
+                        logging_level=_get_log_level(debug=debug, verbose=verbose))
+    _print_checks(checks=checks)
+
+    if json:
+        AbstractCheck.save_checks_to_json(file=json, checks=checks)
+
+
+@click.command(name="list-config",
+               context_settings=CONTEXT_SETTINGS)
+def list_config():
+    """
+    List available configurations.
+    """
+    # TODO: real search
+    click.echo("default")
+    click.echo("fedora")
+    click.echo("redhat")
+
+
+cli.add_command(check)
+cli.add_command(list_check)
+cli.add_command(list_config)
 
 
 def _print_results(results, stat=False):
@@ -149,6 +187,14 @@ def _print_checks(checks):
                 group_title_printed = True
 
             click.echo(str(check))
+
+
+def _get_log_level(debug, verbose):
+    if debug:
+        return logging.DEBUG
+    elif verbose:
+        return logging.INFO
+    return logging.WARNING
 
 
 if __name__ == '__main__':
