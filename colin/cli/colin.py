@@ -96,7 +96,7 @@ def check(target, config, config_file, debug, json, stat, verbose):
             raise click.ClickException(str(ex))
 
 
-@click.command(name="list-check",
+@click.command(name="list-checks",
                context_settings=CONTEXT_SETTINGS)
 @click.option('--config', '-c', type=click.Choice(['redhat', 'fedora']),
               help="Select a predefined configuration.")
@@ -108,7 +108,7 @@ def check(target, config, config_file, debug, json, stat, verbose):
               help="File to save the output as json to.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-def list_check(config, config_file, debug, json, verbose):
+def list_checks(config, config_file, debug, json, verbose):
     """
     Print the checks.
     """
@@ -124,9 +124,9 @@ def list_check(config, config_file, debug, json, verbose):
         AbstractCheck.save_checks_to_json(file=json, checks=checks)
 
 
-@click.command(name="list-config",
+@click.command(name="list-configs",
                context_settings=CONTEXT_SETTINGS)
-def list_config():
+def list_configs():
     """
     List available configurations.
     """
@@ -137,8 +137,8 @@ def list_config():
 
 
 cli.add_command(check)
-cli.add_command(list_check)
-cli.add_command(list_config)
+cli.add_command(list_checks)
+cli.add_command(list_configs)
 
 
 def _print_results(results, stat=False):
