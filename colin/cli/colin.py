@@ -20,6 +20,7 @@ import click as click
 from six import iteritems
 
 from colin.checks.abstract.abstract_check import AbstractCheck
+from .default_group import DefaultGroup
 from ..core.constant import COLOURS, OUTPUT_CHARS
 from ..core.exceptions import ColinException
 from ..core.colin import run, get_checks
@@ -30,17 +31,8 @@ logger = logging.getLogger(__name__)
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
-def _print_version(ctx, param, value):
-    if not value or ctx.resilient_parsing:
-        return
-    click.echo(__version__)
-    ctx.exit()
-
-
-@click.group(context_settings=CONTEXT_SETTINGS)
-@click.option('--version', "-V", is_flag=True, callback=_print_version,
-              expose_value=False, is_eager=True,
-              help="Print version.")
+@click.group(cls=DefaultGroup, context_settings=CONTEXT_SETTINGS)
+@click.version_option(__version__, '--version', '-V')
 def cli():
     """
     COLIN -- Container Linter
@@ -139,6 +131,7 @@ def list_configs():
 cli.add_command(check)
 cli.add_command(list_checks)
 cli.add_command(list_configs)
+cli.set_default_command(check)
 
 
 def _print_results(results, stat=False):
