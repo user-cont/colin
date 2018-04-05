@@ -23,12 +23,13 @@ from .target import Target
 logger = logging.getLogger(__name__)
 
 
-def run(name_of_target, group=None, severity=None, tags=None, config_name=None, config_file=None,
+def run(target, group=None, severity=None, tags=None, config_name=None, config_file=None,
         logging_level=logging.WARNING):
     """
     Runs the sanity checks for the target.
 
-    :param name_of_target: str (name of the container or image, dockerfile will be added in the future)
+    :param target: str or Image/Container (name of the container or image or Image/Container instance from conu,
+                    dockerfile will be added in the future)
     :param group: str (name of the folder with group of checks, if None, all of them will be checked.)
     :param severity: str (if not None, only those checks will be run -- optional x required x warn ...)
     :param tags: list of str (if not None, the checks will be filtered by tags.)
@@ -39,7 +40,7 @@ def run(name_of_target, group=None, severity=None, tags=None, config_name=None, 
     """
     _set_logging(level=logging_level)
     logger.debug("Checking started.")
-    target = Target(name=name_of_target,
+    target = Target(target=target,
                     logging_level=logging_level)
     checks_to_run = _get_checks(target=target,
                                 group=group,
@@ -68,7 +69,7 @@ def get_checks(name_of_target, group=None, severity=None, tags=None, config_name
     """
     _set_logging(level=logging_level)
     logger.debug("Finding checks started.")
-    target = Target(name=name_of_target,
+    target = Target(target=name_of_target,
                     logging_level=logging_level)
     return _get_checks(target=target,
                        group=group,

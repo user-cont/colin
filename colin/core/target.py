@@ -18,7 +18,7 @@ import enum
 import logging
 
 from conu import DockerBackend, DockerImagePullPolicy
-from conu.apidefs.container import Container
+from conu.apidefs.container import Container, Image
 from conu.apidefs.image import Image
 from docker.errors import NotFound
 
@@ -32,44 +32,48 @@ logger = logging.getLogger(__name__)
 
 class Target(object):
 
-    def __init__(self, name, logging_level):
-        self.name = name
-        self.instance = Target._get_target_instance(name, logging_level=logging_level)
+    def __init__(self, target, logging_level):
+        self.instance = Target._get_target_instance(target, logging_level=logging_level)
 
     @staticmethod
-    def _get_target_instance(target_name, logging_level):
+    def _get_target_instance(target, logging_level):
         """
         Get the Container/Image instance for the given name.
         (Container is the first choice.)
 
-        :param target_name: str
+        :param target: str or instance of Image/Container
         :return: Container/Image
         """
-        logger.debug("Finding target '{}'.".format(target_name))
+        logger.debug("Finding target '{}'.".format(target))
+
+        if isinstance(target, (Image, Container)):
+            return target
 
         with DockerBackend(logging_level=logging_level) as backend:
 
             try:
                 cont = backend.ContainerClass(image=None,
-                                              container_id=target_name)
+                                              container_id=target)
                 logger.debug("Target is a container.")
                 return cont
             except NotFound:
-                name_split = target_name.split(':')
-                if len(name_split) == 2:
-                    name, tag = name_split
-                    image = backend.ImageClass(repository=name,
-                                               tag=tag,
+
+                image_name = ImageName.parse(target)
+                logger.debug("Finding image '{}' with tag '{}'.".format(image_name.name, image_name.tag))
+
+                if image_name.tag:
+                    image = backend.ImageClass(repository=image_name.name,
+                                               tag=image_name.tag,
                                                pull_policy=DockerImagePullPolicy.NEVER)
                 else:
-                    image = backend.ImageClass(repository=target_name,
+                    image = backend.ImageClass(repository=image_name.name,
                                                pull_policy=DockerImagePullPolicy.NEVER)
 
                 if image.is_present():
                     logger.debug("Target is an image.")
                     return image
-        logger.warning("Target is neither image nor container.")
-        return None
+        logger.error("Target is neither image nor container.")
+        raise ColinException("Target not found.")
 
     @property
     def target_type(self):
@@ -92,3 +96,79 @@ def is_compatible(target_type, check_class, severity, tags):
     return (target_type == TargetType.DOCKERFILE and isinstance(check_class, DockerfileCheck)) \
            or (target_type == TargetType.CONTAINER and isinstance(check_class, ContainerCheck)) \
            or (target_type == TargetType.CONTAINER_IMAGE and isinstance(check_class, ImageCheck))
+
+
+class ImageName(object):
+    def __init__(self, registry=None, namespace=None, repository=None, tag=None, digest=None):
+        self.registry = registry
+        self.namespace = namespace
+        self.repository = repository
+        self.tag = tag
+        self.digest = digest
+
+    @classmethod
+    def parse(cls, image_name):
+        """
+        Get the instance of ImageName from the string representation.
+
+        :param image_name: str (any possible form of image name)
+        :return: ImageName instance
+        """
+        result = cls()
+
+        # registry.org/namespace/repo:tag
+        s = image_name.split('/', 2)
+
+        if len(s) == 2:
+            if '.' in s[0] or ':' in s[0]:
+                result.registry = s[0]
+            else:
+                result.namespace = s[0]
+        elif len(s) == 3:
+            result.registry = s[0]
+            result.namespace = s[1]
+        result.repository = s[-1]
+
+        try:
+            result.repository, result.digest = result.repository.rsplit("@", 1)
+        except ValueError:
+            pass
+
+        try:
+            result.repository, result.tag = result.repository.rsplit(":", 1)
+        except ValueError:
+            pass
+
+        return result
+
+    def __str__(self):
+        return "Image: registry='{}' namespace='{}' " \
+               "repository='{}' tag='{}' digest='{}'".format(self.registry,
+                                                             self.namespace,
+                                                             self.repository,
+                                                             self.tag,
+                                                             self.digest)
+
+    @property
+    def name(self):
+        """
+        Get the string representation of the image
+        (registry, namespace, repository and digest together).
+
+        :return: str
+        """
+        name_parts = []
+        if self.registry:
+            name_parts.append(self.registry)
+
+        if self.namespace:
+            name_parts.append(self.namespace)
+
+        if self.repository:
+            name_parts.append(self.repository)
+        name = "/".join(name_parts)
+
+        if self.digest:
+            name += "@{}".format(self.digest)
+
+        return name
