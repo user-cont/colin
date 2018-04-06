@@ -92,6 +92,8 @@ class TargetType(enum.Enum):
 
 
 def is_compatible(target_type, check_class, severity, tags):
+    if not target_type:
+        return True
     # TODO take severity and tags into consideration
     return (target_type == TargetType.DOCKERFILE and isinstance(check_class, DockerfileCheck)) \
            or (target_type == TargetType.CONTAINER and isinstance(check_class, ContainerCheck)) \
