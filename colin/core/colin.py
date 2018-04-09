@@ -34,7 +34,7 @@ def run(target, group=None, severity=None, tags=None, ruleset_name=None, ruleset
     :param severity: str (if not None, only those checks will be run -- optional x required x warn ...)
     :param tags: list of str (if not None, the checks will be filtered by tags.)
     :param ruleset_name: str (e.g. fedora; if None, default would be used)
-    :param ruleset_file: str (path)
+    :param ruleset_file: fileobj
     :param logging_level: logging level (default logging.WARNING)
     :return: Results instance
     """
@@ -63,7 +63,7 @@ def get_checks(target_type=None, group=None, severity=None, tags=None, ruleset_n
     :param severity: str (if not None, only those checks will be run -- optional x required x warn ...)
     :param tags: list of str (if not None, the checks will be filtered by tags.)
     :param ruleset_name: str (e.g. fedora; if None, default would be used)
-    :param ruleset_file: str (path)
+    :param ruleset_file: fileobj
     :param logging_level: logging level (default logging.WARNING)
     :return: list of groups of checks
     """
