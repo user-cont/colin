@@ -34,22 +34,40 @@ This is how you can use colin afterwards:
 
 ```
 $ colin -h
-Usage: colin [OPTIONS] TARGET
+Usage: colin [OPTIONS] COMMAND [ARGS]...
+
+  COLIN -- Container Linter
 
 Options:
-  -c, --config [redhat|fedora]  Select a predefined configuration.
-  --debug                       Enable debugging mode (debugging logs, full tracebacks).
-  -f, --config-file FILENAME    Path to a file to use for validation (by
-                                default they are placed in /usr/share/colin).
-  --json FILENAME               File to save the output as json to.
-  -s, --stat                    Print statistics instead of full results.
-  -v, --verbose                 Verbose mode.
-  -h, --help                    Show this message and exit.
+  -V, --version  Show the version and exit.
+  -h, --help     Show this message and exit.
+
+Commands:
+  check          Check the image/container (default).
+  list-checks    Print the checks.
+  list-rulesets  List available rulesets.
+```
+```
+$ colin check -h
+Usage: colin check [OPTIONS] TARGET
+
+  Check the image/container (default).
+
+Options:
+  -r, --ruleset TEXT           Select a predefined ruleset (e.g. fedora).
+  -f, --ruleset-file FILENAME  Path to a file to use for validation (by
+                               default they are placed in /usr/share/colin).
+  --debug                      Enable debugging mode (debugging logs, full
+                               tracebacks).
+  --json FILENAME              File to save the output as json to.
+  -s, --stat                   Print statistics instead of full results.
+  -v, --verbose                Verbose mode.
+  -h, --help                   Show this message and exit.
 ```
 
 Let's give it a shot:
 ```
-$ colin -f ./config/redhat.json rhel7
+$ colin -f ./rulesets/redhat.json rhel7
 LABELS:
 nok:failed:maintainer_label_required
    -> Label 'maintainer' has to be specified.
@@ -71,7 +89,7 @@ ok :passed:architecture_label
 We can also check containers:
 ```
 $ docker run --name some-fedora -d fedora sleep 300
-$ colin -f ./config/default.json some-fedora
+$ colin -f ./rulesets/default.json some-fedora
 LABELS:
 nok:failed:maintainer_label_required
    -> Label 'maintainer' has to be specified.
@@ -80,7 +98,7 @@ nok:failed:maintainer_label_required
 
 $ docker run --name my-fedora -l maintainer=myname -d fedora sleep 300
 # Adding maintainer name fixes the check:
-$ colin -f ./config/default.json  my-fedora
+$ colin -f ./rulesets/default.json  my-fedora
 LABELS:
 ok :passed:maintainer_label_required
 ```
@@ -94,23 +112,24 @@ Once you clone colin locally, you can invoke it directly from git:
 $ git clone https://github.com/user-cont/colin.git
 $ cd colin
 $ python3 -m colin.cli.colin -h
-Usage: colin [OPTIONS] TARGET
+Usage: colin [OPTIONS] COMMAND [ARGS]...
+
+  COLIN -- Container Linter
 
 Options:
-  -c, --config [redhat|fedora]  Select a predefined configuration.
-  --debug                       Enable debugging mode (debugging logs, full tracebacks).
-  -f, --config-file FILENAME    Path to a file to use for validation (by
-                                default they are placed in /usr/share/colin).
-  --json FILENAME               File to save the output as json to.
-  -s, --stat                    Print statistics instead of full results.
-  -v, --verbose                 Verbose mode.
-  -h, --help                    Show this message and exit.
+  -V, --version  Show the version and exit.
+  -h, --help     Show this message and exit.
+
+Commands:
+  check          Check the image/container (default).
+  list-checks    Print the checks.
+  list-rulesets  List available rulesets.
 ```
 
 We can now run the analysis:
 
 ```
-$ python3 -m colin.cli.colin -f ./config/fedora.json fedora:27
+$ python3 -m colin.cli.colin -f ./rulesets/fedora.json fedora:27
 LABELS:
 nok:failed:maintainer_label_required
    -> Label 'maintainer' has to be specified.
@@ -146,6 +165,7 @@ nok:failed:usage_label_required
 
 Each ecosystem will define a set of checks to validate the artifacts. Checks will have different severity level so that we can classify checks as required or optional.
 
+![Scheme](./docs/scheme.png)
 
 ## TODO
 

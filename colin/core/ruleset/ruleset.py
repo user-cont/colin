@@ -20,45 +20,45 @@ import os
 
 from six import iteritems
 
-from ..exceptions import ColinConfigException
-from ..constant import CONFIG_DIRECTORY, JSON
+from ..exceptions import ColinRulesetException
+from ..constant import RULESET_DIRECTORY, JSON
 from ..loader import load_check_implementation
 from ..target import is_compatible
 
 logger = logging.getLogger(__name__)
 
 
-class Config(object):
+class Ruleset(object):
 
-    def __init__(self, config_name=None, config_file=None):
+    def __init__(self, ruleset_name=None, ruleset_file=None):
         """
-        Load config for colin.
+        Load ruleset for colin.
 
-        :param config_name: str (name of the config file (without .json), default is "default"
-        :param config_file: fileobj
+        :param ruleset_name: str (name of the ruleset file (without .json), default is "default"
+        :param ruleset_file: fileobj
         """
-        if config_file:
+        if ruleset_file:
             try:
-                logger.debug("Loading configuration from file '{}'.".format(config_file.name))
-                self.config_dict = json.load(config_file)
+                logger.debug("Loading ruleset from file '{}'.".format(ruleset_file.name))
+                self.ruleset_dict = json.load(ruleset_file)
             except Exception as ex:
-                msg = "Config file '{}' cannot be loaded.".format(config_file.name)
+                msg = "Ruleset file '{}' cannot be loaded.".format(ruleset_file.name)
                 logger.error(msg)
-                raise ColinConfigException(msg)
+                raise ColinRulesetException(msg)
         else:
             try:
-                logger.debug("Loading configuration with the name '{}'.".format(config_name))
-                config_path = config_file or get_config_file(config=config_name)
-                with open(config_path, mode='r') as config_file_obj:
-                    self.config_dict = json.load(config_file_obj)
-            except ColinConfigException as ex:
+                logger.debug("Loading ruleset with the name '{}'.".format(ruleset_name))
+                ruleset_path = get_ruleset_file(ruleset=ruleset_name)
+                with open(ruleset_path, mode='r') as ruleset_file_obj:
+                    self.ruleset_dict = json.load(ruleset_file_obj)
+            except ColinRulesetException as ex:
                 raise ex
             except Exception as ex:
-                file_name = config_path if config_path else config_name
-                msg = "Configuration '{}' cannot be loaded.".format(file_name)
+                file_name = ruleset_path if ruleset_path else ruleset_name
+                msg = "Ruleset '{}' cannot be loaded.".format(file_name)
 
                 logger.error(msg)
-                raise ColinConfigException(msg)
+                raise ColinRulesetException(msg)
 
     def get_checks(self, target_type, group=None, severity=None, tags=None):
         """
@@ -108,8 +108,8 @@ class Config(object):
         """
         check_files = []
         for f in names:
-            check_file = Config.get_check_file(group=group,
-                                               name=f)
+            check_file = Ruleset.get_check_file(group=group,
+                                                name=f)
             check_files.append((severity, check_file))
         return check_files
 
@@ -117,10 +117,10 @@ class Config(object):
         """
         Get check group to validate
 
-        :param group: str (if None, all from the config will be used)
+        :param group: str (if None, all from the ruleset will be used)
         :return: list of str (group names)
         """
-        groups = [g for g in self.config_dict]
+        groups = [g for g in self.ruleset_dict]
         if group:
             if group in groups:
                 check_groups = [group]
@@ -143,11 +143,11 @@ class Config(object):
         for g in self._get_check_groups(group):
             logger.debug("Getting checks for group '{}'.".format(g))
             check_files = []
-            for sev, files in iteritems(self.config_dict[g]):
+            for sev, files in iteritems(self.ruleset_dict[g]):
                 if (not severity) or severity == sev:
-                    check_files += Config.get_check_files(group=g,
-                                                          names=files,
-                                                          severity=sev)
+                    check_files += Ruleset.get_check_files(group=g,
+                                                           names=files,
+                                                           severity=sev)
             groups[g] = check_files
         return groups
 
@@ -162,47 +162,57 @@ def get_checks_path():
     return os.path.abspath(os.path.join(__file__, rel_path))
 
 
-def get_config_file(config=None):
+def get_ruleset_file(ruleset=None):
     """
-    Get the config file from name
+    Get the ruleset file from name
 
-    :param config: str
+    :param ruleset: str
     :return: str
     """
-    config = config or "default"
+    ruleset = ruleset or "default"
 
-    config_directory = get_config_directory()
-    config_file = os.path.join(config_directory, config + JSON)
+    ruleset_directory = get_ruleset_directory()
+    ruleset_file = os.path.join(ruleset_directory, ruleset + JSON)
 
-    if os.path.exists(config_file) and os.path.isfile(config_file):
-        logger.debug("Configuration file '{}' found.".format(config_file))
-        return config_file
+    if os.path.isfile(ruleset_file):
+        logger.debug("Ruleset file '{}' found.".format(ruleset_file))
+        return ruleset_file
 
-    logger.warning("Configuration with the name '{}' cannot be found at '{}'."
-                   .format(config, config_file))
-    raise ColinConfigException("Configuration with the name '{}' cannot be found.".format(config))
+    logger.warning("Ruleset with the name '{}' cannot be found at '{}'."
+                   .format(ruleset, ruleset_file))
+    raise ColinRulesetException("Ruleset with the name '{}' cannot be found.".format(ruleset))
 
 
-def get_config_directory():
+def get_ruleset_directory():
     """
-    Get the directory with config files
-    First directory to check:  $HOME/.local/share/colin/config
-    Second directory to check: /usr/local/share/colin/config
+    Get the directory with ruleset files
+    First directory to check:  $HOME/.local/share/colin/rulesets
+    Second directory to check: /usr/local/share/colin/rulesets
     :return: str
     """
 
     local_share = os.path.join(os.path.expanduser("~"),
                                ".local",
-                               CONFIG_DIRECTORY)
-    if os.path.isdir(local_share) and os.path.exists(local_share):
-        logger.debug("Local configuration directory found ('{}').".format(local_share))
+                               RULESET_DIRECTORY)
+    if os.path.isdir(local_share):
+        logger.debug("Local ruleset directory found ('{}').".format(local_share))
         return local_share
 
-    usr_local_share = os.path.join("/usr/local", CONFIG_DIRECTORY)
-    if os.path.isdir(usr_local_share) and os.path.exists(usr_local_share):
-        logger.debug("Global configuration directory found ('{}').".format(usr_local_share))
+    usr_local_share = os.path.join("/usr/local", RULESET_DIRECTORY)
+    if os.path.isdir(usr_local_share):
+        logger.debug("Global ruleset directory found ('{}').".format(usr_local_share))
         return usr_local_share
 
-    msg = "Config directory cannot be found."
+    msg = "Ruleset directory cannot be found."
     logger.warning(msg)
-    raise ColinConfigException(msg)
+    raise ColinRulesetException(msg)
+
+
+def get_rulesets():
+    """"
+    Get available rulesets.
+    """
+    rulesets_dir = get_ruleset_directory()
+    ruleset_files = [f[:-len(JSON)] for f in os.listdir(rulesets_dir) if
+                     os.path.isfile(os.path.join(rulesets_dir, f)) and f.lower().endswith(JSON)]
+    return ruleset_files

@@ -17,13 +17,13 @@
 import logging
 
 from .check_runner import go_through_checks
-from .config.config import Config
+from .ruleset.ruleset import Ruleset
 from .target import Target
 
 logger = logging.getLogger(__name__)
 
 
-def run(target, group=None, severity=None, tags=None, config_name=None, config_file=None,
+def run(target, group=None, severity=None, tags=None, ruleset_name=None, ruleset_file=None,
         logging_level=logging.WARNING):
     """
     Runs the sanity checks for the target.
@@ -33,8 +33,8 @@ def run(target, group=None, severity=None, tags=None, config_name=None, config_f
     :param group: str (name of the folder with group of checks, if None, all of them will be checked.)
     :param severity: str (if not None, only those checks will be run -- optional x required x warn ...)
     :param tags: list of str (if not None, the checks will be filtered by tags.)
-    :param config_name: str (e.g. fedora; if None, default would be used)
-    :param config_file: str (path)
+    :param ruleset_name: str (e.g. fedora; if None, default would be used)
+    :param ruleset_file: fileobj
     :param logging_level: logging level (default logging.WARNING)
     :return: Results instance
     """
@@ -46,14 +46,14 @@ def run(target, group=None, severity=None, tags=None, config_name=None, config_f
                                 group=group,
                                 severity=severity,
                                 tags=tags,
-                                config_name=config_name,
-                                config_file=config_file)
+                                ruleset_name=ruleset_name,
+                                ruleset_file=ruleset_file)
     result = go_through_checks(target=target,
                                checks=checks_to_run)
     return result
 
 
-def get_checks(target_type=None, group=None, severity=None, tags=None, config_name=None, config_file=None,
+def get_checks(target_type=None, group=None, severity=None, tags=None, ruleset_name=None, ruleset_file=None,
                logging_level=logging.WARNING):
     """
     Get the sanity checks for the target.
@@ -62,8 +62,8 @@ def get_checks(target_type=None, group=None, severity=None, tags=None, config_na
     :param group: str (name of the folder with group of checks, if None, all of them will be checked.)
     :param severity: str (if not None, only those checks will be run -- optional x required x warn ...)
     :param tags: list of str (if not None, the checks will be filtered by tags.)
-    :param config_name: str (e.g. fedora; if None, default would be used)
-    :param config_file: str (path)
+    :param ruleset_name: str (e.g. fedora; if None, default would be used)
+    :param ruleset_file: fileobj
     :param logging_level: logging level (default logging.WARNING)
     :return: list of groups of checks
     """
@@ -73,17 +73,17 @@ def get_checks(target_type=None, group=None, severity=None, tags=None, config_na
                        group=group,
                        severity=severity,
                        tags=tags,
-                       config_name=config_name,
-                       config_file=config_file)
+                       ruleset_name=ruleset_name,
+                       ruleset_file=ruleset_file)
 
 
-def _get_checks(target_type, group=None, severity=None, tags=None, config_name=None, config_file=None):
-    config = Config(config_name=config_name,
-                    config_file=config_file)
-    return config.get_checks(group=group,
-                             severity=severity,
-                             tags=tags,
-                             target_type=target_type)
+def _get_checks(target_type, group=None, severity=None, tags=None, ruleset_name=None, ruleset_file=None):
+    ruleset = Ruleset(ruleset_name=ruleset_name,
+                      ruleset_file=ruleset_file)
+    return ruleset.get_checks(group=group,
+                              severity=severity,
+                              tags=tags,
+                              target_type=target_type)
 
 
 def _set_logging(

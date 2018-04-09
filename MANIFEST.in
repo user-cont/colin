@@ -1,7 +1,7 @@
 include MANIFEST.in
 include README.md
 include bash-complete/colin
-recursive-include config *
+recursive-include rulesets *
 recursive-include colin *
 recursive-include docs *
 recursive-include examples *
