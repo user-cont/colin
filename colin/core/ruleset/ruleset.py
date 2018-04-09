@@ -213,6 +213,6 @@ def get_rulesets():
     Get available rulesets.
     """
     rulesets_dir = get_ruleset_directory()
-    ruleset_files = [os.path.basename(f)[:-5] for f in os.listdir(rulesets_dir) if
+    ruleset_files = [f[:-len(JSON)] for f in os.listdir(rulesets_dir) if
                      os.path.isfile(os.path.join(rulesets_dir, f)) and f.lower().endswith(JSON)]
     return ruleset_files
