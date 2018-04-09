@@ -48,7 +48,7 @@ class Ruleset(object):
         else:
             try:
                 logger.debug("Loading ruleset with the name '{}'.".format(ruleset_name))
-                ruleset_path = ruleset_file or get_ruleset_file(ruleset=ruleset_name)
+                ruleset_path = get_ruleset_file(ruleset=ruleset_name)
                 with open(ruleset_path, mode='r') as ruleset_file_obj:
                     self.ruleset_dict = json.load(ruleset_file_obj)
             except ColinRulesetException as ex:
@@ -174,7 +174,7 @@ def get_ruleset_file(ruleset=None):
     ruleset_directory = get_ruleset_directory()
     ruleset_file = os.path.join(ruleset_directory, ruleset + JSON)
 
-    if os.path.exists(ruleset_file) and os.path.isfile(ruleset_file):
+    if os.path.isfile(ruleset_file):
         logger.debug("Ruleset file '{}' found.".format(ruleset_file))
         return ruleset_file
 
@@ -194,12 +194,12 @@ def get_ruleset_directory():
     local_share = os.path.join(os.path.expanduser("~"),
                                ".local",
                                RULESET_DIRECTORY)
-    if os.path.isdir(local_share) and os.path.exists(local_share):
+    if os.path.isdir(local_share):
         logger.debug("Local ruleset directory found ('{}').".format(local_share))
         return local_share
 
     usr_local_share = os.path.join("/usr/local", RULESET_DIRECTORY)
-    if os.path.isdir(usr_local_share) and os.path.exists(usr_local_share):
+    if os.path.isdir(usr_local_share):
         logger.debug("Global ruleset directory found ('{}').".format(usr_local_share))
         return usr_local_share
 
