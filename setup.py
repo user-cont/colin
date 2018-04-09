@@ -27,9 +27,9 @@ setup(
         [console_scripts]
         colin=colin.cli.colin:cli
     ''',
-    data_files=[("share/colin/config/", ["config/default.json",
-                                         "config/fedora.json",
-                                         "config/redhat.json"]),
+    data_files=[("share/colin/ruleset/", ["ruleset/default.json",
+                                          "ruleset/fedora.json",
+                                          "ruleset/redhat.json"]),
                 ("share/bash-completion/completions/", ["bash-complete/colin"])],
     license='GPLv3+',
     classifiers=[

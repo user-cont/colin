@@ -18,5 +18,5 @@ class ColinException(Exception):
     """ Generic exception when something goes wrong with colin. """
 
 
-class ColinConfigException(Exception):
-    """ Exception raise when there is a problem with config files. """
+class ColinRulesetException(Exception):
+    """ Exception raise when there is a problem with ruleset files. """

@@ -43,9 +43,9 @@ def cli():
 @click.command(name="check",
                context_settings=CONTEXT_SETTINGS)
 @click.argument('target', type=click.STRING)
-@click.option('--config', '-c', type=click.Choice(['redhat', 'fedora']),
-              help="Select a predefined configuration.")
-@click.option('--config-file', '-f', type=click.File(mode='r'),
+@click.option('--ruleset', '-r', type=click.STRING,
+              help="Select a predefined ruleset (e.g. fedora).")
+@click.option('--ruleset-file', '-f', type=click.File(mode='r'),
               help="Path to a file to use for validation (by default they are placed in /usr/share/colin).")
 @click.option('--debug', default=False, is_flag=True,
               help="Enable debugging mode (debugging logs, full tracebacks).")
@@ -55,12 +55,12 @@ def cli():
               help="Print statistics instead of full results.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-def check(target, config, config_file, debug, json, stat, verbose):
+def check(target, ruleset, ruleset_file, debug, json, stat, verbose):
     """
     Check the image/container.
     """
-    if config and config_file:
-        raise click.BadOptionUsage("Options '--config' and '--file-config' cannot be used together.")
+    if ruleset and ruleset_file:
+        raise click.BadOptionUsage("Options '--ruleset' and '--file-ruleset' cannot be used together.")
 
     if debug and verbose:
         raise click.BadOptionUsage("Options '--debug' and '--verbose' cannot be used together.")
@@ -68,8 +68,8 @@ def check(target, config, config_file, debug, json, stat, verbose):
     try:
 
         results = run(target=target,
-                      config_name=config,
-                      config_file=config_file,
+                      ruleset_name=ruleset,
+                      ruleset_file=ruleset_file,
                       logging_level=_get_log_level(debug=debug,
                                                    verbose=verbose))
         _print_results(results=results, stat=stat)
@@ -93,9 +93,9 @@ def check(target, config, config_file, debug, json, stat, verbose):
 
 @click.command(name="list-checks",
                context_settings=CONTEXT_SETTINGS)
-@click.option('--config', '-c', type=click.Choice(['redhat', 'fedora']),
-              help="Select a predefined configuration.")
-@click.option('--config-file', '-f', type=click.File(mode='r'),
+@click.option('--ruleset', '-r', type=click.STRING,
+              help="Select a predefined ruleset (e.g. fedora).")
+@click.option('--ruleset-file', '-f', type=click.File(mode='r'),
               help="Path to a file to use for validation (by default they are placed in /usr/share/colin).")
 @click.option('--debug', default=False, is_flag=True,
               help="Enable debugging mode (debugging logs, full tracebacks).")
@@ -103,18 +103,18 @@ def check(target, config, config_file, debug, json, stat, verbose):
               help="File to save the output as json to.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-def list_checks(config, config_file, debug, json, verbose):
+def list_checks(ruleset, ruleset_file, debug, json, verbose):
     """
     Print the checks.
     """
-    if config and config_file:
-        raise click.BadOptionUsage("Options '--config' and '--file-config' cannot be used together.")
+    if ruleset and ruleset_file:
+        raise click.BadOptionUsage("Options '--ruleset' and '--file-ruleset' cannot be used together.")
 
     if debug and verbose:
         raise click.BadOptionUsage("Options '--debug' and '--verbose' cannot be used together.")
 
-    checks = get_checks(config_name=config,
-                        config_file=config_file,
+    checks = get_checks(ruleset_name=ruleset,
+                        ruleset_file=ruleset_file,
                         logging_level=_get_log_level(debug=debug, verbose=verbose))
     _print_checks(checks=checks)
 
@@ -122,11 +122,11 @@ def list_checks(config, config_file, debug, json, verbose):
         AbstractCheck.save_checks_to_json(file=json, checks=checks)
 
 
-@click.command(name="list-configs",
+@click.command(name="list-rulesets",
                context_settings=CONTEXT_SETTINGS)
-def list_configs():
+def list_rulesets():
     """
-    List available configurations.
+    List available rulesets.
     """
     # TODO: real search
     click.echo("default")
@@ -136,7 +136,7 @@ def list_configs():
 
 cli.add_command(check)
 cli.add_command(list_checks)
-cli.add_command(list_configs)
+cli.add_command(list_rulesets)
 cli.set_default_command(check)
 
 
