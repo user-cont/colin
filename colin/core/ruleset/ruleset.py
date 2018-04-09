@@ -186,8 +186,8 @@ def get_ruleset_file(ruleset=None):
 def get_ruleset_directory():
     """
     Get the directory with ruleset files
-    First directory to check:  $HOME/.local/share/colin/ruleset
-    Second directory to check: /usr/local/share/colin/ruleset
+    First directory to check:  $HOME/.local/share/colin/rulesets
+    Second directory to check: /usr/local/share/colin/rulesets
     :return: str
     """
 

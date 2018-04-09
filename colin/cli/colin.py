@@ -46,7 +46,7 @@ def cli():
 @click.option('--ruleset', '-r', type=click.STRING, envvar='COLIN_RULESET',
               help="Select a predefined ruleset (e.g. fedora).")
 @click.option('--ruleset-file', '-f', type=click.File(mode='r'),
-              help="Path to a file to use for validation (by default they are placed in /usr/share/colin).")
+              help="Path to a file to use for validation (by default they are placed in /usr/share/colin/rulesets).")
 @click.option('--debug', default=False, is_flag=True,
               help="Enable debugging mode (debugging logs, full tracebacks).")
 @click.option('--json', type=click.File(mode='w'),
@@ -96,7 +96,7 @@ def check(target, ruleset, ruleset_file, debug, json, stat, verbose):
 @click.option('--ruleset', '-r', type=click.STRING, envvar='COLIN_RULESET',
               help="Select a predefined ruleset (e.g. fedora).")
 @click.option('--ruleset-file', '-f', type=click.File(mode='r'),
-              help="Path to a file to use for validation (by default they are placed in /usr/share/colin).")
+              help="Path to a file to use for validation (by default they are placed in /usr/share/colin/rulesets).")
 @click.option('--debug', default=False, is_flag=True,
               help="Enable debugging mode (debugging logs, full tracebacks).")
 @click.option('--json', type=click.File(mode='w'),
