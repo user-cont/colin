@@ -43,9 +43,26 @@ Options:
   -h, --help     Show this message and exit.
 
 Commands:
-  check          Check the image/container.
+  check          Check the image/container (default).
   list-checks    Print the checks.
   list-rulesets  List available rulesets.
+```
+```
+$ colin check -h
+Usage: colin check [OPTIONS] TARGET
+
+  Check the image/container (default).
+
+Options:
+  -r, --ruleset TEXT           Select a predefined ruleset (e.g. fedora).
+  -f, --ruleset-file FILENAME  Path to a file to use for validation (by
+                               default they are placed in /usr/share/colin).
+  --debug                      Enable debugging mode (debugging logs, full
+                               tracebacks).
+  --json FILENAME              File to save the output as json to.
+  -s, --stat                   Print statistics instead of full results.
+  -v, --verbose                Verbose mode.
+  -h, --help                   Show this message and exit.
 ```
 
 Let's give it a shot:
@@ -104,7 +121,7 @@ Options:
   -h, --help     Show this message and exit.
 
 Commands:
-  check          Check the image/container.
+  check          Check the image/container (default).
   list-checks    Print the checks.
   list-rulesets  List available rulesets.
 ```

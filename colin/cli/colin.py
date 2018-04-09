@@ -57,7 +57,7 @@ def cli():
               help="Verbose mode.")
 def check(target, ruleset, ruleset_file, debug, json, stat, verbose):
     """
-    Check the image/container.
+    Check the image/container (default).
     """
     if ruleset and ruleset_file:
         raise click.BadOptionUsage("Options '--ruleset' and '--file-ruleset' cannot be used together.")
