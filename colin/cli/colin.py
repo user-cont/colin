@@ -19,7 +19,8 @@ import logging
 import click as click
 from six import iteritems
 
-from colin.checks.abstract.abstract_check import AbstractCheck
+from ..checks.abstract.abstract_check import AbstractCheck
+from ..core.ruleset.ruleset import get_rulesets
 from .default_group import DefaultGroup
 from ..core.constant import COLOURS, OUTPUT_CHARS
 from ..core.exceptions import ColinException
@@ -128,10 +129,9 @@ def list_rulesets():
     """
     List available rulesets.
     """
-    # TODO: real search
-    click.echo("default")
-    click.echo("fedora")
-    click.echo("redhat")
+    rulesets = get_rulesets()
+    for r in rulesets:
+        click.echo(r)
 
 
 cli.add_command(check)
