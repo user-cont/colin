@@ -67,7 +67,7 @@ Options:
 
 Let's give it a shot:
 ```
-$ colin -f ./ruleset/redhat.json rhel7
+$ colin -f ./rulesets/redhat.json rhel7
 LABELS:
 nok:failed:maintainer_label_required
    -> Label 'maintainer' has to be specified.
@@ -89,7 +89,7 @@ ok :passed:architecture_label
 We can also check containers:
 ```
 $ docker run --name some-fedora -d fedora sleep 300
-$ colin -f ./ruleset/default.json some-fedora
+$ colin -f ./rulesets/default.json some-fedora
 LABELS:
 nok:failed:maintainer_label_required
    -> Label 'maintainer' has to be specified.
@@ -98,7 +98,7 @@ nok:failed:maintainer_label_required
 
 $ docker run --name my-fedora -l maintainer=myname -d fedora sleep 300
 # Adding maintainer name fixes the check:
-$ colin -f ./ruleset/default.json  my-fedora
+$ colin -f ./rulesets/default.json  my-fedora
 LABELS:
 ok :passed:maintainer_label_required
 ```
@@ -129,7 +129,7 @@ Commands:
 We can now run the analysis:
 
 ```
-$ python3 -m colin.cli.colin -f ./ruleset/fedora.json fedora:27
+$ python3 -m colin.cli.colin -f ./rulesets/fedora.json fedora:27
 LABELS:
 nok:failed:maintainer_label_required
    -> Label 'maintainer' has to be specified.
