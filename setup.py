@@ -17,7 +17,7 @@ setup(
     description="Tool to check generic rules/best-practices for containers/images/dockerfiles.",
     long_description=long_description,
     long_description_content_type='text/markdown',
-    packages=find_packages(),
+    packages=find_packages(exclude=['examples', 'tests']),
     install_requires=[
         'Click',
         'six',
