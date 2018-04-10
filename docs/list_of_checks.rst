@@ -1,7 +1,7 @@
 List of all checks
 ==================
 
-Colin checks several labels, non-labeled checks (e.g.helpfile) and the best practises in Fedora and Red Hat images.
+Colin checks several labels and the best practises (e.g. helpfile check) in Fedora and Red Hat images.
 
 Fedora
 ------
