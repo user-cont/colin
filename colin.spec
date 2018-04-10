@@ -29,7 +29,7 @@ BuildRequires:  python3-setuptools
 Requires:       python3-docker
 Requires:       python3-requests
 Requires:       python3-pyxattr
-Requires:       conu
+#Requires:       conu
 Recommends:     atomic
 Recommends:     docker
 
