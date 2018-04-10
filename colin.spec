@@ -18,7 +18,7 @@ BuildArch:      noarch
 
 
 %description
-`colin` as a tool to check generic rules/best-practices
+`colin` is a tool to check generic rules/best-practices
 for containers/images/dockerfiles.
 
 %package -n     python3-%{pypi_name}
