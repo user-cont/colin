@@ -15,6 +15,8 @@ License:        GPLv3+
 URL:            https://github.com/user-cont/colin
 Source0:        https://files.pythonhosted.org/packages/source/c/%{pypi_name}/%{pypi_name}-%{version}.tar.gz
 BuildArch:      noarch
+Requires:       python3-%{pypi_name}
+Requires:       %{pypi_name}-doc
 
 
 %description
@@ -29,9 +31,11 @@ BuildRequires:  python3-setuptools
 Requires:       python3-docker
 Requires:       python3-requests
 Requires:       python3-pyxattr
+Requires:       python3-click
+Requires:       docker
+
 #Requires:       conu
 Recommends:     atomic
-Recommends:     docker
 
 %description -n python3-%{pypi_name}
 `colin` as a tool to check generic rules/best-practices
@@ -54,14 +58,14 @@ rm -rf %{pypi_name}.egg-info
 %install
 %py3_install
 
-%files -n python3-%{pypi_name}
-%license LICENSE
-%doc README.md
+%files
 %{_bindir}/%{pypi_name}
+%{_datadir}/bash-completion/completions/%{pypi_name}
+
+%files -n python3-%{pypi_name}
 %{python3_sitelib}/%{pypi_name}/
 %{python3_sitelib}/%{pypi_name}-*.egg-info/
 %{_datadir}/%{pypi_name}/*
-%{_datadir}/bash-completion/completions/%{pypi_name}
 %exclude %{python3_sitelib}/tests
 
 %files -n %{pypi_name}-doc
