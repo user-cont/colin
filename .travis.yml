@@ -1,0 +1,15 @@
+language: python
+sudo: false
+notifications:
+  email: false
+
+python:
+- '3.6'
+before_install:
+- sudo apt-get -y install gcc libattr1-dev
+script: true
+deploy:
+  provider: pypi
+
+after_deploy:
+- make rpm

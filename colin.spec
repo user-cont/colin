@@ -16,8 +16,6 @@ URL:            https://github.com/user-cont/colin
 Source0:        https://files.pythonhosted.org/packages/source/c/%{pypi_name}/%{pypi_name}-%{version}.tar.gz
 BuildArch:      noarch
 Requires:       python3-%{pypi_name}
-Requires:       %{pypi_name}-doc
-
 
 %description
 `colin` is a tool to check generic rules/best-practices
@@ -59,19 +57,21 @@ rm -rf %{pypi_name}.egg-info
 %py3_install
 
 %files
+%license LICENSE
 %{_bindir}/%{pypi_name}
 %{_datadir}/bash-completion/completions/%{pypi_name}
 
 %files -n python3-%{pypi_name}
+%license LICENSE
+%doc README.md
 %{python3_sitelib}/%{pypi_name}/
 %{python3_sitelib}/%{pypi_name}-*.egg-info/
 %{_datadir}/%{pypi_name}/*
 %exclude %{python3_sitelib}/tests
 
 %files -n %{pypi_name}-doc
-%doc docs
 %license LICENSE
-%doc README.md
+%doc docs
 
 %changelog
 * Mon Apr 09 2018 Petr Hracek <phracek@redhat.com> - 0.0.3-1
