@@ -126,6 +126,11 @@ Commands:
   list-rulesets  List available rulesets.
 ```
 
+`list-checks` and `list-rulesets` commands expect rulesets directory either in
+`/usr/local/share/colin/` or in `$HOME/.local/share/colin/` and may fail if it's
+not there. To make them work directly from git repo make a symlink:
+`ln -s $(pwd)/rulesets/ ~/.local/share/colin/rulesets`
+
 We can now run the analysis:
 
 ```
