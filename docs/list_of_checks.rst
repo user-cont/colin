@@ -1,7 +1,7 @@
 List of all checks
 ==================
 
-Colin checks several labels in Fedora and Red Hat images.
+Colin checks several labels, non-labeled checks (e.g.helpfile) and the best practises in Fedora and Red Hat images.
 
 Fedora
 ------
@@ -384,28 +384,6 @@ Below is a list of the labels which are checked in the Red Hat images.
        -> The name and email of the maintainer (usually the submitter).
        -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
        -> ['maintainer', 'label', 'required']
-       -> optional
-
-    DOCKERFILE:
-    is_tag_latest
-       ->
-       ->
-       -> https://docs.docker.com/engine/reference/builder/#from
-       -> ['from', 'dockerfile', 'latest']
-       -> required
-
-    maintainer_deprecated
-       ->
-       ->
-       -> https://docs.docker.com/engine/reference/builder/#maintainer-deprecated
-       -> ['maintainer', 'dockerfile', 'deprecated']
-       -> required
-
-    maintainer_deprecated
-       ->
-       ->
-       ->
-       -> ['run', 'dockerfile']
        -> optional
 
     BEST_PRACTICES:
