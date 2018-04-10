@@ -14,3 +14,10 @@ test-in-container: build-test-container
 
 exec-test:
 	PYTHONPATH=$(CURDIR) py.test-3 $(TEST_TARGET)
+
+clean:
+	python3 setup.py clean
+	rm -rf build/* dist/*
+
+html:
+	make -f Makefile.docs html
