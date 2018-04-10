@@ -65,7 +65,7 @@ Content
    :maxdepth: 1
 
    python_api
-   check_list
+   list_of_checks
 
 Index and Search
 ================
