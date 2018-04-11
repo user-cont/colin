@@ -31,14 +31,23 @@ class EnvCheck(ContainerCheck, ImageCheck):
 
     def check(self, target):
         env_vars = target.instance.get_metadata()["Config"]["Env"]
-        present = env_vars is not None and self.env_var in env_vars
+
+        env_vars_dict = {}
+        if env_vars:
+            for key_value in env_vars:
+                key, value = key_value.split("=")
+                env_vars_dict[key] = value
+            present = self.env_var in env_vars_dict
+        else:
+            present = False
 
         if present:
+
             if self.required and not self.value_regex:
                 passed = True
             elif self.value_regex:
                 pattern = re.compile(self.value_regex)
-                passed = bool(pattern.match(env_vars[self.env_var]))
+                passed = bool(pattern.match(env_vars_dict[self.env_var]))
             else:
                 passed = False
 
