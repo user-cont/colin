@@ -7,9 +7,8 @@
   },
   "dockerfile": {
     "required": [
-      "from_tag",
-      "maintainer_deprecated",
-      "layered_run"
+      "label_maintainer",
+      "maintainer_deprecated"
     ],
     "optional": []
   }

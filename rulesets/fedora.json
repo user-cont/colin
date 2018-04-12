@@ -26,11 +26,8 @@
   },
   "dockerfile": {
     "required": [
-      "from_tag",
+      "label_maintainer",
       "maintainer_deprecated"
-    ],
-    "optional": [
-      "layered_run"
     ]
   },
   "best_practices": {
