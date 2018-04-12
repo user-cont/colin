@@ -21,6 +21,22 @@ from .images import ImageCheck
 from ..result import CheckResult
 
 
+def check_label(label, required, value_regex, labels):
+    present = labels is not None and label in labels
+
+    if present:
+        if required and not value_regex:
+            return True
+        elif value_regex:
+            pattern = re.compile(value_regex)
+            return bool(pattern.match(labels[label]))
+        else:
+            return False
+
+    else:
+        return not required
+
+
 class LabelCheck(ContainerCheck, ImageCheck):
 
     def __init__(self, name, message, description, reference_url, tags, label, required, value_regex=None):
@@ -31,19 +47,10 @@ class LabelCheck(ContainerCheck, ImageCheck):
 
     def check(self, target):
         labels = target.instance.get_metadata()["Config"]["Labels"]
-        present = labels is not None and self.label in labels
-
-        if present:
-            if self.required and not self.value_regex:
-                passed = True
-            elif self.value_regex:
-                pattern = re.compile(self.value_regex)
-                passed = bool(pattern.match(labels[self.label]))
-            else:
-                passed = False
-
-        else:
-            passed = not self.required
+        passed = check_label(label=self.label,
+                             required=self.required,
+                             value_regex=self.value_regex,
+                             labels=labels)
 
         return CheckResult(ok=passed,
                            severity=self.severity,
