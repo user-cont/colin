@@ -16,11 +16,13 @@
 
 import enum
 import logging
+import os
 
 from conu import DockerBackend, DockerImagePullPolicy
-from conu.apidefs.container import Container, Image
+from conu.apidefs.container import Container
 from conu.apidefs.image import Image
 from docker.errors import NotFound
+from dockerfile_parse import DockerfileParser
 
 from ..core.exceptions import ColinException
 from ..checks.abstract.containers import ContainerCheck
@@ -40,6 +42,7 @@ class Target(object):
         """
         Get the Container/Image instance for the given name.
         (Container is the first choice.)
+        or DockerfileParser instance if the target is path.
 
         :param target: str or instance of Image/Container
         :return: Container/Image
@@ -47,7 +50,11 @@ class Target(object):
         logger.debug("Finding target '{}'.".format(target))
 
         if isinstance(target, (Image, Container)):
+            logger.debug("Target is a conu object.")
             return target
+        if os.path.exists(target):
+            logger.debug("Target is a dockerfile.")
+            return DockerfileParser(path=target)
 
         with DockerBackend(logging_level=logging_level) as backend:
 
@@ -81,6 +88,8 @@ class Target(object):
             return TargetType.CONTAINER_IMAGE
         elif isinstance(self.instance, Container):
             return TargetType.CONTAINER
+        elif isinstance(self.instance, DockerfileParser):
+            return TargetType.DOCKERFILE
         logger.debug("Target type not found.")
         raise ColinException("Target type not found.")
 

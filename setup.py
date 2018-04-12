@@ -21,7 +21,8 @@ setup(
     install_requires=[
         'Click',
         'six',
-        'conu>=0.3.0rc0'
+        'conu>=0.3.0rc0',
+        'dockerfile_parse'
     ],
     entry_points='''
         [console_scripts]
