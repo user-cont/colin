@@ -25,9 +25,6 @@ from docker.errors import NotFound
 from dockerfile_parse import DockerfileParser
 
 from ..core.exceptions import ColinException
-from ..checks.abstract.containers import ContainerCheck
-from ..checks.abstract.dockerfile import DockerfileCheck
-from ..checks.abstract.images import ImageCheck
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +51,7 @@ class Target(object):
             return target
         if os.path.exists(target):
             logger.debug("Target is a dockerfile.")
-            return DockerfileParser(path=target)
+            return DockerfileParser(fileobj=open(target))
 
         with DockerBackend(logging_level=logging_level) as backend:
 
@@ -98,15 +95,6 @@ class TargetType(enum.Enum):
     DOCKERFILE = 0
     CONTAINER = 1
     CONTAINER_IMAGE = 2
-
-
-def is_compatible(target_type, check_class, severity, tags):
-    if not target_type:
-        return True
-    # TODO take severity and tags into consideration
-    return (target_type == TargetType.DOCKERFILE and isinstance(check_class, DockerfileCheck)) \
-           or (target_type == TargetType.CONTAINER and isinstance(check_class, ContainerCheck)) \
-           or (target_type == TargetType.CONTAINER_IMAGE and isinstance(check_class, ImageCheck))
 
 
 class ImageName(object):
