@@ -8,16 +8,6 @@
       "usage",
       "io_k8s_display-name",
       "io_openshift_tags",
-      "architecture",
-      "com_redhat_build-host",
-      "authoritative-source-url",
-      "url",
-      "vendor",
-      "release",
-      "build-date",
-      "distribution-scope",
-      "vcs-ref",
-      "vcs-type",
       "description",
       "io_k8s_description",
       "architecture_capital_deprecated",
@@ -26,7 +16,25 @@
       "version_capital_deprecated",
       "install_capital_deprecated",
       "uninstall_capital_deprecated",
-      "release_capital_deprecated"
+      "release_capital_deprecated",
+      {
+        "type": [
+          "Container",
+          "Image"
+        ],
+        "checks": [
+          "architecture",
+          "com_redhat_build-host",
+          "authoritative-source-url",
+          "vendor",
+          "release",
+          "url",
+          "build-date",
+          "distribution-scope",
+          "vcs-ref",
+          "vcs-type"
+        ]
+      }
     ],
     "optional": [
       "vcs-url",
@@ -37,8 +45,8 @@
   },
   "dockerfile": {
     "required": [
-      "label_maintainer",
-      "maintainer_deprecated"
+      "maintainer_deprecated",
+      "from_tag"
     ],
     "optional": [
     ]
