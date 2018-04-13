@@ -14,28 +14,64 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 import logging
+import re
 
-from .labels import check_label
+from ..check_utils import check_label
 from ..result import CheckResult
 from .abstract_check import AbstractCheck
 
 logger = logging.getLogger(__name__)
 
 
+def get_instructions_from_dockerfile_parse(dfp, instruction):
+    """
+    Get the list of instruction dictionary for given instruction name.
+    (Subset of DockerfileParser.structure only for given instruction.)
+
+    :param dfp: DockerfileParser
+    :param instruction: str
+    :return: list
+    """
+    result = []
+    for inst in dfp.structure:
+        if inst["instruction"] == instruction:
+            result.append(inst)
+    return result
+
+
 class DockerfileCheck(AbstractCheck):
     pass
 
 
-class InstructionCheck(AbstractCheck):
+class InstructionCheck(DockerfileCheck):
 
-    def __init__(self, name, message, description, reference_url, tags, instruction, regex, required):
+    def __init__(self, name, message, description, reference_url, tags, instruction, value_regex, required):
         super().__init__(name, message, description, reference_url, tags)
         self.instruction = instruction
-        self.regex = regex
+        self.value_regex = value_regex
         self.required = required
 
     def check(self, target):
-        pass
+        instructions = get_instructions_from_dockerfile_parse(target.instance, self.instruction)
+        pattern = re.compile(self.value_regex)
+        logs = []
+        passed = True
+        for inst in instructions:
+            match = bool(pattern.match(inst["value"]))
+            passed = match == self.required
+            log = "Value for instruction {} {}mach regex: '{}'.".format(inst["content"],
+                                                                        "" if match else "does not ",
+                                                                        self.value_regex)
+            logs.append(log)
+            logger.debug(log)
+
+        return CheckResult(ok=passed,
+                           severity=self.severity,
+                           description=self.description,
+                           message=self.message,
+                           reference_url=self.reference_url,
+                           check_name=self.name,
+                           logs=logs)
 
 
 class InstructionCountCheck(DockerfileCheck):
@@ -47,14 +83,12 @@ class InstructionCountCheck(DockerfileCheck):
         self.max_count = max_count
 
     def check(self, target):
-        count = 0
-        for instruction in target.instance.structure:
-            if instruction["instruction"] == self.instruction:
-                count += 1
-        log = "Found {} occurrences of the {} instruction. Needed: min {} | max {}".format(self.instruction,
-                                                                                             count,
-                                                                                             self.min_count,
-                                                                                             self.max_count)
+        count = len(get_instructions_from_dockerfile_parse(target.instance, self.instruction))
+
+        log = "Found {} occurrences of the {} instruction. Needed: min {} | max {}".format(count,
+                                                                                           self.instruction,
+                                                                                           self.min_count,
+                                                                                           self.max_count)
         logger.debug(log)
         passed = True
         if self.min_count:

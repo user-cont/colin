@@ -13,31 +13,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
-import re
-
+from ..check_utils import get_labels_from_target, check_label
+from .dockerfile import DockerfileCheck
 from .containers import ContainerCheck
 from .images import ImageCheck
 from ..result import CheckResult
 
 
-def check_label(label, required, value_regex, labels):
-    present = labels is not None and label in labels
-
-    if present:
-        if required and not value_regex:
-            return True
-        elif value_regex:
-            pattern = re.compile(value_regex)
-            return bool(pattern.match(labels[label]))
-        else:
-            return False
-
-    else:
-        return not required
-
-
-class LabelCheck(ContainerCheck, ImageCheck):
+class LabelCheck(ContainerCheck, ImageCheck, DockerfileCheck):
 
     def __init__(self, name, message, description, reference_url, tags, label, required, value_regex=None):
         super().__init__(name, message, description, reference_url, tags)
@@ -46,7 +29,7 @@ class LabelCheck(ContainerCheck, ImageCheck):
         self.value_regex = value_regex
 
     def check(self, target):
-        labels = target.instance.get_metadata()["Config"]["Labels"]
+        labels = get_labels_from_target(target=target)
         passed = check_label(label=self.label,
                              required=self.required,
                              value_regex=self.value_regex,
@@ -61,7 +44,7 @@ class LabelCheck(ContainerCheck, ImageCheck):
                            logs=[])
 
 
-class DeprecatedLabelCheck(ContainerCheck, ImageCheck):
+class DeprecatedLabelCheck(ContainerCheck, ImageCheck, DockerfileCheck):
 
     def __init__(self, name, message, description, reference_url, tags, old_label, new_label):
         super().__init__(name, message, description, reference_url, tags)
@@ -69,7 +52,7 @@ class DeprecatedLabelCheck(ContainerCheck, ImageCheck):
         self.new_label = new_label
 
     def check(self, target):
-        labels = target.instance.get_metadata()["Config"]["Labels"]
+        labels = get_labels_from_target(target=target)
         old_present = labels is not None and self.old_label in labels
 
         passed = (not old_present) or (self.new_label in labels)
