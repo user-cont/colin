@@ -32,11 +32,7 @@ def get_instructions_from_dockerfile_parse(dfp, instruction):
     :param instruction: str
     :return: list
     """
-    result = []
-    for inst in dfp.structure:
-        if inst["instruction"] == instruction:
-            result.append(inst)
-    return result
+    return [inst for inst in dfp.structure if inst["instruction"] == instruction]
 
 
 class DockerfileCheck(AbstractCheck):
