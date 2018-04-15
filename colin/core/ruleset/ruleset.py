@@ -83,11 +83,11 @@ class Ruleset(object):
                 if severity and severity != sev:
                     continue
 
-                check_files += get_checks_from_rules(rules=rules,
-                                                     group=g,
-                                                     target_type=target_type,
-                                                     severity=sev,
-                                                     tags=tags)
+                check_files += Ruleset.get_checks_from_rules(rules=rules,
+                                                             group=g,
+                                                             target_type=target_type,
+                                                             severity=sev,
+                                                             tags=tags)
             groups[g] = check_files
         return groups
 
@@ -101,6 +101,51 @@ class Ruleset(object):
         :return: str (path)
         """
         return os.path.join(get_checks_path(), group, name + ".py")
+
+    @staticmethod
+    def get_checks_from_rules(rules, group, target_type, severity, tags):
+        """
+        get check from the list of check items in the resultset file.
+
+        :param rules: [str or dict]
+        :param group: str
+        :param target_type: TargetType enum
+        :param severity: str
+        :param tags: [str]
+        :return: list of filtered check instances
+        """
+        rule_items = []
+        for rule in rules:
+
+            if isinstance(rule, six.string_types):
+                rule_items.append(rule)
+            elif isinstance(rule, dict):
+                if target_type and target_type.name not in rule["type"]:
+                    continue
+
+                rule_items += rule["checks"]
+
+        check_instances = []
+        for r in rule_items:
+            logger.debug("Loading check instance for {}".format(r))
+            check_instances += load_check_implementation(path=Ruleset.get_check_file(group, r),
+                                                         severity=severity)
+        result = []
+        for check_instance in check_instances:
+            if not is_compatible(target_type=target_type, check_instance=check_instance):
+                logger.debug(
+                    "Check {} not compatible with the target type: {}".format(check_instance.name, target_type.name))
+                continue
+
+            if tags:
+                for t in tags:
+                    if t not in check_instance.tags:
+                        logger.debug("Check not passed the tag control: {}".format(r))
+                        continue
+            result.append(check_instance)
+            logger.debug("Check instance {} added.".format(check_instance.name))
+
+        return result
 
     def _get_check_groups(self, group=None):
         """
@@ -119,49 +164,6 @@ class Ruleset(object):
             check_groups = groups
         logger.debug("Found groups: {}.".format(check_groups))
         return check_groups
-
-
-def is_compatible(target_type, check_instance):
-    if not target_type:
-        return True
-    return (target_type == TargetType.DOCKERFILE and isinstance(check_instance, DockerfileCheck)) \
-           or (target_type == TargetType.CONTAINER and isinstance(check_instance, ContainerCheck)) \
-           or (target_type == TargetType.CONTAINER_IMAGE and isinstance(check_instance, ImageCheck))
-
-
-def get_checks_from_rules(rules, group, target_type, severity, tags):
-    rule_items = []
-    for rule in rules:
-
-        if isinstance(rule, six.string_types):
-            rule_items.append(rule)
-        elif isinstance(rule, dict):
-            if target_type and target_type.name not in rule["type"]:
-                continue
-
-            rule_items += rule["checks"]
-
-    check_instances = []
-    for r in rule_items:
-        logger.debug("Loading check instance for {}".format(r))
-        check_instances += load_check_implementation(path=Ruleset.get_check_file(group, r),
-                                                     severity=severity)
-    result = []
-    for check_instance in check_instances:
-        if not is_compatible(target_type=target_type, check_instance=check_instance):
-            logger.debug(
-                "Check {} not compatible with the target type: {}".format(check_instance.name, target_type.name))
-            continue
-
-        if tags:
-            for t in tags:
-                if t not in check_instance.tags:
-                    logger.debug("Check not passed the tag control: {}".format(r))
-                    continue
-        result.append(check_instance)
-        logger.debug("Check instance {} added.".format(check_instance.name))
-
-    return result
 
 
 def get_checks_path():

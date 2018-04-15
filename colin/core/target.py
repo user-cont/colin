@@ -24,9 +24,27 @@ from conu.apidefs.image import Image
 from docker.errors import NotFound
 from dockerfile_parse import DockerfileParser
 
+from ..checks.abstract.containers import ContainerCheck
+from ..checks.abstract.dockerfile import DockerfileCheck
+from ..checks.abstract.images import ImageCheck
 from ..core.exceptions import ColinException
 
 logger = logging.getLogger(__name__)
+
+
+def is_compatible(target_type, check_instance):
+    """
+    Check the target compatibility with the check instance.
+
+    :param target_type: TargetType enum, if None, returns True
+    :param check_instance: instance of some Check class
+    :return: True if the target is None or compatible with the check instance
+    """
+    if not target_type:
+        return True
+    return (target_type == TargetType.DOCKERFILE and isinstance(check_instance, DockerfileCheck)) \
+           or (target_type == TargetType.CONTAINER and isinstance(check_instance, ContainerCheck)) \
+           or (target_type == TargetType.CONTAINER_IMAGE and isinstance(check_instance, ImageCheck))
 
 
 class Target(object):
@@ -81,6 +99,11 @@ class Target(object):
 
     @property
     def target_type(self):
+        """
+        Type of the target (image/container/dockerfile)
+
+        :return: TargetType enum
+        """
         if isinstance(self.instance, Image):
             return TargetType.CONTAINER_IMAGE
         elif isinstance(self.instance, Container):
@@ -89,6 +112,17 @@ class Target(object):
             return TargetType.DOCKERFILE
         logger.debug("Target type not found.")
         raise ColinException("Target type not found.")
+
+    @property
+    def labels(self):
+        """
+        Get list of labels from the target instance.
+
+        :return: [str]
+        """
+        if self.target_type == TargetType.DOCKERFILE:
+            return self.instance.labels
+        return self.instance.get_metadata()["Config"]["Labels"]
 
 
 class TargetType(enum.Enum):

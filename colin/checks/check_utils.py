@@ -1,7 +1,5 @@
 import re
 
-from ..core.target import TargetType
-
 
 def check_label(label, required, value_regex, labels):
     """
@@ -27,15 +25,3 @@ def check_label(label, required, value_regex, labels):
 
     else:
         return not required
-
-
-def get_labels_from_target(target):
-    """
-    Get list of labels from the target instance.
-
-    :param target: instance of the Target
-    :return: [str]
-    """
-    if target.target_type == TargetType.DOCKERFILE:
-        return target.instance.labels
-    return target.instance.get_metadata()["Config"]["Labels"]

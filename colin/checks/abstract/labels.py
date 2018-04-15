@@ -29,11 +29,10 @@ class LabelCheck(ContainerCheck, ImageCheck, DockerfileCheck):
         self.value_regex = value_regex
 
     def check(self, target):
-        labels = get_labels_from_target(target=target)
         passed = check_label(label=self.label,
                              required=self.required,
                              value_regex=self.value_regex,
-                             labels=labels)
+                             labels=target.labels)
 
         return CheckResult(ok=passed,
                            severity=self.severity,
@@ -52,7 +51,7 @@ class DeprecatedLabelCheck(ContainerCheck, ImageCheck, DockerfileCheck):
         self.new_label = new_label
 
     def check(self, target):
-        labels = get_labels_from_target(target=target)
+        labels = target.labels
         old_present = labels is not None and self.old_label in labels
 
         passed = (not old_present) or (self.new_label in labels)
