@@ -13,11 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from ..check_utils import get_labels_from_target, check_label
-from .dockerfile import DockerfileCheck
-from .containers import ContainerCheck
-from .images import ImageCheck
+from ..check_utils import check_label
 from ..result import CheckResult
+from .containers import ContainerCheck
+from .dockerfile import DockerfileCheck
+from .images import ImageCheck
 
 
 class LabelCheck(ContainerCheck, ImageCheck, DockerfileCheck):

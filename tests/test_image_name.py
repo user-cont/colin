@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 import pytest
-
 from colin.core.target import ImageName
 
 

@@ -18,7 +18,7 @@ import json
 
 from six import iteritems
 
-from ..core.constant import REQUIRED, PASSED, FAILED, WARNING, OPTIONAL
+from ..core.constant import FAILED, OPTIONAL, PASSED, REQUIRED, WARNING
 
 
 class CheckResult(object):

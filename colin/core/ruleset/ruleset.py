@@ -21,13 +21,10 @@ import os
 import six
 from six import iteritems
 
+from ..constant import JSON, RULESET_DIRECTORY
 from ..exceptions import ColinRulesetException
-from ..constant import RULESET_DIRECTORY, JSON
 from ..loader import load_check_implementation
-from ...checks.abstract.containers import ContainerCheck
-from ...checks.abstract.dockerfile import DockerfileCheck
-from ...checks.abstract.images import ImageCheck
-from ..target import TargetType
+from ..target import is_compatible
 
 logger = logging.getLogger(__name__)
 
