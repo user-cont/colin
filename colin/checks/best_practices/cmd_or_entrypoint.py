@@ -10,11 +10,12 @@ logger = logging.getLogger(__name__)
 class CmdOrEntrypointCheck(ContainerCheck, ImageCheck):
 
     def __init__(self):
-        super().__init__(name="cmd_or_entrypoint",
-                         message="Cmd or Entrypoint has to be specified",
-                         description="",
-                         reference_url="?????",
-                         tags=["cmd", "entrypoint", "required"])
+        super(self.__class__, self) \
+            .__init__(name="cmd_or_entrypoint",
+                      message="Cmd or Entrypoint has to be specified",
+                      description="",
+                      reference_url="?????",
+                      tags=["cmd", "entrypoint", "required"])
 
     def check(self, target):
         metadata = target.instance.get_metadata()["Config"]

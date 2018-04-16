@@ -23,7 +23,8 @@ from .images import ImageCheck
 class LabelCheck(ContainerCheck, ImageCheck, DockerfileCheck):
 
     def __init__(self, name, message, description, reference_url, tags, label, required, value_regex=None):
-        super().__init__(name, message, description, reference_url, tags)
+        super(LabelCheck, self) \
+            .__init__(name, message, description, reference_url, tags)
         self.label = label
         self.required = required
         self.value_regex = value_regex
@@ -46,7 +47,8 @@ class LabelCheck(ContainerCheck, ImageCheck, DockerfileCheck):
 class DeprecatedLabelCheck(ContainerCheck, ImageCheck, DockerfileCheck):
 
     def __init__(self, name, message, description, reference_url, tags, old_label, new_label):
-        super().__init__(name, message, description, reference_url, tags)
+        super(DeprecatedLabelCheck, self) \
+            .__init__(name, message, description, reference_url, tags)
         self.old_label = old_label
         self.new_label = new_label
 
