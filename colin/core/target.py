@@ -15,6 +15,7 @@
 #
 
 import enum
+import io
 import logging
 import os
 
@@ -57,17 +58,22 @@ class Target(object):
         """
         Get the Container/Image instance for the given name.
         (Container is the first choice.)
-        or DockerfileParser instance if the target is path.
+        or DockerfileParser instance if the target is path or file-like object.
 
-        :param target: str or instance of Image/Container
-        :return: Container/Image
+        :param target: str
+                        or instance of Image/Container
+                        or file-like object as Dockerfile
+        :return: Target object
         """
         logger.debug("Finding target '{}'.".format(target))
 
         if isinstance(target, (Image, Container)):
             logger.debug("Target is a conu object.")
             return target
-        if os.path.exists(target):
+        if isinstance(target, io.IOBase):
+            logger.debug("Target is a dockerfile loaded from the file-like object.")
+            return DockerfileParser(fileobj=target)
+        if os.path.isfile(target):
             logger.debug("Target is a dockerfile.")
             return DockerfileParser(fileobj=open(target))
 
