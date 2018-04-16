@@ -16,6 +16,8 @@
 
 import inspect
 import logging
+import os
+import warnings
 
 import six
 
@@ -25,27 +27,36 @@ logger = logging.getLogger(__name__)
 
 
 def _load_module(path):
+    module_name = "{}.{}.{}".format(MODULE_NAME_IMPORTED_CHECKS,
+                                    os.path.basename(os.path.dirname(path)),
+                                    os.path.basename(path))
     if six.PY3:
 
         from importlib.util import module_from_spec
         from importlib.util import spec_from_file_location
 
-        s = spec_from_file_location(MODULE_NAME_IMPORTED_CHECKS, path)
+        s = spec_from_file_location(module_name, path)
         m = module_from_spec(s)
         s.loader.exec_module(m)
         return m
 
     elif six.PY2:
         import imp
-        return imp.load_source(MODULE_NAME_IMPORTED_CHECKS, path)
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            m = imp.load_source(module_name, path)
+        return m
 
 
 def load_check_implementation(path):
     logger.debug("Getting check(s) from the file '{}'.".format(path))
     m = _load_module(path)
+
     check_classes = []
     for name, obj in inspect.getmembers(m, inspect.isclass):
-        if obj.__module__ == MODULE_NAME_IMPORTED_CHECKS:
+        if obj.__module__.startswith(MODULE_NAME_IMPORTED_CHECKS):
             new_check = obj()
             check_classes.append(new_check)
+            logger.debug("Check instance '{}' found.".format(new_check.name))
     return check_classes

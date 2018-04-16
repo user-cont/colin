@@ -42,7 +42,7 @@ class DockerfileCheck(AbstractCheck):
 class InstructionCheck(DockerfileCheck):
 
     def __init__(self, name, message, description, reference_url, tags, instruction, value_regex, required):
-        super(self.__class__, self) \
+        super(InstructionCheck, self) \
             .__init__(name, message, description, reference_url, tags)
         self.instruction = instruction
         self.value_regex = value_regex
