@@ -125,10 +125,10 @@ class Ruleset(object):
         check_instances = []
         for r in rule_items:
             logger.debug("Loading check instance for {}".format(r))
-            check_instances += load_check_implementation(path=Ruleset.get_check_file(group, r),
-                                                         severity=severity)
+            check_instances += load_check_implementation(path=Ruleset.get_check_file(group, r))
         result = []
         for check_instance in check_instances:
+            check_instance.severity = severity
             if not is_compatible(target_type=target_type, check_instance=check_instance):
                 logger.debug(
                     "Check {} not compatible with the target type: {}".format(check_instance.name, target_type.name))
