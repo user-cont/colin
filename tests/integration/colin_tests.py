@@ -1,5 +1,6 @@
 import colin
 
+
 def get_colin_test_image():
     return colin.run("colin-test")
 

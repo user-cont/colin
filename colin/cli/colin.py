@@ -20,12 +20,12 @@ import click as click
 from six import iteritems
 
 from ..checks.abstract.abstract_check import AbstractCheck
-from ..core.ruleset.ruleset import get_rulesets
-from .default_group import DefaultGroup
+from ..core.colin import get_checks, run
 from ..core.constant import COLOURS, OUTPUT_CHARS
 from ..core.exceptions import ColinException
-from ..core.colin import run, get_checks
+from ..core.ruleset.ruleset import get_rulesets
 from ..version import __version__
+from .default_group import DefaultGroup
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ def cli():
               help="Verbose mode.")
 def check(target, ruleset, ruleset_file, debug, json, stat, verbose):
     """
-    Check the image/container (default).
+    Check the image/container/dockerfile (default).
     """
     if ruleset and ruleset_file:
         raise click.BadOptionUsage("Options '--ruleset' and '--file-ruleset' cannot be used together.")

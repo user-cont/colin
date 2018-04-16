@@ -14,10 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from ...core.exceptions import ColinException
+from ..result import CheckResult
 from .containers import ContainerCheck
 from .images import ImageCheck
-from ..result import CheckResult
-from ...core.exceptions import ColinException
 
 
 class FileSystemCheck(ContainerCheck, ImageCheck):

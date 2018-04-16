@@ -15,19 +15,37 @@
 #
 
 import enum
+import io
 import logging
+import os
 
 from conu import DockerBackend, DockerImagePullPolicy
-from conu.apidefs.container import Container, Image
+from conu.apidefs.container import Container
 from conu.apidefs.image import Image
 from docker.errors import NotFound
+from dockerfile_parse import DockerfileParser
 
-from ..core.exceptions import ColinException
 from ..checks.abstract.containers import ContainerCheck
 from ..checks.abstract.dockerfile import DockerfileCheck
 from ..checks.abstract.images import ImageCheck
+from ..core.exceptions import ColinException
 
 logger = logging.getLogger(__name__)
+
+
+def is_compatible(target_type, check_instance):
+    """
+    Check the target compatibility with the check instance.
+
+    :param target_type: TargetType enum, if None, returns True
+    :param check_instance: instance of some Check class
+    :return: True if the target is None or compatible with the check instance
+    """
+    if not target_type:
+        return True
+    return (target_type == TargetType.DOCKERFILE and isinstance(check_instance, DockerfileCheck)) \
+           or (target_type == TargetType.CONTAINER and isinstance(check_instance, ContainerCheck)) \
+           or (target_type == TargetType.CONTAINER_IMAGE and isinstance(check_instance, ImageCheck))
 
 
 class Target(object):
@@ -40,14 +58,24 @@ class Target(object):
         """
         Get the Container/Image instance for the given name.
         (Container is the first choice.)
+        or DockerfileParser instance if the target is path or file-like object.
 
-        :param target: str or instance of Image/Container
-        :return: Container/Image
+        :param target: str
+                        or instance of Image/Container
+                        or file-like object as Dockerfile
+        :return: Target object
         """
         logger.debug("Finding target '{}'.".format(target))
 
         if isinstance(target, (Image, Container)):
+            logger.debug("Target is a conu object.")
             return target
+        if isinstance(target, io.IOBase):
+            logger.debug("Target is a dockerfile loaded from the file-like object.")
+            return DockerfileParser(fileobj=target)
+        if os.path.isfile(target):
+            logger.debug("Target is a dockerfile.")
+            return DockerfileParser(fileobj=open(target))
 
         with DockerBackend(logging_level=logging_level) as backend:
 
@@ -77,27 +105,36 @@ class Target(object):
 
     @property
     def target_type(self):
+        """
+        Type of the target (image/container/dockerfile)
+
+        :return: TargetType enum
+        """
         if isinstance(self.instance, Image):
             return TargetType.CONTAINER_IMAGE
         elif isinstance(self.instance, Container):
             return TargetType.CONTAINER
+        elif isinstance(self.instance, DockerfileParser):
+            return TargetType.DOCKERFILE
         logger.debug("Target type not found.")
         raise ColinException("Target type not found.")
+
+    @property
+    def labels(self):
+        """
+        Get list of labels from the target instance.
+
+        :return: [str]
+        """
+        if self.target_type == TargetType.DOCKERFILE:
+            return self.instance.labels
+        return self.instance.get_metadata()["Config"]["Labels"]
 
 
 class TargetType(enum.Enum):
     DOCKERFILE = 0
     CONTAINER = 1
     CONTAINER_IMAGE = 2
-
-
-def is_compatible(target_type, check_class, severity, tags):
-    if not target_type:
-        return True
-    # TODO take severity and tags into consideration
-    return (target_type == TargetType.DOCKERFILE and isinstance(check_class, DockerfileCheck)) \
-           or (target_type == TargetType.CONTAINER and isinstance(check_class, ContainerCheck)) \
-           or (target_type == TargetType.CONTAINER_IMAGE and isinstance(check_class, ImageCheck))
 
 
 class ImageName(object):

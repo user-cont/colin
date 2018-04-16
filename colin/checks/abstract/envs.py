@@ -16,9 +16,9 @@
 
 import re
 
+from ..result import CheckResult
 from .containers import ContainerCheck
 from .images import ImageCheck
-from ..result import CheckResult
 
 
 class EnvCheck(ContainerCheck, ImageCheck):

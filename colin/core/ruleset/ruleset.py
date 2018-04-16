@@ -18,10 +18,11 @@ import json
 import logging
 import os
 
+import six
 from six import iteritems
 
+from ..constant import JSON, RULESET_DIRECTORY
 from ..exceptions import ColinRulesetException
-from ..constant import RULESET_DIRECTORY, JSON
 from ..loader import load_check_implementation
 from ..target import is_compatible
 
@@ -70,19 +71,21 @@ class Ruleset(object):
         :param tags: list of str
         :return: list of check instances
         """
-        check_files = self._get_check_files(group=group,
-                                            severity=severity)
         groups = {}
-        for (group, check_files) in iteritems(check_files):
-            checks = []
-            for severity, check_file in check_files:
+        for g in self._get_check_groups(group):
+            logger.debug("Getting checks for group '{}'.".format(g))
+            check_files = []
+            for sev, rules in iteritems(self.ruleset_dict[g]):
 
-                check_classes = load_check_implementation(path=check_file, severity=severity)
-                for check_class in check_classes:
-                    if is_compatible(target_type, check_class, severity, tags):
-                        checks.append(check_class)
+                if severity and severity != sev:
+                    continue
 
-            groups[group] = checks
+                check_files += Ruleset.get_checks_from_rules(rules=rules,
+                                                             group=g,
+                                                             target_type=target_type,
+                                                             severity=sev,
+                                                             tags=tags)
+            groups[g] = check_files
         return groups
 
     @staticmethod
@@ -97,21 +100,49 @@ class Ruleset(object):
         return os.path.join(get_checks_path(), group, name + ".py")
 
     @staticmethod
-    def get_check_files(group, names, severity):
+    def get_checks_from_rules(rules, group, target_type, severity, tags):
         """
-        Get the check files from given group with given names.
+        get check from the list of check items in the resultset file.
 
-        :param severity: str
+        :param rules: [str or dict]
         :param group: str
-        :param names: list of str
-        :return: list of str (paths)
+        :param target_type: TargetType enum
+        :param severity: str
+        :param tags: [str]
+        :return: list of filtered check instances
         """
-        check_files = []
-        for f in names:
-            check_file = Ruleset.get_check_file(group=group,
-                                                name=f)
-            check_files.append((severity, check_file))
-        return check_files
+        rule_items = []
+        for rule in rules:
+
+            if isinstance(rule, six.string_types):
+                rule_items.append(rule)
+            elif isinstance(rule, dict):
+                if target_type and target_type.name not in rule["type"]:
+                    continue
+
+                rule_items += rule["checks"]
+
+        check_instances = []
+        for r in rule_items:
+            logger.debug("Loading check instance for {}".format(r))
+            check_instances += load_check_implementation(path=Ruleset.get_check_file(group, r),
+                                                         severity=severity)
+        result = []
+        for check_instance in check_instances:
+            if not is_compatible(target_type=target_type, check_instance=check_instance):
+                logger.debug(
+                    "Check {} not compatible with the target type: {}".format(check_instance.name, target_type.name))
+                continue
+
+            if tags:
+                for t in tags:
+                    if t not in check_instance.tags:
+                        logger.debug("Check not passed the tag control: {}".format(t))
+                        continue
+            result.append(check_instance)
+            logger.debug("Check instance {} added.".format(check_instance.name))
+
+        return result
 
     def _get_check_groups(self, group=None):
         """
@@ -130,26 +161,6 @@ class Ruleset(object):
             check_groups = groups
         logger.debug("Found groups: {}.".format(check_groups))
         return check_groups
-
-    def _get_check_files(self, group=None, severity=None):
-        """
-        Get file names with checks filtered by group and severity.
-
-        :param group: str (if None, all groups will be used)
-        :param severity: str (if None, all severities will be used)
-        :return: list of str (absolute paths)
-        """
-        groups = {}
-        for g in self._get_check_groups(group):
-            logger.debug("Getting checks for group '{}'.".format(g))
-            check_files = []
-            for sev, files in iteritems(self.ruleset_dict[g]):
-                if (not severity) or severity == sev:
-                    check_files += Ruleset.get_check_files(group=g,
-                                                           names=files,
-                                                           severity=sev)
-            groups[g] = check_files
-        return groups
 
 
 def get_checks_path():

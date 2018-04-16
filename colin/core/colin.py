@@ -28,8 +28,9 @@ def run(target, group=None, severity=None, tags=None, ruleset_name=None, ruleset
     """
     Runs the sanity checks for the target.
 
-    :param target: str or Image/Container (name of the container or image or Image/Container instance from conu,
-                    dockerfile will be added in the future)
+    :param target: str
+                    or Image/Container (name of the container/image or Image/Container instance from conu)
+                    or path or file-like object for dockerfile
     :param group: str (name of the folder with group of checks, if None, all of them will be checked.)
     :param severity: str (if not None, only those checks will be run -- optional x required x warn ...)
     :param tags: list of str (if not None, the checks will be filtered by tags.)
