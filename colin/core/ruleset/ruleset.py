@@ -137,7 +137,7 @@ class Ruleset(object):
             if tags:
                 for t in tags:
                     if t not in check_instance.tags:
-                        logger.debug("Check not passed the tag control: {}".format(r))
+                        logger.debug("Check not passed the tag control: {}".format(t))
                         continue
             result.append(check_instance)
             logger.debug("Check instance {} added.".format(check_instance.name))
