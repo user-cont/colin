@@ -116,24 +116,52 @@ def list_checks(ruleset, ruleset_file, debug, json, verbose):
     if debug and verbose:
         raise click.BadOptionUsage("Options '--debug' and '--verbose' cannot be used together.")
 
-    checks = get_checks(ruleset_name=ruleset,
-                        ruleset_file=ruleset_file,
-                        logging_level=_get_log_level(debug=debug, verbose=verbose))
-    _print_checks(checks=checks)
+    try:
+        if not debug:
+            logger.disabled = True
 
-    if json:
-        AbstractCheck.save_checks_to_json(file=json, checks=checks)
+        log_level = _get_log_level(debug=debug,
+                                   verbose=verbose)
+
+        checks = get_checks(ruleset_name=ruleset,
+                            ruleset_file=ruleset_file,
+                            logging_level=log_level)
+        _print_checks(checks=checks)
+
+        if json:
+            AbstractCheck.save_checks_to_json(file=json, checks=checks)
+    except ColinException as ex:
+        logger.error("An error occurred: %r", ex)
+        if debug:
+            raise
+        else:
+            raise click.ClickException(str(ex))
+    except Exception as ex:
+        logger.error("An error occurred: %r", ex)
+        if debug:
+            raise
+        else:
+            raise click.ClickException(str(ex))
 
 
 @click.command(name="list-rulesets",
                context_settings=CONTEXT_SETTINGS)
-def list_rulesets():
+@click.option('--debug', default=False, is_flag=True,
+              help="Enable debugging mode (debugging logs, full tracebacks).")
+def list_rulesets(debug):
     """
     List available rulesets.
     """
-    rulesets = get_rulesets()
-    for r in rulesets:
-        click.echo(r)
+    try:
+        rulesets = get_rulesets()
+        for r in rulesets:
+            click.echo(r)
+    except Exception as ex:
+        logger.error("An error occurred: %r", ex)
+        if debug:
+            raise
+        else:
+            raise click.ClickException(str(ex))
 
 
 cli.add_command(check)
