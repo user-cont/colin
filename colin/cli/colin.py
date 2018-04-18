@@ -66,7 +66,7 @@ def check(target, ruleset, ruleset_file, debug, json, stat, verbose):
         raise click.BadOptionUsage("Options '--debug' and '--verbose' cannot be used together.")
 
     try:
-        if not (debug or verbose):
+        if not debug:
             logger.disabled = True
 
         log_level = _get_log_level(debug=debug,
