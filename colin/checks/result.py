@@ -18,7 +18,8 @@ import json
 
 from six import iteritems
 
-from ..core.constant import FAILED, OPTIONAL, PASSED, REQUIRED, WARNING
+from ..core.constant import (COLOURS, FAILED, OPTIONAL, OUTPUT_CHARS, PASSED,
+                             REQUIRED, WARNING)
 
 
 class CheckResult(object):
@@ -43,9 +44,8 @@ class CheckResult(object):
         return status_ok if self.ok else status_nok
 
     def __str__(self):
-        return "{}:{}:{}".format("ok " if self.ok else "nok",
-                                 self.status,
-                                 self.check_name)
+        return "{}:{}".format(self.status,
+                              self.message)
 
 
 class DockerfileCheckResult(CheckResult):
@@ -150,3 +150,62 @@ class CheckResults(object):
         for r in results:
             self._generated_result[group].append(r)
             yield r
+
+    def generate_pretty_output(self, stat, verbose, output_function):
+        """
+        Send the formated to the provided function
+
+        :param stat: if True print stat instead of full output
+        :param verbose: bool
+        :param output_function: function to send output to
+        """
+        for group, check_results in self.results:
+
+            group_title_printed = False
+            for r in check_results:
+
+                if not group_title_printed:
+                    output_function("{}:".format(group.upper()),
+                                    nl=not stat)
+                    group_title_printed = True
+
+                if stat:
+                    output_function(OUTPUT_CHARS[r.status],
+                                    fg=COLOURS[r.status],
+                                    nl=False)
+                else:
+                    output_function(str(r), fg=COLOURS[r.status])
+                    if verbose:
+                        output_function("  -> {}\n"
+                                        "  -> {}".format(r.description,
+                                                         r.reference_url),
+                                        fg=COLOURS[r.status])
+
+            if group_title_printed and stat:
+                output_function("")
+
+    def get_pretty_string(self, stat, verbose):
+        """
+        Pretty string representation of the results
+
+        :param stat: bool
+        :param verbose: bool
+        :return: str
+        """
+        pretty_output = _PrettyOutputToStr()
+        self.generate_pretty_output(stat=stat,
+                                    verbose=verbose,
+                                    output_function=pretty_output.save_output)
+        return pretty_output.result
+
+
+class _PrettyOutputToStr(object):
+
+    def __init__(self):
+        self.result = ""
+
+    def save_output(self, text=None, fg=None, nl=True):
+        text = text or ""
+        self.result += text
+        if nl:
+            self.result += "\n"

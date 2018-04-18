@@ -21,7 +21,6 @@ from six import iteritems
 
 from ..checks.abstract.abstract_check import AbstractCheck
 from ..core.colin import get_checks, run
-from ..core.constant import COLOURS, OUTPUT_CHARS
 from ..core.exceptions import ColinException
 from ..core.ruleset.ruleset import get_rulesets
 from ..version import __version__
@@ -140,39 +139,17 @@ cli.add_command(list_rulesets)
 cli.set_default_command(check)
 
 
-def _print_results(results, stat=False):
+def _print_results(results, stat=False, verbose=False):
     """
     Prints the results to the stdout
 
+    :type verbose: bool
     :param results: generator of group results
     :param stat: if True print stat instead of full output
     """
-    for group, check_results in results.results:
-
-        group_title_printed = False
-        for r in check_results:
-
-            if not group_title_printed:
-                click.secho("{}:".format(group.upper()),
-                            nl=not stat)
-                group_title_printed = True
-
-            if stat:
-                click.secho(OUTPUT_CHARS[r.status],
-                            fg=COLOURS[r.status],
-                            nl=False)
-            else:
-                click.secho(str(r), fg=COLOURS[r.status])
-                if not r.ok:
-                    click.secho("   -> {}\n"
-                                "   -> {}\n"
-                                "   -> {}".format(r.message,
-                                                  r.description,
-                                                  r.reference_url),
-                                fg=COLOURS[r.status])
-
-        if group_title_printed and stat:
-            click.echo()
+    results.generate_pretty_output(stat=stat,
+                                   verbose=verbose,
+                                   output_function=click.secho)
 
 
 def _print_checks(checks):
