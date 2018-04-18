@@ -26,7 +26,7 @@ from ..core.ruleset.ruleset import get_rulesets
 from ..version import __version__
 from .default_group import DefaultGroup
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("colin.cli")
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
@@ -66,13 +66,16 @@ def check(target, ruleset, ruleset_file, debug, json, stat, verbose):
         raise click.BadOptionUsage("Options '--debug' and '--verbose' cannot be used together.")
 
     try:
+        if not (debug or verbose):
+            logger.disabled = True
 
+        log_level = _get_log_level(debug=debug,
+                                   verbose=verbose)
         results = run(target=target,
                       ruleset_name=ruleset,
                       ruleset_file=ruleset_file,
-                      logging_level=_get_log_level(debug=debug,
-                                                   verbose=verbose))
-        _print_results(results=results, stat=stat)
+                      logging_level=log_level)
+        _print_results(results=results, stat=stat, verbose=verbose)
 
         if json:
             results.save_json_to_file(file=json)
@@ -169,7 +172,7 @@ def _get_log_level(debug, verbose):
     if debug:
         return logging.DEBUG
     if verbose:
-        return logging.INFO
+        return logging.WARNING
     return logging.WARNING
 
 
