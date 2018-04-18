@@ -22,6 +22,20 @@ For more information, please check our [documentation on colin.readthedocs.io](h
 
 ## Usage
 
+### How to test colin locally
+
+```bash
+    make check-local -e TEST_IMAGE_NAME=<image_name> -e ANSIBLE_EXTRA_ARGS=-vv -e CONFIG=fedora -e ARTIFACTS_DIR=./artifacts -e setup=true
+```
+which runs ansible playbook, by a command:
+```bash
+    ansible-playbook $(ANSIBLE_EXTRA_ARGS) -e config=$(CONFIG) -e subject=$(TEST_IMAGE_NAME) -e results=$(RESULTS) -e artifacts_dir=$(ARTIFACTS_DIR) ./local.yml -e setup=true
+```
+The parameters used in ansible specifies:
+- TEST_IMAGE_NAME ... name of the image which colin tests
+- CONFIG ... name of default configuration file which is being used
+- ARTIFACTS_DIR ... directory where the results are stored. The directory has to already exist.
+- RESULTS ... filename which is being used by `colin` for storing results.
 
 ### Installing via `pip`
 
