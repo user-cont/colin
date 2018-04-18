@@ -14,34 +14,49 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import inspect
+import logging
+import os
+import warnings
+
 import six
 
-if six.PY3:
-    import inspect
+from .constant import MODULE_NAME_IMPORTED_CHECKS
 
-    from importlib.util import module_from_spec
-    from importlib.util import spec_from_file_location
-    import logging
-
-    from colin.core.constant import MODULE_NAME_IMPORTED_CHECKS
-
-    logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
-    def load_check_implementation(path, severity):
-        logger.debug("Getting check(s) from the file '{}'.".format(path))
+def _load_module(path):
+    module_name = "{}.{}.{}".format(MODULE_NAME_IMPORTED_CHECKS,
+                                    os.path.basename(os.path.dirname(path)),
+                                    os.path.basename(path))
+    if six.PY3:
 
-        s = spec_from_file_location(MODULE_NAME_IMPORTED_CHECKS, path)
+        from importlib.util import module_from_spec
+        from importlib.util import spec_from_file_location
+
+        s = spec_from_file_location(module_name, path)
         m = module_from_spec(s)
         s.loader.exec_module(m)
-        check_classes = []
-        for name, obj in inspect.getmembers(m, inspect.isclass):
-            if obj.__module__ == MODULE_NAME_IMPORTED_CHECKS:
-                new_check = obj()
-                new_check.severity = severity
-                check_classes.append(new_check)
-        return check_classes
+        return m
 
-else:
-    def load_check_implementation(path):
-        raise NotImplementedError()
+    elif six.PY2:
+        import imp
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            m = imp.load_source(module_name, path)
+        return m
+
+
+def load_check_implementation(path):
+    logger.debug("Getting check(s) from the file '{}'.".format(path))
+    m = _load_module(path)
+
+    check_classes = []
+    for name, obj in inspect.getmembers(m, inspect.isclass):
+        if obj.__module__.startswith(MODULE_NAME_IMPORTED_CHECKS):
+            new_check = obj()
+            check_classes.append(new_check)
+            logger.debug("Check instance '{}' found.".format(new_check.name))
+    return check_classes

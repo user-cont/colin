@@ -6,12 +6,13 @@ from colin.core.target import ImageName
 class FromTagCheck(DockerfileCheck):
 
     def __init__(self):
-        super().__init__(name="from_tag_not_latest",
-                         message="In FROM, tag has to be specified and not 'latest'.",
-                         description="Using the 'latest' tag may cause unpredictable builds."
-                                     "It is recommended that a specific tag is used in the FROM.",
-                         reference_url="https://fedoraproject.org/wiki/Container:Guidelines#FROM",
-                         tags=["from", "dockerfile", "baseimage", "latest"])
+        super(self.__class__, self) \
+            .__init__(name="from_tag_not_latest",
+                      message="In FROM, tag has to be specified and not 'latest'.",
+                      description="Using the 'latest' tag may cause unpredictable builds."
+                                  "It is recommended that a specific tag is used in the FROM.",
+                      reference_url="https://fedoraproject.org/wiki/Container:Guidelines#FROM",
+                      tags=["from", "dockerfile", "baseimage", "latest"])
 
     def check(self, target):
         im = ImageName.parse(target.instance.baseimage)

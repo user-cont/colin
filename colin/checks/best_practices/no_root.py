@@ -6,11 +6,12 @@ from colin.checks.result import CheckResult
 class NoRootCheck(ContainerCheck, ImageCheck):
 
     def __init__(self):
-        super().__init__(name="no_root",
-                         message="Service should not run as root by default.",
-                         description="",
-                         reference_url="?????",
-                         tags=["root", "user"])
+        super(self.__class__, self) \
+            .__init__(name="no_root",
+                      message="Service should not run as root by default.",
+                      description="",
+                      reference_url="?????",
+                      tags=["root", "user"])
 
     def check(self, target):
         metadata = target.instance.get_metadata()["Config"]

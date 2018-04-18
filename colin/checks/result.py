@@ -24,7 +24,8 @@ from ..core.constant import FAILED, OPTIONAL, PASSED, REQUIRED, WARNING
 class CheckResult(object):
 
     def __init__(self, ok, description, message, reference_url, check_name, severity, logs):
-        super().__init__()
+        super(self.__class__, self) \
+            .__init__()
         self.ok = ok
         self.description = description
         self.message = message
@@ -51,7 +52,8 @@ class DockerfileCheckResult(CheckResult):
 
     def __init__(self, ok, description, message, reference_url, check_name, severity, lines=None,
                  correction_diff=None):
-        super().__init__(ok, description, message, reference_url, check_name, severity)
+        super(self.__class__, self) \
+            .__init__(ok, description, message, reference_url, check_name, severity)
         self.lines = lines
         self.correction_diff = correction_diff
 
