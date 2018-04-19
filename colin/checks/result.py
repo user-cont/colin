@@ -16,6 +16,7 @@
 
 import json
 
+import six
 from six import iteritems
 
 from ..core.constant import (COLOURS, FAILED, OPTIONAL, OUTPUT_CHARS, PASSED,
@@ -127,6 +128,14 @@ class CheckResults(object):
         else:
             return self._group_generator()
 
+    @property
+    def statistics(self):
+        result = {}
+        for r in self.all_results:
+            result.setdefault(r.status, 0)
+            result[r.status] += 1
+        return result
+
     def _group_generator(self):
         """
         Forward original generator of result groups, but saves the value for the future use.
@@ -183,6 +192,12 @@ class CheckResults(object):
 
             if group_title_printed and stat:
                 output_function("")
+
+        if not stat or verbose:
+            output_function("")
+            for status, count in six.iteritems(self.statistics):
+                output_function("{}:{} ".format(status, count), nl=False)
+            output_function("")
 
     def get_pretty_string(self, stat, verbose):
         """
