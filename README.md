@@ -15,6 +15,8 @@ Initial plan is to validate containers/images/dockerfiles against different ecos
 
 *Colin* will also provide generic checks for maintainers or users of containerized content.
 
+For more information, please check our [documentation on colin.readthedocs.io](https://colin.readthedocs.io/en/latest/).
+
 ![example](./docs/example.gif)
 
 
