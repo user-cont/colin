@@ -128,6 +128,11 @@ class CheckResults(object):
 
     @property
     def statistics(self):
+        """
+        Get the dictionary with the count of the check-statuses
+
+        :return: dict(str -> int)
+        """
         result = {}
         for r in self.all_results:
             result.setdefault(r.status, 0)
@@ -136,10 +141,22 @@ class CheckResults(object):
 
     @property
     def ok(self):
+        """
+        If the results ended without any error
+
+
+        :return: True, if there is no check which ends with error status
+        """
         return ERROR not in self.statistics
 
     @property
     def fail(self):
+        """
+        If the results ended without any fail
+
+
+        :return: True, if there is no check which ends with fail status
+        """
         return FAILED in self.statistics
 
     def _group_generator(self):
