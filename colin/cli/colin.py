@@ -21,13 +21,12 @@ from six import iteritems
 
 from ..checks.abstract.abstract_check import AbstractCheck
 from ..core.colin import get_checks, run
-from ..core.constant import COLOURS, OUTPUT_CHARS
 from ..core.exceptions import ColinException
 from ..core.ruleset.ruleset import get_rulesets
 from ..version import __version__
 from .default_group import DefaultGroup
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("colin.cli")
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
@@ -54,9 +53,11 @@ def cli():
               help="File to save the output as json to.")
 @click.option('--stat', '-s', is_flag=True,
               help="Print statistics instead of full results.")
+@click.option('--tag', '-t', multiple=True, type=click.STRING,
+              help="Filter checks with the tag.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-def check(target, ruleset, ruleset_file, debug, json, stat, verbose):
+def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose):
     """
     Check the image/container/dockerfile (default).
     """
@@ -67,13 +68,17 @@ def check(target, ruleset, ruleset_file, debug, json, stat, verbose):
         raise click.BadOptionUsage("Options '--debug' and '--verbose' cannot be used together.")
 
     try:
+        if not debug:
+            logger.disabled = True
 
+        log_level = _get_log_level(debug=debug,
+                                   verbose=verbose)
         results = run(target=target,
                       ruleset_name=ruleset,
                       ruleset_file=ruleset_file,
-                      logging_level=_get_log_level(debug=debug,
-                                                   verbose=verbose))
-        _print_results(results=results, stat=stat)
+                      logging_level=log_level,
+                      tags=tag)
+        _print_results(results=results, stat=stat, verbose=verbose)
 
         if json:
             results.save_json_to_file(file=json)
@@ -102,9 +107,11 @@ def check(target, ruleset, ruleset_file, debug, json, stat, verbose):
               help="Enable debugging mode (debugging logs, full tracebacks).")
 @click.option('--json', type=click.File(mode='w'),
               help="File to save the output as json to.")
+@click.option('--tag', '-t', multiple=True, type=click.STRING,
+              help="Filter checks with the tag.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-def list_checks(ruleset, ruleset_file, debug, json, verbose):
+def list_checks(ruleset, ruleset_file, debug, json, tag, verbose):
     """
     Print the checks.
     """
@@ -114,24 +121,53 @@ def list_checks(ruleset, ruleset_file, debug, json, verbose):
     if debug and verbose:
         raise click.BadOptionUsage("Options '--debug' and '--verbose' cannot be used together.")
 
-    checks = get_checks(ruleset_name=ruleset,
-                        ruleset_file=ruleset_file,
-                        logging_level=_get_log_level(debug=debug, verbose=verbose))
-    _print_checks(checks=checks)
+    try:
+        if not debug:
+            logger.disabled = True
 
-    if json:
-        AbstractCheck.save_checks_to_json(file=json, checks=checks)
+        log_level = _get_log_level(debug=debug,
+                                   verbose=verbose)
+
+        checks = get_checks(ruleset_name=ruleset,
+                            ruleset_file=ruleset_file,
+                            logging_level=log_level,
+                            tags=tag)
+        _print_checks(checks=checks)
+
+        if json:
+            AbstractCheck.save_checks_to_json(file=json, checks=checks)
+    except ColinException as ex:
+        logger.error("An error occurred: %r", ex)
+        if debug:
+            raise
+        else:
+            raise click.ClickException(str(ex))
+    except Exception as ex:
+        logger.error("An error occurred: %r", ex)
+        if debug:
+            raise
+        else:
+            raise click.ClickException(str(ex))
 
 
 @click.command(name="list-rulesets",
                context_settings=CONTEXT_SETTINGS)
-def list_rulesets():
+@click.option('--debug', default=False, is_flag=True,
+              help="Enable debugging mode (debugging logs, full tracebacks).")
+def list_rulesets(debug):
     """
     List available rulesets.
     """
-    rulesets = get_rulesets()
-    for r in rulesets:
-        click.echo(r)
+    try:
+        rulesets = get_rulesets()
+        for r in rulesets:
+            click.echo(r)
+    except Exception as ex:
+        logger.error("An error occurred: %r", ex)
+        if debug:
+            raise
+        else:
+            raise click.ClickException(str(ex))
 
 
 cli.add_command(check)
@@ -140,39 +176,17 @@ cli.add_command(list_rulesets)
 cli.set_default_command(check)
 
 
-def _print_results(results, stat=False):
+def _print_results(results, stat=False, verbose=False):
     """
     Prints the results to the stdout
 
+    :type verbose: bool
     :param results: generator of group results
     :param stat: if True print stat instead of full output
     """
-    for group, check_results in results.results:
-
-        group_title_printed = False
-        for r in check_results:
-
-            if not group_title_printed:
-                click.secho("{}:".format(group.upper()),
-                            nl=not stat)
-                group_title_printed = True
-
-            if stat:
-                click.secho(OUTPUT_CHARS[r.status],
-                            fg=COLOURS[r.status],
-                            nl=False)
-            else:
-                click.secho(str(r), fg=COLOURS[r.status])
-                if not r.ok:
-                    click.secho("   -> {}\n"
-                                "   -> {}\n"
-                                "   -> {}".format(r.message,
-                                                  r.description,
-                                                  r.reference_url),
-                                fg=COLOURS[r.status])
-
-        if group_title_printed and stat:
-            click.echo()
+    results.generate_pretty_output(stat=stat,
+                                   verbose=verbose,
+                                   output_function=click.secho)
 
 
 def _print_checks(checks):
@@ -192,7 +206,7 @@ def _get_log_level(debug, verbose):
     if debug:
         return logging.DEBUG
     if verbose:
-        return logging.INFO
+        return logging.WARNING
     return logging.WARNING
 
 

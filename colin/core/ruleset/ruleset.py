@@ -131,14 +131,14 @@ class Ruleset(object):
             check_instance.severity = severity
             if not is_compatible(target_type=target_type, check_instance=check_instance):
                 logger.debug(
-                    "Check {} not compatible with the target type: {}".format(check_instance.name, target_type.name))
+                    "Check '{}' not compatible with the target type: {}".format(check_instance.name, target_type.name))
                 continue
 
             if tags:
-                for t in tags:
-                    if t not in check_instance.tags:
-                        logger.debug("Check not passed the tag control: {}".format(t))
-                        continue
+                if not set(tags) < set(check_instance.tags):
+                    logger.debug("Check '{}' not passed the tag control: {}".format(check_instance.name,
+                                                                                  tags))
+                    continue
             result.append(check_instance)
             logger.debug("Check instance {} added.".format(check_instance.name))
 

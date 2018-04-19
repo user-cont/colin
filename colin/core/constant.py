@@ -18,9 +18,9 @@ RULESET_DIRECTORY = "share/colin/rulesets/"
 JSON = ".json"
 MODULE_NAME_IMPORTED_CHECKS = "colin.checks.imported"
 
-PASSED = "passed"
-FAILED = "failed"
-WARNING = "warning"
+PASSED = "pass"
+FAILED = "fail"
+WARNING = "warn"
 
 REQUIRED = "required"
 OPTIONAL = "optional"
