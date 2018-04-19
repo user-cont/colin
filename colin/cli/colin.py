@@ -53,9 +53,11 @@ def cli():
               help="File to save the output as json to.")
 @click.option('--stat', '-s', is_flag=True,
               help="Print statistics instead of full results.")
+@click.option('--tag', '-t', multiple=True, type=click.STRING,
+              help="Filter checks with the tag.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-def check(target, ruleset, ruleset_file, debug, json, stat, verbose):
+def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose):
     """
     Check the image/container/dockerfile (default).
     """
@@ -74,7 +76,8 @@ def check(target, ruleset, ruleset_file, debug, json, stat, verbose):
         results = run(target=target,
                       ruleset_name=ruleset,
                       ruleset_file=ruleset_file,
-                      logging_level=log_level)
+                      logging_level=log_level,
+                      tags=tag)
         _print_results(results=results, stat=stat, verbose=verbose)
 
         if json:
@@ -104,9 +107,11 @@ def check(target, ruleset, ruleset_file, debug, json, stat, verbose):
               help="Enable debugging mode (debugging logs, full tracebacks).")
 @click.option('--json', type=click.File(mode='w'),
               help="File to save the output as json to.")
+@click.option('--tag', '-t', multiple=True, type=click.STRING,
+              help="Filter checks with the tag.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-def list_checks(ruleset, ruleset_file, debug, json, verbose):
+def list_checks(ruleset, ruleset_file, debug, json, tag, verbose):
     """
     Print the checks.
     """
@@ -125,7 +130,8 @@ def list_checks(ruleset, ruleset_file, debug, json, verbose):
 
         checks = get_checks(ruleset_name=ruleset,
                             ruleset_file=ruleset_file,
-                            logging_level=log_level)
+                            logging_level=log_level,
+                            tags=tag)
         _print_checks(checks=checks)
 
         if json:
