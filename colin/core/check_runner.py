@@ -18,7 +18,7 @@ import logging
 
 from six import iteritems
 
-from ..checks.result import CheckResults
+from ..checks.result import CheckResults, FailedCheckResult
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,11 @@ def go_through_checks(target, checks):
 def _result_generator(target, checks):
     for check in checks:
         logger.debug("Checking {}".format(check.name))
-        yield check.check(target)
+        try:
+            yield check.check(target)
+        except Exception as ex:
+            logger.warning("There occurred an error when executing the check. ({})".format(ex))
+            yield FailedCheckResult(check, ex)
 
 
 def _group_generator(target, checks):

@@ -19,8 +19,8 @@ import json
 import six
 from six import iteritems
 
-from ..core.constant import (COLOURS, FAILED, OPTIONAL, OUTPUT_CHARS, PASSED,
-                             REQUIRED, WARNING)
+from ..core.constant import (COLOURS, ERROR, FAILED, OPTIONAL, OUTPUT_CHARS,
+                             PASSED, REQUIRED, WARNING)
 
 
 class CheckResult(object):
@@ -212,6 +212,24 @@ class CheckResults(object):
                                     verbose=verbose,
                                     output_function=pretty_output.save_output)
         return pretty_output.result
+
+
+class FailedCheckResult(CheckResult):
+
+    def __init__(self, check, exception):
+        super(self.__class__, self) \
+            .__init__(ok=False,
+                      message=check.message,
+                      description=str(exception),
+                      reference_url="",
+                      check_name=check.name,
+                      severity=check.severity,
+                      logs=[str(exception)]
+                      )
+
+    @property
+    def status(self):
+        return ERROR
 
 
 class _PrettyOutputToStr(object):

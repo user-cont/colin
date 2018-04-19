@@ -18,9 +18,10 @@ RULESET_DIRECTORY = "share/colin/rulesets/"
 JSON = ".json"
 MODULE_NAME_IMPORTED_CHECKS = "colin.checks.imported"
 
-PASSED = "pass"
-FAILED = "fail"
-WARNING = "warn"
+PASSED = "PASS"
+FAILED = "FAIL"
+WARNING = "WARN"
+ERROR = "ERROR"
 
 REQUIRED = "required"
 OPTIONAL = "optional"
@@ -29,10 +30,12 @@ COLOURS = {
     PASSED: "green",
     WARNING: "yellow",
     FAILED: "red",
+    ERROR: "red"
 }
 
 OUTPUT_CHARS = {
     PASSED: ".",
     WARNING: "!",
     FAILED: "x",
+    ERROR: "#"
 }
