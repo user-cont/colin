@@ -22,10 +22,10 @@ For more information, please check our [documentation on colin.readthedocs.io](h
 
 ## Usage
 
-### How to test colin locally
+### How to test a container image and Dockerfile with Colin locally
 
 ```bash
-    make check-local -e TEST_IMAGE_NAME=<image_name> -e ANSIBLE_EXTRA_ARGS=-vv -e CONFIG=fedora -e ARTIFACTS_DIR=<directory_for_results> -e RESULTS=result.json  -e setup=true
+    make check-local -e TEST_IMAGE_NAME=<image_name> -e ANSIBLE_EXTRA_ARGS=-vv -e CONFIG=<config_file> -e ARTIFACTS_DIR=<directory_for_results> -e RESULTS=<result_file>  -e setup=true
 ```
 
 which runs ansible playbook, by a command:
@@ -33,13 +33,16 @@ which runs ansible playbook, by a command:
 ```bash
     ansible-playbook $(ANSIBLE_EXTRA_ARGS) -e config=$(CONFIG) -e subject=$(TEST_IMAGE_NAME) -e results=$(RESULTS) -e artifacts_dir=$(ARTIFACTS_DIR) ./local.yml -e setup=true
 ```
-The parameters used in ansible specifies:
+
+The parameters used in command specify:
 - TEST_IMAGE_NAME ... name of the image which colin tests
+- ANSIBLE_EXTRA_ARGS ... extra arguments for ansible command
 - CONFIG ... name of default configuration file which is being used. By default `fedora`
-- ARTIFACTS_DIR ... directory where the results are stored. The directory has to already exist. By default `./artifacts`
+- ARTIFACTS_DIR ... directory where the results are stored. Ansible playbook creates it if needed. By default `./artifacts`
 - RESULTS ... filename which is being used by `colin` for storing results. By default `colin.json`
 
 E.g. checking `fedora:27` image with ruleset `fedora` and stored results `colin.json` into directory `artifacts`:
+
 ```bash
 make check-local -e TEST_IMAGE_NAME=fedora:27 -e CONFIG=fedora -e ARTIFACTS_DIR=./artifacts
 ```
@@ -129,7 +132,7 @@ ok :passed:maintainer_label_required
 
 ### Directly from git
 
-Once you clone colin locally, you can invoke it directly from git:
+Once you clone colin locally, you can invoke it directly from cloned git repository:
 
 ```
 $ git clone https://github.com/user-cont/colin.git
