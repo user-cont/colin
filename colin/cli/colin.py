@@ -15,8 +15,10 @@
 #
 
 import logging
+import sys
 
 import click as click
+import six
 from six import iteritems
 
 from ..checks.abstract.abstract_check import AbstractCheck
@@ -64,12 +66,9 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose):
     if ruleset and ruleset_file:
         raise click.BadOptionUsage("Options '--ruleset' and '--file-ruleset' cannot be used together.")
 
-    if debug and verbose:
-        raise click.BadOptionUsage("Options '--debug' and '--verbose' cannot be used together.")
-
     try:
         if not debug:
-            logger.disabled = True
+            logging.basicConfig(stream=six.StringIO())
 
         log_level = _get_log_level(debug=debug,
                                    verbose=verbose)
@@ -82,6 +81,11 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose):
 
         if json:
             results.save_json_to_file(file=json)
+
+        if not results.ok:
+            sys.exit(1)
+        elif results.fail:
+            sys.exit(2)
 
     except ColinException as ex:
         logger.error("An error occurred: %r", ex)
@@ -118,12 +122,9 @@ def list_checks(ruleset, ruleset_file, debug, json, tag, verbose):
     if ruleset and ruleset_file:
         raise click.BadOptionUsage("Options '--ruleset' and '--file-ruleset' cannot be used together.")
 
-    if debug and verbose:
-        raise click.BadOptionUsage("Options '--debug' and '--verbose' cannot be used together.")
-
     try:
         if not debug:
-            logger.disabled = True
+            logging.basicConfig(stream=six.StringIO())
 
         log_level = _get_log_level(debug=debug,
                                    verbose=verbose)
@@ -203,11 +204,7 @@ def _print_checks(checks):
 
 
 def _get_log_level(debug, verbose):
-    if debug:
-        return logging.DEBUG
-    if verbose:
-        return logging.WARNING
-    return logging.WARNING
+    return logging.DEBUG if debug else logging.NOTSET
 
 
 if __name__ == '__main__':

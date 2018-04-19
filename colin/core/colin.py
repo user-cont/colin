@@ -104,13 +104,14 @@ def _set_logging(
     :param format: str, formatting style
     :param date_format: str, date style in the logs
     """
-    logger = logging.getLogger(logger_name)
-    logger.setLevel(level)
+    if level != logging.NOTSET:
+        logger = logging.getLogger(logger_name)
+        logger.setLevel(level)
 
-    handler_kwargs = handler_kwargs or {}
-    handler = handler_class(**handler_kwargs)
-    handler.setLevel(level)
+        handler_kwargs = handler_kwargs or {}
+        handler = handler_class(**handler_kwargs)
+        handler.setLevel(level)
 
-    formatter = logging.Formatter(format, date_format)
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+        formatter = logging.Formatter(format, date_format)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
