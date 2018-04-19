@@ -26,8 +26,6 @@ from ..core.constant import (COLOURS, ERROR, FAILED, OPTIONAL, OUTPUT_CHARS,
 class CheckResult(object):
 
     def __init__(self, ok, description, message, reference_url, check_name, severity, logs):
-        super(self.__class__, self) \
-            .__init__()
         self.ok = ok
         self.description = description
         self.message = message
@@ -135,6 +133,14 @@ class CheckResults(object):
             result.setdefault(r.status, 0)
             result[r.status] += 1
         return result
+
+    @property
+    def ok(self):
+        return ERROR not in self.statistics
+
+    @property
+    def fail(self):
+        return FAILED in self.statistics
 
     def _group_generator(self):
         """

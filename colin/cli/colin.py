@@ -15,6 +15,7 @@
 #
 
 import logging
+import sys
 
 import click as click
 from six import iteritems
@@ -82,6 +83,11 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose):
 
         if json:
             results.save_json_to_file(file=json)
+
+        if not results.ok:
+            sys.exit(1)
+        elif results.fail:
+            sys.exit(2)
 
     except ColinException as ex:
         logger.error("An error occurred: %r", ex)
