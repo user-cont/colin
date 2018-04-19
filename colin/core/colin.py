@@ -113,5 +113,4 @@ def _set_logging(
 
     formatter = logging.Formatter(format, date_format)
     handler.setFormatter(formatter)
-    logger.handlers.clear()
     logger.addHandler(handler)
