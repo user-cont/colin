@@ -1,5 +1,6 @@
 include MANIFEST.in
 include README.md
+include LICENSE
 include bash-complete/colin
 recursive-include rulesets *
 recursive-include colin *

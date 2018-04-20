@@ -21,3 +21,18 @@ clean:
 
 html:
 	make -f Makefile.docs html
+
+sdist:
+	./setup.py sdist -d .
+
+rpm: sdist
+	rpmbuild ./*.spec -bb --define "_sourcedir $(CURDIR)" --define "_specdir $(CURDIR)" --define "_buildir $(CURDIR)" --define "_srcrpmdir $(CURDIR)" --define "_rpmdir $(CURDIR)"
+
+srpm: sdist
+	rpmbuild ./*.spec -bs --define "_sourcedir $(CURDIR)" --define "_specdir $(CURDIR)" --define "_buildir $(CURDIR)" --define "_srcrpmdir $(CURDIR)" --define "_rpmdir $(CURDIR)"
+
+rpm-in-mock-f27: srpm
+	mock --rebuild -r fedora-27-x86_64 ./*.src.rpm
+
+rpm-in-mock-el7: srpm
+	mock --rebuild -r epel-7-x86_64 ./*.src.rpm
