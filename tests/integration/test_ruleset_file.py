@@ -37,9 +37,7 @@ def generate_json_file(colin_json):
     return temp_file_name
 
 
-def test_label_maintainer():
-    # Clean up a NamedTemporaryFile on your own
-    # delete=True means the file will be deleted on close
+def test_specific_ruleset():
     colin_json={"labels": {
         "required": [
             "maintainer",

@@ -1,4 +1,4 @@
-.PHONY: check build-test-container test-in-container exec-test check-local check-labels
+.PHONY: check build-test-container test-in-container exec-test check-local
 
 TEST_IMAGE_NAME := colin-test
 TEST_IMAGE_LABELS_NAME := colin-labels
@@ -48,7 +48,7 @@ check-local:
 	ansible-playbook $(ANSIBLE_EXTRA_ARGS) -e config=$(CONFIG) -e subject=$(TEST_IMAGE_NAME) -e results=$(RESULTS) -e artifacts_dir=$(ARTIFACTS_DIR) ./local.yml -e setup=true
 
 clean:
-	git clean -dfx
+	git clean
 
 install: clean
 	pip install --user .
