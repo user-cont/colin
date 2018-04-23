@@ -1,4 +1,4 @@
-FROM fedora:28
+FROM registry.fedoraproject.org/fedora:27
 
 RUN dnf install -y make python3-pytest python3-pyxattr docker \
     && dnf clean all

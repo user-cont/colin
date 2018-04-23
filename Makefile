@@ -1,15 +1,19 @@
-.PHONY: check build-test-container test-in-container exec-test check-local
+.PHONY: check build-test-container test-in-container exec-test check-local check-labels
 
 TEST_IMAGE_NAME := colin-test
-TEST_TARGET = ./tests/integration/colin_tests.py
+TEST_IMAGE_LABELS_NAME := colin-labels
+TEST_TARGET = ./tests/integration/
 RESULTS := colin.json
 CONFIG := fedora
 ARTIFACTS_DIR := ./artifacts
 
-check: build-test-container test-in-container
+check: build-test-container build-labels-container test-in-container
 
 build-test-container:
 	docker build --network host --tag=$(TEST_IMAGE_NAME) -f ./Dockerfile.tests .
+
+build-labels-container:
+	cd tests/data && docker build --tag=$(TEST_IMAGE_LABELS_NAME) .
 
 test-in-container: build-test-container
 	@# use it like this: `make test-in-container TEST_TARGET=./tests/integration/test_utils.py`
@@ -42,3 +46,13 @@ rpm-in-mock-el7: srpm
 
 check-local:
 	ansible-playbook $(ANSIBLE_EXTRA_ARGS) -e config=$(CONFIG) -e subject=$(TEST_IMAGE_NAME) -e results=$(RESULTS) -e artifacts_dir=$(ARTIFACTS_DIR) ./local.yml -e setup=true
+
+clean:
+	git clean -dfx
+
+install: clean
+	pip install --user .
+
+uninstall:
+	pip uninstall .
+	rm /usr/lib/python*/site-packages/colin\* -rf
