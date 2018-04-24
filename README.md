@@ -93,23 +93,22 @@ Options:
 
 Let's give it a shot:
 ```
-$ colin -f ./rulesets/redhat.json rhel7
+$ colin -f ./rulesets/fedora.json fedora:27
 LABELS:
-nok:failed:maintainer_label_required
-   -> Label 'maintainer' has to be specified.
-   -> The name and email of the maintainer (usually the submitter).
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-ok :passed:name_label_required
-ok :passed:com_redhat_component_label_required
-ok :passed:summary_label_required
-ok :passed:version_label_required
-nok:failed:usage_label_required
-   -> Label 'usage' has to be specified.
-   -> A human readable example of container execution.
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-ok :passed:io_k8s_display-name_label_required
-ok :passed:io_openshift_tags_label_required
-ok :passed:architecture_label
+FAIL:Label 'maintainer' has to be specified.
+PASS:Label 'name' has to be specified.
+FAIL:Label 'com.redhat.component' has to be specified.
+FAIL:Label 'summary' has to be specified.
+PASS:Label 'version' has to be specified.
+FAIL:Label 'usage' has to be specified.
+FAIL:Label 'release' has to be specified.
+FAIL:Label 'architecture' has to be specified.
+WARN:Label 'url' has to be specified.
+WARN:Label 'help' has to be specified.
+WARN:Label 'build-date' has to be specified.
+WARN:Label 'distribution-scope' has to be specified.
+WARN:Label 'vcs-ref' has to be specified.
+...
 ```
 
 We can also check containers:
@@ -117,16 +116,16 @@ We can also check containers:
 $ docker run --name some-fedora -d fedora sleep 300
 $ colin -f ./rulesets/default.json some-fedora
 LABELS:
-nok:failed:maintainer_label_required
-   -> Label 'maintainer' has to be specified.
-   -> The name and email of the maintainer (usually the submitter).
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-
+FAIL:Label 'maintainer' has to be specified.
+FAIL:Label 'name' has to be specified.
+...
 $ docker run --name my-fedora -l maintainer=myname -d fedora sleep 300
 # Adding maintainer name fixes the check:
 $ colin -f ./rulesets/default.json  my-fedora
 LABELS:
-ok :passed:maintainer_label_required
+PASS:Label 'maintainer' has to be specified.
+FAIL:Label 'name' has to be specified.
+...
 ```
 
 
@@ -157,30 +156,25 @@ We can now run the analysis:
 ```
 $ python3 -m colin.cli.colin -f ./rulesets/fedora.json fedora:27
 LABELS:
-nok:failed:maintainer_label_required
-   -> Label 'maintainer' has to be specified.
-   -> The name and email of the maintainer (usually the submitter).
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-nok:failed:name_label_required
-   -> Label 'name' has to be specified.
-   -> Name of the Image or Container.
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-nok:failed:com_redhat_component_label_required
-   -> Label 'com.redhat.component' has to be specified.
-   -> The Bugzilla component name where bugs against this container should be reported by users.
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-nok:failed:summary_label_required
-   -> Label 'summary' has to be specified.
-   -> A short description of the image.
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-nok:failed:version_label_required
-   -> Label 'version' has to be specified.
-   -> Version of the image.
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-nok:failed:usage_label_required
-   -> Label 'usage' has to be specified.
-   -> A human readable example of container execution.
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
+FAIL:Label 'maintainer' has to be specified.
+PASS:Label 'name' has to be specified.
+FAIL:Label 'com.redhat.component' has to be specified.
+FAIL:Label 'summary' has to be specified.
+PASS:Label 'version' has to be specified.
+FAIL:Label 'usage' has to be specified.
+FAIL:Label 'release' has to be specified.
+FAIL:Label 'architecture' has to be specified.
+WARN:Label 'url' has to be specified.
+WARN:Label 'help' has to be specified.
+WARN:Label 'build-date' has to be specified.
+WARN:Label 'distribution-scope' has to be specified.
+WARN:Label 'vcs-ref' has to be specified.
+WARN:Label 'vcs-type' has to be specified.
+WARN:Label 'description' has to be specified.
+WARN:Label 'io.k8s.description' has to be specified.
+WARN:Label 'vcs-url' has to be specified.
+WARN:Label 'maintainer' has to be specified.
+WARN:Label 'io.openshift.expose-services' has to be specified.
 ...
 ```
 
