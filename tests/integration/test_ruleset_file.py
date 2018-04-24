@@ -20,12 +20,12 @@ import tempfile
 import colin
 import random
 
-def get_colin_labels_image(ruleset_name=None, ruleset_file=None):
+def get_results_from_colin_labels_image(ruleset_name=None, ruleset_file=None):
     return colin.run("colin-labels", ruleset_name=ruleset_name, ruleset_file=ruleset_file)
 
 
 def test_colin_labels_image():
-    assert get_colin_labels_image()
+    assert get_results_from_colin_labels_image()
 
 
 def generate_json_file(colin_json):
@@ -52,7 +52,7 @@ def test_specific_ruleset():
 
 
     with open(generate_json_file(colin_json), "r") as f:
-        result = get_colin_labels_image(ruleset_file=f)
+        result = get_results_from_colin_labels_image(ruleset_file=f)
     assert result
     expected_dict = {"maintainer_label_required": "PASS",
                      "name_label_required": "PASS",

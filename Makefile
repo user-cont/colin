@@ -1,4 +1,4 @@
-.PHONY: check build-test-container test-in-container exec-test check-local
+.PHONY: check build-test-image build-labels-image test-in-container exec-test check-local
 
 TEST_IMAGE_NAME := colin-test
 TEST_IMAGE_LABELS_NAME := colin-labels
@@ -7,15 +7,15 @@ RESULTS := colin.json
 CONFIG := fedora
 ARTIFACTS_DIR := ./artifacts
 
-check: build-test-container build-labels-container test-in-container
+check: build-test-image build-labels-image test-in-container
 
-build-test-container:
+build-test-image:
 	docker build --network host --tag=$(TEST_IMAGE_NAME) -f ./Dockerfile.tests .
 
-build-labels-container:
+build-labels-image:
 	cd tests/data && docker build --tag=$(TEST_IMAGE_LABELS_NAME) .
 
-test-in-container: build-test-container
+test-in-container: build-test-image
 	@# use it like this: `make test-in-container TEST_TARGET=./tests/integration/test_utils.py`
 	docker run --net=host --rm -v /dev:/dev:ro --security-opt label=disable --cap-add SYS_ADMIN -ti -v /var/run/docker.sock:/var/run/docker.sock:Z -v $(CURDIR):/src $(TEST_IMAGE_NAME) make exec-test TEST_TARGET=$(TEST_TARGET)
 
@@ -25,6 +25,7 @@ exec-test:
 clean:
 	python3 setup.py clean
 	rm -rf build/* dist/*
+	git clean -fx
 
 html:
 	make -f Makefile.docs html
@@ -46,9 +47,6 @@ rpm-in-mock-el7: srpm
 
 check-local:
 	ansible-playbook $(ANSIBLE_EXTRA_ARGS) -e config=$(CONFIG) -e subject=$(TEST_IMAGE_NAME) -e results=$(RESULTS) -e artifacts_dir=$(ARTIFACTS_DIR) ./local.yml -e setup=true
-
-clean:
-	git clean
 
 install: clean
 	pip install --user .

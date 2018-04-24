@@ -16,14 +16,14 @@
 
 import colin
 
-def get_colin_image():
+def get_results_from_colin_labels_image():
     return colin.run("colin-labels", ruleset_name="fedora")
 
 def test_colin_image():
-    assert get_colin_image()
+    assert get_results_from_colin_labels_image()
 
 def test_labels_in_image():
-    result = get_colin_image()
+    result = get_results_from_colin_labels_image()
     assert result
     expected_dict = {"maintainer_label_required": "PASS",
                      "name_label_required": "PASS",
