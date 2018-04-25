@@ -1,7 +1,7 @@
 FROM registry.fedoraproject.org/fedora:27
 
 ENV NAME=colin-labels \
-    VERSION=0.0.3
+    VERSION=0.0.4
 
 LABEL name="${NAME}" \
     summary="Colin image used for testing Dockerfile labels" \
