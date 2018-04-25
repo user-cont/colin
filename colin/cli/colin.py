@@ -85,7 +85,7 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose):
         if not results.ok:
             sys.exit(1)
         elif results.fail:
-            sys.exit(2)
+            sys.exit(3)
 
     except ColinException as ex:
         logger.error("An error occurred: %r", ex)
