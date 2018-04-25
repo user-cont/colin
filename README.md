@@ -178,6 +178,14 @@ WARN:Label 'io.openshift.expose-services' has to be specified.
 ...
 ```
 
+### Exit codes
+
+Colin can exit with several codes:
+
+- `0` --> OK
+- `1` --> error in the execution
+- `2` --> CLI error, wrong parameters
+- `3` --> at least one check failed
 
 ## Technical details
 
