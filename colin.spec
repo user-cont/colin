@@ -7,7 +7,7 @@
 %endif
 
 Name:           %{pypi_name}
-Version:        0.0.3
+Version:        0.0.4
 Release:        1%{?dist}
 Summary:        Tool to check generic rules/best-practices for containers/images/dockerfiles.
 
