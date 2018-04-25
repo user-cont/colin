@@ -74,5 +74,13 @@ rm -rf %{pypi_name}.egg-info
 %doc docs
 
 %changelog
+* Wed Apr 25 2018 lachmanfrantisek <flachman@redhat.com> - 0.0.4-1
+- bash completion
+- better cli
+- better ruleset files and loading
+- dockerfile support
+- python2 compatibility
+- better error handling
+
 * Mon Apr 09 2018 Petr Hracek <phracek@redhat.com> - 0.0.3-1
 - Initial package.
