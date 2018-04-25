@@ -145,7 +145,7 @@ class CheckResults(object):
         """
         return FAILED in self.statistics
 
-    def generate_pretty_output(self, stat, verbose, output_function):
+    def generate_pretty_output(self, stat, verbose, output_function, logs=True):
         """
         Send the formated to the provided function
 
@@ -174,6 +174,12 @@ class CheckResults(object):
                                         "  -> {}".format(r.description,
                                                          r.reference_url),
                                         fg=COLOURS[r.status])
+                        if logs and r.logs:
+                            output_function("  -> logs:",
+                                            fg=COLOURS[r.status])
+                            for l in r.logs:
+                                output_function("    -> {}".format(l),
+                                                fg=COLOURS[r.status])
 
             if group_title_printed and stat:
                 output_function("")
@@ -201,15 +207,15 @@ class CheckResults(object):
 
 class FailedCheckResult(CheckResult):
 
-    def __init__(self, check, exception):
+    def __init__(self, check, logs=None):
         super(self.__class__, self) \
             .__init__(ok=False,
                       message=check.message,
-                      description=str(exception),
-                      reference_url="",
+                      description=check.description,
+                      reference_url=check.reference_url,
                       check_name=check.name,
                       severity=check.severity,
-                      logs=[str(exception)]
+                      logs=logs or []
                       )
 
     @property
