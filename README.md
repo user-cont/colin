@@ -22,10 +22,10 @@ For more information, please check our [documentation on colin.readthedocs.io](h
 
 ## Usage
 
-### How to test colin locally
+### How to test a container image and Dockerfile with Colin locally
 
 ```bash
-    make check-local -e TEST_IMAGE_NAME=<image_name> -e ANSIBLE_EXTRA_ARGS=-vv -e CONFIG=fedora -e ARTIFACTS_DIR=<directory_for_results> -e RESULTS=result.json  -e setup=true
+    make check-local -e TEST_IMAGE_NAME=<image_name> -e ANSIBLE_EXTRA_ARGS=-vv -e CONFIG=<config_file> -e ARTIFACTS_DIR=<directory_for_results> -e RESULTS=<result_file>  -e setup=true
 ```
 
 which runs ansible playbook, by a command:
@@ -33,13 +33,16 @@ which runs ansible playbook, by a command:
 ```bash
     ansible-playbook $(ANSIBLE_EXTRA_ARGS) -e config=$(CONFIG) -e subject=$(TEST_IMAGE_NAME) -e results=$(RESULTS) -e artifacts_dir=$(ARTIFACTS_DIR) ./local.yml -e setup=true
 ```
-The parameters used in ansible specifies:
+
+The parameters used in command specify:
 - TEST_IMAGE_NAME ... name of the image which colin tests
+- ANSIBLE_EXTRA_ARGS ... extra arguments for ansible command
 - CONFIG ... name of default configuration file which is being used. By default `fedora`
-- ARTIFACTS_DIR ... directory where the results are stored. The directory has to already exist. By default `./artifacts`
+- ARTIFACTS_DIR ... directory where the results are stored. Ansible playbook creates it if needed. By default `./artifacts`
 - RESULTS ... filename which is being used by `colin` for storing results. By default `colin.json`
 
 E.g. checking `fedora:27` image with ruleset `fedora` and stored results `colin.json` into directory `artifacts`:
+
 ```bash
 make check-local -e TEST_IMAGE_NAME=fedora:27 -e CONFIG=fedora -e ARTIFACTS_DIR=./artifacts
 ```
@@ -90,23 +93,22 @@ Options:
 
 Let's give it a shot:
 ```
-$ colin -f ./rulesets/redhat.json rhel7
+$ colin -f ./rulesets/fedora.json fedora:27
 LABELS:
-nok:failed:maintainer_label_required
-   -> Label 'maintainer' has to be specified.
-   -> The name and email of the maintainer (usually the submitter).
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-ok :passed:name_label_required
-ok :passed:com_redhat_component_label_required
-ok :passed:summary_label_required
-ok :passed:version_label_required
-nok:failed:usage_label_required
-   -> Label 'usage' has to be specified.
-   -> A human readable example of container execution.
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-ok :passed:io_k8s_display-name_label_required
-ok :passed:io_openshift_tags_label_required
-ok :passed:architecture_label
+FAIL:Label 'maintainer' has to be specified.
+PASS:Label 'name' has to be specified.
+FAIL:Label 'com.redhat.component' has to be specified.
+FAIL:Label 'summary' has to be specified.
+PASS:Label 'version' has to be specified.
+FAIL:Label 'usage' has to be specified.
+FAIL:Label 'release' has to be specified.
+FAIL:Label 'architecture' has to be specified.
+WARN:Label 'url' has to be specified.
+WARN:Label 'help' has to be specified.
+WARN:Label 'build-date' has to be specified.
+WARN:Label 'distribution-scope' has to be specified.
+WARN:Label 'vcs-ref' has to be specified.
+...
 ```
 
 We can also check containers:
@@ -114,22 +116,22 @@ We can also check containers:
 $ docker run --name some-fedora -d fedora sleep 300
 $ colin -f ./rulesets/default.json some-fedora
 LABELS:
-nok:failed:maintainer_label_required
-   -> Label 'maintainer' has to be specified.
-   -> The name and email of the maintainer (usually the submitter).
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-
+FAIL:Label 'maintainer' has to be specified.
+FAIL:Label 'name' has to be specified.
+...
 $ docker run --name my-fedora -l maintainer=myname -d fedora sleep 300
 # Adding maintainer name fixes the check:
 $ colin -f ./rulesets/default.json  my-fedora
 LABELS:
-ok :passed:maintainer_label_required
+PASS:Label 'maintainer' has to be specified.
+FAIL:Label 'name' has to be specified.
+...
 ```
 
 
 ### Directly from git
 
-Once you clone colin locally, you can invoke it directly from git:
+Once you clone colin locally, you can invoke it directly from cloned git repository:
 
 ```
 $ git clone https://github.com/user-cont/colin.git
@@ -154,30 +156,25 @@ We can now run the analysis:
 ```
 $ python3 -m colin.cli.colin -f ./rulesets/fedora.json fedora:27
 LABELS:
-nok:failed:maintainer_label_required
-   -> Label 'maintainer' has to be specified.
-   -> The name and email of the maintainer (usually the submitter).
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-nok:failed:name_label_required
-   -> Label 'name' has to be specified.
-   -> Name of the Image or Container.
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-nok:failed:com_redhat_component_label_required
-   -> Label 'com.redhat.component' has to be specified.
-   -> The Bugzilla component name where bugs against this container should be reported by users.
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-nok:failed:summary_label_required
-   -> Label 'summary' has to be specified.
-   -> A short description of the image.
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-nok:failed:version_label_required
-   -> Label 'version' has to be specified.
-   -> Version of the image.
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-nok:failed:usage_label_required
-   -> Label 'usage' has to be specified.
-   -> A human readable example of container execution.
-   -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
+FAIL:Label 'maintainer' has to be specified.
+PASS:Label 'name' has to be specified.
+FAIL:Label 'com.redhat.component' has to be specified.
+FAIL:Label 'summary' has to be specified.
+PASS:Label 'version' has to be specified.
+FAIL:Label 'usage' has to be specified.
+FAIL:Label 'release' has to be specified.
+FAIL:Label 'architecture' has to be specified.
+WARN:Label 'url' has to be specified.
+WARN:Label 'help' has to be specified.
+WARN:Label 'build-date' has to be specified.
+WARN:Label 'distribution-scope' has to be specified.
+WARN:Label 'vcs-ref' has to be specified.
+WARN:Label 'vcs-type' has to be specified.
+WARN:Label 'description' has to be specified.
+WARN:Label 'io.k8s.description' has to be specified.
+WARN:Label 'vcs-url' has to be specified.
+WARN:Label 'maintainer' has to be specified.
+WARN:Label 'io.openshift.expose-services' has to be specified.
 ...
 ```
 
