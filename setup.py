@@ -32,8 +32,7 @@ setup(
         colin=colin.cli.colin:cli
     ''',
     data_files=[("share/colin/rulesets/", ["rulesets/default.json",
-                                           "rulesets/fedora.json",
-                                           "rulesets/redhat.json"]),
+                                           "rulesets/fedora.json"]),
                 ("share/bash-completion/completions/", ["bash-complete/colin"])],
     license='GPLv3+',
     classifiers=[

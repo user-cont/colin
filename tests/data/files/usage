@@ -1,0 +1,8 @@
+#!/bin/bash -e
+cat <<EOF
+
+This is the punchbag Colin image:
+
+You can then run the resulting image via:
+docker run <application image>
+EOF
