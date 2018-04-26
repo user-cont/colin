@@ -31,12 +31,13 @@ logger = logging.getLogger(__name__)
 
 class Ruleset(object):
 
-    def __init__(self, ruleset_name=None, ruleset_file=None):
+    def __init__(self, ruleset_name=None, ruleset_file=None, ruleset=None):
         """
         Load ruleset for colin.
 
         :param ruleset_name: str (name of the ruleset file (without .json), default is "default"
-        :param ruleset_file: fileobj
+        :param ruleset_file: fileobj instance holding ruleset configuration
+        :param ruleset: dict, content of a ruleset file
         """
         if ruleset_file:
             try:
@@ -46,7 +47,7 @@ class Ruleset(object):
                 msg = "Ruleset file '{}' cannot be loaded.".format(ruleset_file.name)
                 logger.error(msg)
                 raise ColinRulesetException(msg)
-        else:
+        elif ruleset_name:
             try:
                 logger.debug("Loading ruleset with the name '{}'.".format(ruleset_name))
                 ruleset_path = get_ruleset_file(ruleset=ruleset_name)
@@ -60,6 +61,12 @@ class Ruleset(object):
 
                 logger.error(msg)
                 raise ColinRulesetException(msg)
+        elif ruleset:
+            self.ruleset_dict = ruleset
+        else:
+            logger.error("none of the arguments ruleset_{name,file}, ruleset was passed")
+            raise ColinRulesetException("No ruleset was selected.")
+        # TODO: validate ruleset
 
     def get_checks(self, target_type, group=None, severity=None, tags=None):
         """
