@@ -1,5 +1,7 @@
 %global pypi_name colin
 
+%{?python_enable_dependency_generator}
+
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %bcond_with python3
 %else
@@ -8,7 +10,7 @@
 
 Name:           %{pypi_name}
 Version:        0.0.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Tool to check generic rules/best-practices for containers/images/dockerfiles.
 
 License:        GPLv3+
@@ -19,17 +21,13 @@ Requires:       python3-%{pypi_name}
 
 %description
 `colin` is a tool to check generic rules/best-practices
-for containers/images/dockerfiles.
+for containers/images/dockerfiles
 
 %package -n     python3-%{pypi_name}
 Summary:        %{summary}
 %{?python_provide:%python_provide python3-%{pypi_name}}
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
-Requires:       python3-docker
-Requires:       python3-requests
-Requires:       python3-pyxattr
-Requires:       python3-click
 Requires:       docker
 
 #Requires:       conu
@@ -39,10 +37,11 @@ Recommends:     atomic
 `colin` as a tool to check generic rules/best-practices
 for containers/images/dockerfiles.
 
-%package -n %{pypi_name}-doc
+%package doc
+BuildRequires:  python3-sphinx
 Summary:        colin documentation
 
-%description -n %{pypi_name}-doc
+%description doc
 Documentation for colin.
 
 %prep
@@ -52,6 +51,11 @@ rm -rf %{pypi_name}.egg-info
 
 %build
 %py3_build
+
+# generate html docs
+PYTHONPATH="${PWD}:${PWD}/docs/" sphinx-build docs html
+# remove the sphinx-build leftovers
+rm -rf build/html/.{doctrees,buildinfo}
 
 %install
 %py3_install
@@ -66,14 +70,17 @@ rm -rf %{pypi_name}.egg-info
 %doc README.md
 %{python3_sitelib}/%{pypi_name}/
 %{python3_sitelib}/%{pypi_name}-*.egg-info/
-%{_datadir}/%{pypi_name}/*
+%{_datadir}/%{pypi_name}/
 %exclude %{python3_sitelib}/tests
 
-%files -n %{pypi_name}-doc
+%files doc
 %license LICENSE
-%doc docs
+%doc html
 
 %changelog
+* Wed May 02 2018 Petr Hracek <phracek@redhat.com> - 0.0.4-2
+- Fix issues catched by BZ review process (#1572084)
+
 * Wed Apr 25 2018 lachmanfrantisek <flachman@redhat.com> - 0.0.4-1
 - bash completion
 - better cli
