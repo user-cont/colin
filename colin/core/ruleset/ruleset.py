@@ -21,7 +21,7 @@ import os
 import six
 from six import iteritems
 
-from ..constant import JSON, RULESET_DIRECTORY
+from ..constant import JSON, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME
 from ..exceptions import ColinRulesetException
 from ..loader import load_check_implementation
 from ..target import is_compatible
@@ -220,6 +220,11 @@ def get_ruleset_directory():
     if os.path.isdir(usr_local_share):
         logger.debug("Global ruleset directory found ('{}').".format(usr_local_share))
         return usr_local_share
+
+    cwd_rulesets = os.path.join(".", RULESET_DIRECTORY_NAME)
+    if os.path.isdir(cwd_rulesets):
+        logger.debug("Ruleset directory found in current directory ('{}').".format(cwd_rulesets))
+        return cwd_rulesets
 
     msg = "Ruleset directory cannot be found."
     logger.warning(msg)
