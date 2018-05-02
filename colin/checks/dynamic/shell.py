@@ -10,4 +10,4 @@ class BashCheck(CmdCheck):
                       description="The target has to be able to invoke shell.",
                       reference_url="https://docs.docker.com/engine/reference/run/",
                       tags=["sh", "cmd", "shell", "output"],
-                      cmd=['sh', '-c', 'exit'])
+                      cmd=['sh', '-c', 'exit', '0'])
