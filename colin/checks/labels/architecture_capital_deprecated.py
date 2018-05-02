@@ -4,7 +4,7 @@ from colin.checks.abstract.labels import DeprecatedLabelCheck
 class ArchitectureLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
 
     def __init__(self):
-        super(self.__class__, self). \
+        super(ArchitectureLabelCapitalDeprecatedCheck, self). \
             __init__(name="architecture_label_capital_deprecated",
                      message="Label 'Architecture' is deprecated.",
                      description="Replace with 'architecture'.",

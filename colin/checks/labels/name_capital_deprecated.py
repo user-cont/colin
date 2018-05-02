@@ -4,7 +4,7 @@ from colin.checks.abstract.labels import DeprecatedLabelCheck
 class NameLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
 
     def __init__(self):
-        super(self.__class__, self) \
+        super(NameLabelCapitalDeprecatedCheck, self) \
             .__init__(name="name_label_capital_deprecated",
                       message="Label 'Name' is deprecated.",
                       description="Replace with 'name'.",

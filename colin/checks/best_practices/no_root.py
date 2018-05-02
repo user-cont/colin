@@ -6,10 +6,10 @@ from colin.checks.result import CheckResult
 class NoRootCheck(ContainerCheck, ImageCheck):
 
     def __init__(self):
-        super(self.__class__, self) \
+        super(NoRootCheck, self) \
             .__init__(name="no_root",
                       message="Service should not run as root by default.",
-                      description="",
+                      description="It can be insecure to run service as root.",
                       reference_url="?????",
                       tags=["root", "user"])
 
