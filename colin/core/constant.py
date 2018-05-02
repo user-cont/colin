@@ -14,7 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-RULESET_DIRECTORY = "share/colin/rulesets/"
+RULESET_DIRECTORY_NAME = "rulesets"
+RULESET_DIRECTORY = "share/colin/" + RULESET_DIRECTORY_NAME
 JSON = ".json"
 MODULE_NAME_IMPORTED_CHECKS = "colin.checks.imported"
 

@@ -1,6 +1,6 @@
-import click
 from click.testing import CliRunner
 from colin.cli.colin import check, list_checks, list_rulesets
+
 
 def _call_colin(fnc, parameters=None):
     runner = CliRunner()
@@ -18,6 +18,7 @@ def _common_help_options(result):
     assert "-t, --tag TEXT" in result.output
     assert "-v, --verbose" in result.output
     assert "-h, --help" in result.output
+
 
 def test_check_command():
     result = _call_colin(check)
@@ -64,6 +65,8 @@ from_tag_not_latest
 """
     assert result.exit_code == 0
     assert result.output == expected_output
+    assert _call_colin(list_checks, parameters=["-r", "default"]).output == \
+        _call_colin(list_checks).output
 
 
 def test_list_checks_help_command():
@@ -73,7 +76,7 @@ def test_list_checks_help_command():
 
 
 def test_list_checks_fedora():
-    result = _call_colin(list_checks, parameters=["-r", "default"])
+    result = _call_colin(list_checks, parameters=["-r", "fedora"])
     assert result.exit_code == 0
     assert "maintainer_label_required" in result.output
     assert "maintainer_deprecated" in result.output
@@ -82,11 +85,9 @@ def test_list_checks_fedora():
 
 def test_list_rulesets():
     result = _call_colin(list_rulesets)
-    expected_output = """fedora
-default
-"""
+    assert "fedora" in result.output
+    assert "default" in result.output
     assert result.exit_code == 0
-    assert result.output == expected_output
 
 
 def test_list_rulesets_help_command():

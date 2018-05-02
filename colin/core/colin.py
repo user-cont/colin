@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 def run(target, group=None, severity=None, tags=None, ruleset_name=None, ruleset_file=None,
-        logging_level=logging.WARNING):
+        ruleset=None, logging_level=logging.WARNING):
     """
     Runs the sanity checks for the target.
 
@@ -35,7 +35,8 @@ def run(target, group=None, severity=None, tags=None, ruleset_name=None, ruleset
     :param severity: str (if not None, only those checks will be run -- optional x required x warn ...)
     :param tags: list of str (if not None, the checks will be filtered by tags.)
     :param ruleset_name: str (e.g. fedora; if None, default would be used)
-    :param ruleset_file: fileobj
+    :param ruleset_file: fileobj instance holding ruleset configuration
+    :param ruleset: dict, content of a ruleset file
     :param logging_level: logging level (default logging.WARNING)
     :return: Results instance
     """
@@ -48,14 +49,16 @@ def run(target, group=None, severity=None, tags=None, ruleset_name=None, ruleset
                                 severity=severity,
                                 tags=tags,
                                 ruleset_name=ruleset_name,
-                                ruleset_file=ruleset_file)
+                                ruleset_file=ruleset_file,
+                                ruleset=ruleset,
+    )
     result = go_through_checks(target=target,
                                checks=checks_to_run)
     return result
 
 
-def get_checks(target_type=None, group=None, severity=None, tags=None, ruleset_name=None, ruleset_file=None,
-               logging_level=logging.WARNING):
+def get_checks(target_type=None, group=None, severity=None, tags=None, ruleset_name=None,
+               ruleset_file=None, ruleset=None, logging_level=logging.WARNING):
     """
     Get the sanity checks for the target.
 
@@ -64,7 +67,8 @@ def get_checks(target_type=None, group=None, severity=None, tags=None, ruleset_n
     :param severity: str (if not None, only those checks will be run -- optional x required x warn ...)
     :param tags: list of str (if not None, the checks will be filtered by tags.)
     :param ruleset_name: str (e.g. fedora; if None, default would be used)
-    :param ruleset_file: fileobj
+    :param ruleset_file: fileobj instance holding ruleset configuration
+    :param ruleset: dict, content of a ruleset file
     :param logging_level: logging level (default logging.WARNING)
     :return: list of groups of checks
     """
@@ -75,12 +79,16 @@ def get_checks(target_type=None, group=None, severity=None, tags=None, ruleset_n
                        severity=severity,
                        tags=tags,
                        ruleset_name=ruleset_name,
-                       ruleset_file=ruleset_file)
+                       ruleset_file=ruleset_file,
+                       ruleset=ruleset
+    )
 
 
-def _get_checks(target_type, group=None, severity=None, tags=None, ruleset_name=None, ruleset_file=None):
+def _get_checks(target_type, group=None, severity=None, tags=None,
+                ruleset_name=None, ruleset_file=None, ruleset=None):
     ruleset = Ruleset(ruleset_name=ruleset_name,
-                      ruleset_file=ruleset_file)
+                      ruleset_file=ruleset_file,
+                      ruleset=ruleset)
     return ruleset.get_checks(group=group,
                               severity=severity,
                               tags=tags,

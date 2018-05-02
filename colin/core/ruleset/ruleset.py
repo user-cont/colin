@@ -21,7 +21,7 @@ import os
 import six
 from six import iteritems
 
-from ..constant import JSON, RULESET_DIRECTORY
+from ..constant import JSON, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME
 from ..exceptions import ColinRulesetException
 from ..loader import load_check_implementation
 from ..target import is_compatible
@@ -31,14 +31,17 @@ logger = logging.getLogger(__name__)
 
 class Ruleset(object):
 
-    def __init__(self, ruleset_name=None, ruleset_file=None):
+    def __init__(self, ruleset_name=None, ruleset_file=None, ruleset=None):
         """
         Load ruleset for colin.
 
         :param ruleset_name: str (name of the ruleset file (without .json), default is "default"
-        :param ruleset_file: fileobj
+        :param ruleset_file: fileobj instance holding ruleset configuration
+        :param ruleset: dict, content of a ruleset file
         """
-        if ruleset_file:
+        if ruleset:
+            self.ruleset_dict = ruleset
+        elif ruleset_file:
             try:
                 logger.debug("Loading ruleset from file '{}'.".format(ruleset_file.name))
                 self.ruleset_dict = json.load(ruleset_file)
@@ -60,6 +63,7 @@ class Ruleset(object):
 
                 logger.error(msg)
                 raise ColinRulesetException(msg)
+        # TODO: validate ruleset
 
     def get_checks(self, target_type, group=None, severity=None, tags=None):
         """
@@ -213,6 +217,11 @@ def get_ruleset_directory():
     if os.path.isdir(usr_local_share):
         logger.debug("Global ruleset directory found ('{}').".format(usr_local_share))
         return usr_local_share
+
+    cwd_rulesets = os.path.join(".", RULESET_DIRECTORY_NAME)
+    if os.path.isdir(cwd_rulesets):
+        logger.debug("Ruleset directory found in current directory ('{}').".format(cwd_rulesets))
+        return cwd_rulesets
 
     msg = "Ruleset directory cannot be found."
     logger.warning(msg)
