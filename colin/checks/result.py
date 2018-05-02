@@ -17,10 +17,10 @@
 import json
 
 import six
-from six import iteritems
 
 from ..core.constant import (COLOURS, ERROR, FAILED, OPTIONAL, OUTPUT_CHARS,
                              PASSED, REQUIRED, WARNING)
+from ..utils.caching_iterable import CachingIterable
 
 
 class CheckResult(object):
@@ -60,9 +60,7 @@ class DockerfileCheckResult(CheckResult):
 class CheckResults(object):
 
     def __init__(self, results):
-        self._results = results
-        self._generated = False
-        self._generated_result = {}
+        self.results = CachingIterable(results)
 
     @property
     def _dict_of_results(self):
@@ -115,18 +113,6 @@ class CheckResults(object):
                   indent=4)
 
     @property
-    def results(self):
-        """
-        Get the result generator
-
-        :return: Generator of group generator of results
-        """
-        if self._generated:
-            return iteritems(self._generated_result)
-        else:
-            return self._group_generator()
-
-    @property
     def statistics(self):
         """
         Get the dictionary with the count of the check-statuses
@@ -158,30 +144,6 @@ class CheckResults(object):
         :return: True, if there is no check which ends with fail status
         """
         return FAILED in self.statistics
-
-    def _group_generator(self):
-        """
-        Forward original generator of result groups, but saves the value for the future use.
-
-        :return: yields the group generator
-        """
-        for group, group_result in self._results:
-            self._generated_result.setdefault(group, [])
-            yield group, self._result_generator(group=group,
-                                                results=group_result)
-        self._generated = True
-
-    def _result_generator(self, group, results):
-        """
-        Forward the result from one generator and saves the value for the future use.
-
-        :param group: str
-        :param results: Result object generator
-        :return: yields the values from original generator
-        """
-        for r in results:
-            self._generated_result[group].append(r)
-            yield r
 
     def generate_pretty_output(self, stat, verbose, output_function):
         """
