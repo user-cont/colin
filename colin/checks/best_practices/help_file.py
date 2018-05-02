@@ -4,7 +4,7 @@ from colin.checks.abstract.filesystem import FileSystemCheck
 class HelpFileCheck(FileSystemCheck):
 
     def __init__(self):
-        super(self.__class__, self) \
+        super(HelpFileCheck, self) \
             .__init__(name="help_file_required",
                       message="The 'helpfile' has to be provided.",
                       description="Just like traditional packages, containers need "

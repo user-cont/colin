@@ -6,7 +6,7 @@ from colin.core.target import ImageName
 class FromTagCheck(DockerfileCheck):
 
     def __init__(self):
-        super(self.__class__, self) \
+        super(FromTagCheck, self) \
             .__init__(name="from_tag_not_latest",
                       message="In FROM, tag has to be specified and not 'latest'.",
                       description="Using the 'latest' tag may cause unpredictable builds."

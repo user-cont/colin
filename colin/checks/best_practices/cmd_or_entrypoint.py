@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class CmdOrEntrypointCheck(ContainerCheck, ImageCheck):
 
     def __init__(self):
-        super(self.__class__, self) \
+        super(CmdOrEntrypointCheck, self) \
             .__init__(name="cmd_or_entrypoint",
                       message="Cmd or Entrypoint has to be specified",
                       description="An ENTRYPOINT allows you to configure a container that will run as an executable. "
