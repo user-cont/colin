@@ -39,7 +39,9 @@ class Ruleset(object):
         :param ruleset_file: fileobj instance holding ruleset configuration
         :param ruleset: dict, content of a ruleset file
         """
-        if ruleset_file:
+        if ruleset:
+            self.ruleset_dict = ruleset
+        elif ruleset_file:
             try:
                 logger.debug("Loading ruleset from file '{}'.".format(ruleset_file.name))
                 self.ruleset_dict = json.load(ruleset_file)
@@ -47,7 +49,7 @@ class Ruleset(object):
                 msg = "Ruleset file '{}' cannot be loaded.".format(ruleset_file.name)
                 logger.error(msg)
                 raise ColinRulesetException(msg)
-        elif ruleset_name:
+        else:
             try:
                 logger.debug("Loading ruleset with the name '{}'.".format(ruleset_name))
                 ruleset_path = get_ruleset_file(ruleset=ruleset_name)
@@ -61,11 +63,6 @@ class Ruleset(object):
 
                 logger.error(msg)
                 raise ColinRulesetException(msg)
-        elif ruleset:
-            self.ruleset_dict = ruleset
-        else:
-            logger.error("none of the arguments ruleset_{name,file}, ruleset was passed")
-            raise ColinRulesetException("No ruleset was selected.")
         # TODO: validate ruleset
 
     def get_checks(self, target_type, group=None, severity=None, tags=None):

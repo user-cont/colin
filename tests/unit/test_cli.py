@@ -38,7 +38,7 @@ def test_check_help_command():
 
 
 def test_list_checks():
-    result = _call_colin(list_checks, parameters=["-r", "default"])
+    result = _call_colin(list_checks)
     expected_output = """LABELS:
 maintainer_label_required
    -> Label 'maintainer' has to be specified.
@@ -65,6 +65,8 @@ from_tag_not_latest
 """
     assert result.exit_code == 0
     assert result.output == expected_output
+    assert _call_colin(list_checks, parameters=["-r", "default"]).output == \
+        _call_colin(list_checks).output
 
 
 def test_list_checks_help_command():
@@ -74,7 +76,7 @@ def test_list_checks_help_command():
 
 
 def test_list_checks_fedora():
-    result = _call_colin(list_checks, parameters=["-r", "default"])
+    result = _call_colin(list_checks, parameters=["-r", "fedora"])
     assert result.exit_code == 0
     assert "maintainer_label_required" in result.output
     assert "maintainer_deprecated" in result.output
