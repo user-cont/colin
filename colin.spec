@@ -10,7 +10,7 @@
 
 Name:           %{pypi_name}
 Version:        0.0.4
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Tool to check generic rules/best-practices for containers/images/dockerfiles.
 
 License:        GPLv3+
@@ -29,20 +29,18 @@ Summary:        %{summary}
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
 Requires:       docker
-
-#Requires:       conu
 Recommends:     atomic
 
 %description -n python3-%{pypi_name}
 `colin` as a tool to check generic rules/best-practices
-for containers/images/dockerfiles.
+for containers/images/dockerfiles
 
 %package doc
 BuildRequires:  python3-sphinx
 Summary:        colin documentation
 
 %description doc
-Documentation for colin.
+Documentation for colin
 
 %prep
 %autosetup -n %{pypi_name}-%{version}
@@ -55,7 +53,7 @@ rm -rf %{pypi_name}.egg-info
 # generate html docs
 PYTHONPATH="${PWD}:${PWD}/docs/" sphinx-build docs html
 # remove the sphinx-build leftovers
-rm -rf build/html/.{doctrees,buildinfo}
+rm -rf html/.{doctrees,buildinfo}
 
 %install
 %py3_install
@@ -78,6 +76,9 @@ rm -rf build/html/.{doctrees,buildinfo}
 %doc html
 
 %changelog
+* Wed May 02 2018 Petr Hracek <phracek@redhat.com> - 0.0.4-3
+- Polishing texts and remove leftovers (#1572084)
+
 * Wed May 02 2018 Petr Hracek <phracek@redhat.com> - 0.0.4-2
 - Fix issues catched by BZ review process (#1572084)
 
