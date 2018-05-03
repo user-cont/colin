@@ -11,7 +11,7 @@
 Name:           %{pypi_name}
 Version:        0.0.4
 Release:        3%{?dist}
-Summary:        Tool to check generic rules/best-practices for containers/images/dockerfiles.
+Summary:        Tool to check generic rules/best-practices for containers/images/dockerfiles
 
 License:        GPLv3+
 URL:            https://github.com/user-cont/colin
