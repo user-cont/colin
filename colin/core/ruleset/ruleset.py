@@ -14,13 +14,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import json
 import logging
 import os
 
 import six
 from six import iteritems
 
+from colin.core.ruleset.loader import RulesetStruct
+from .loader import get_ruleset_struct_from_file, get_ruleset_struct_from_fileobj
 from ..constant import JSON, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME
 from ..exceptions import ColinRulesetException
 from ..loader import load_check_implementation
@@ -40,57 +41,54 @@ class Ruleset(object):
         :param ruleset: dict, content of a ruleset file
         """
         if ruleset:
-            self.ruleset_dict = ruleset
+            self.ruleset_struct = RulesetStruct(ruleset)
         elif ruleset_file:
-            try:
-                logger.debug("Loading ruleset from file '{}'.".format(ruleset_file.name))
-                self.ruleset_dict = json.load(ruleset_file)
-            except Exception as ex:
-                msg = "Ruleset file '{}' cannot be loaded.".format(ruleset_file.name)
-                logger.error(msg)
-                raise ColinRulesetException(msg)
+            self.ruleset_struct = get_ruleset_struct_from_fileobj(ruleset_file)
         else:
-            try:
-                logger.debug("Loading ruleset with the name '{}'.".format(ruleset_name))
-                ruleset_path = get_ruleset_file(ruleset=ruleset_name)
-                with open(ruleset_path, mode='r') as ruleset_file_obj:
-                    self.ruleset_dict = json.load(ruleset_file_obj)
-            except ColinRulesetException as ex:
-                raise ex
-            except Exception as ex:
-                file_name = ruleset_path if ruleset_path else ruleset_name
-                msg = "Ruleset '{}' cannot be loaded.".format(file_name)
+            logger.debug("Loading ruleset with the name '{}'.".format(ruleset_name))
+            ruleset_path = get_ruleset_file(ruleset=ruleset_name)
+            self.ruleset_struct = get_ruleset_struct_from_file(ruleset_path)
 
-                logger.error(msg)
-                raise ColinRulesetException(msg)
-        # TODO: validate ruleset
-
-    def get_checks(self, target_type, group=None, severity=None, tags=None):
+    def get_checks(self, target_type, tags=None):
         """
-        Get all checks for given type/group/severity/tags.
+        Get all checks for given type/tags.
 
         :param target_type: TargetType enum
-        :param group: str (if not group, get checks from all groups/directories)
-        :param severity: str (optional x required)
         :param tags: list of str
         :return: list of check instances
         """
-        groups = {}
-        for g in self._get_check_groups(group):
-            logger.debug("Getting checks for group '{}'.".format(g))
-            check_files = []
-            for sev, rules in iteritems(self.ruleset_dict[g]):
+        check_instances = []
+        for check_struct in self.ruleset_struct.checks:
+            logger.debug("Processing check_struct {}.".format(check_struct))
 
-                if severity and severity != sev:
+            usable_targets = check_struct.usable_targets
+            if target_type and usable_targets and target_type.name not in usable_targets:
+                logger.info("Skipping... Target type does not match.")
+                continue
+            # FIXME: tags filtering is definitely broken
+
+            check_instances += load_check_implementation(
+                path=Ruleset.get_check_file(check_struct.name))
+
+        result = []
+        for check_instance in check_instances:
+            if not is_compatible(target_type=target_type, check_instance=check_instance):
+                logger.error(
+                    "Check '{}' not compatible with the target type: {}".format(
+                        check_instance.name, target_type.name))
+                raise ColinRulesetException(
+                    "Check {} can't be used for target type {}".format(
+                        check_instance, target_type))
+
+            if tags:
+                if not set(tags) < set(check_instance.tags):
+                    logger.debug("Check '{}' not passed the tag control: {}".format(check_instance.name,
+                                                                                    tags))
                     continue
+            result.append(check_instance)
+            logger.debug("Check instance {} added.".format(check_instance.name))
 
-                check_files += Ruleset.get_checks_from_rules(rules=rules,
-                                                             group=g,
-                                                             target_type=target_type,
-                                                             severity=sev,
-                                                             tags=tags)
-            groups[g] = check_files
-        return groups
+        return result
 
     @staticmethod
     def get_check_file(group, name):
@@ -101,70 +99,8 @@ class Ruleset(object):
         :param name: str
         :return: str (path)
         """
+        logger.debug("Loading check instance for {}".format(r))
         return os.path.join(get_checks_path(), group, name + ".py")
-
-    @staticmethod
-    def get_checks_from_rules(rules, group, target_type, severity, tags):
-        """
-        get check from the list of check items in the resultset file.
-
-        :param rules: [str or dict]
-        :param group: str
-        :param target_type: TargetType enum
-        :param severity: str
-        :param tags: [str]
-        :return: list of filtered check instances
-        """
-        rule_items = []
-        for rule in rules:
-
-            if isinstance(rule, six.string_types):
-                rule_items.append(rule)
-            elif isinstance(rule, dict):
-                if target_type and target_type.name not in rule["type"]:
-                    continue
-
-                rule_items += rule["checks"]
-
-        check_instances = []
-        for r in rule_items:
-            logger.debug("Loading check instance for {}".format(r))
-            check_instances += load_check_implementation(path=Ruleset.get_check_file(group, r))
-        result = []
-        for check_instance in check_instances:
-            check_instance.severity = severity
-            if not is_compatible(target_type=target_type, check_instance=check_instance):
-                logger.debug(
-                    "Check '{}' not compatible with the target type: {}".format(check_instance.name, target_type.name))
-                continue
-
-            if tags:
-                if not set(tags) < set(check_instance.tags):
-                    logger.debug("Check '{}' not passed the tag control: {}".format(check_instance.name,
-                                                                                  tags))
-                    continue
-            result.append(check_instance)
-            logger.debug("Check instance {} added.".format(check_instance.name))
-
-        return result
-
-    def _get_check_groups(self, group=None):
-        """
-        Get check group to validate
-
-        :param group: str (if None, all from the ruleset will be used)
-        :return: list of str (group names)
-        """
-        groups = [g for g in self.ruleset_dict]
-        if group:
-            if group in groups:
-                check_groups = [group]
-            else:
-                check_groups = []
-        else:
-            check_groups = groups
-        logger.debug("Found groups: {}.".format(check_groups))
-        return check_groups
 
 
 def get_checks_path():
