@@ -15,6 +15,7 @@
 #
 
 import logging
+import traceback
 
 from six import iteritems
 
@@ -37,8 +38,10 @@ def _result_generator(target, checks):
         try:
             yield check.check(target)
         except Exception as ex:
-            logger.warning("There occurred an error when executing the check. ({})".format(ex))
-            yield FailedCheckResult(check, ex)
+            tb = traceback.format_exc()
+            logger.warning(
+                "There occurred an error when executing the check: {}".format(tb))
+            yield FailedCheckResult(check, logs=[str(ex)])
 
 
 def _group_generator(target, checks):

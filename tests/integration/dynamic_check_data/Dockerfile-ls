@@ -1,0 +1,3 @@
+FROM fedora:28
+ENTRYPOINT ["/bin/ls"]
+CMD ["/"]

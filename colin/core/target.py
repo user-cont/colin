@@ -19,6 +19,7 @@ import io
 import logging
 import os
 
+import six
 from conu import DockerBackend, DockerImagePullPolicy
 from conu.apidefs.container import Container
 from conu.apidefs.image import Image
@@ -129,6 +130,31 @@ class Target(object):
         if self.target_type == TargetType.DOCKERFILE:
             return self.instance.labels
         return self.instance.get_metadata()["Config"]["Labels"]
+
+    def get_output(self, cmd):
+        if isinstance(cmd, six.string_types):
+            cmd = [cmd]
+        if self.target_type == TargetType.CONTAINER:
+            if not self.instance.is_running():
+                raise ColinException("Cannot get output for stopped container.")
+            output = "".join([o.decode() for o in self.instance.execute(command=cmd)])
+            exit_code = self.instance.get_metadata()["State"]["ExitCode"]
+
+            if exit_code != 0:
+                raise ColinException("Container exited with the code {}. Output:\n{}".format(exit_code, output))
+
+        elif self.target_type == TargetType.CONTAINER_IMAGE:
+            container = self.instance.run_via_binary(command=cmd)
+            container.wait()
+            output = "".join([o.decode() for o in container.logs()])
+            exit_code = container.get_metadata()["State"]["ExitCode"]
+            container.delete(force=True)
+
+            if exit_code != 0:
+                raise ColinException("Container exited with the code {}. Output:\n{}".format(exit_code, output))
+            return output
+        else:
+            raise ColinException("Cannot get command output for given target type.")
 
 
 class TargetType(enum.Enum):
