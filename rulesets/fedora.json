@@ -13,15 +13,15 @@
     "optional": [
       "url",
       "help",
-      "build-date",
-      "distribution-scope",
-      "vcs-ref",
-      "vcs-type",
+      "build_date",
+      "distribution_scope",
+      "vcs_ref",
+      "vcs_type",
       "description",
       "io_k8s_description",
-      "vcs-url",
+      "vcs_url",
       "maintainer",
-      "io_openshift_expose-services"
+      "io_openshift_expose_services"
     ]
   },
   "dockerfile": {

@@ -24,7 +24,7 @@ from .images import ImageCheck
 class EnvCheck(ContainerCheck, ImageCheck):
 
     def __init__(self, name, message, description, reference_url, tags, env_var, required, value_regex=None):
-        super(self.__class__, self) \
+        super(EnvCheck, self) \
             .__init__(name, message, description, reference_url, tags)
         self.env_var = env_var
         self.required = required

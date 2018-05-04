@@ -4,12 +4,12 @@ from colin.checks.abstract.labels import LabelCheck
 class BuildDateLabelCheck(LabelCheck):
 
     def __init__(self):
-        super(self.__class__, self) \
+        super(BuildDateLabelCheck, self) \
             .__init__(name="build-date_label",
                       message="Label 'build-date' has to be specified.",
                       description="Date/Time image was built as RFC 3339 date-time.",
                       reference_url="https://github.com/projectatomic/ContainerApplicationGenericLabels",
-                      tags=["build-date", "label", "required"],
+                      tags=["build-date", "label"],
                       label="build-date",
                       required=True,
                       value_regex=None)

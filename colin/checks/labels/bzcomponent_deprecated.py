@@ -4,7 +4,7 @@ from colin.checks.abstract.labels import DeprecatedLabelCheck
 class BZComponentDeprecatedCheck(DeprecatedLabelCheck):
 
     def __init__(self):
-        super(self.__class__, self) \
+        super(BZComponentDeprecatedCheck, self) \
             .__init__(name="bzcomponent_deprecated",
                       message="Label 'BZComponent' is deprecated.",
                       description="Replace with 'com.redhat.component'.",

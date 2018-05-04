@@ -10,12 +10,13 @@ logger = logging.getLogger(__name__)
 class CmdOrEntrypointCheck(ContainerCheck, ImageCheck):
 
     def __init__(self):
-        super(self.__class__, self) \
+        super(CmdOrEntrypointCheck, self) \
             .__init__(name="cmd_or_entrypoint",
                       message="Cmd or Entrypoint has to be specified",
-                      description="",
-                      reference_url="?????",
-                      tags=["cmd", "entrypoint", "required"])
+                      description="An ENTRYPOINT allows you to configure a container that will run as an executable. "
+                                  "The main purpose of a CMD is to provide defaults for an executing container.",
+                      reference_url="https://fedoraproject.org/wiki/Container:Guidelines#CMD.2FENTRYPOINT_2",
+                      tags=["cmd", "entrypoint"])
 
     def check(self, target):
         metadata = target.instance.get_metadata()["Config"]

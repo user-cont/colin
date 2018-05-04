@@ -4,7 +4,7 @@ from colin.checks.abstract.dockerfile import InstructionCountCheck
 class MaintainerDeprecatedCheck(InstructionCountCheck):
 
     def __init__(self):
-        super(self.__class__, self) \
+        super(MaintainerDeprecatedCheck, self) \
             .__init__(name="maintainer_deprecated",
                       message="",
                       description="",

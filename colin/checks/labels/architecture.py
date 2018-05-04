@@ -4,14 +4,14 @@ from colin.checks.abstract.labels import LabelCheck
 class ArchitectureLabelCheck(LabelCheck):
 
     def __init__(self):
-        super(self.__class__, self) \
+        super(ArchitectureLabelCheck, self) \
             .__init__(name="architecture_label",
                       message="Label 'architecture' has to be specified.",
                       description="Architecture the software in the image should target. "
                                   "(Optional: if omitted, it will be built "
                                   "for all supported Fedora Architectures)",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
-                      tags=["architecture", "label", "required", "optional"],
+                      tags=["architecture", "label"],
                       label="architecture",
                       required=True,
                       value_regex=None)

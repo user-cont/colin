@@ -106,7 +106,7 @@ class InstructionCountCheck(DockerfileCheck):
 class DockerfileLabelCheck(DockerfileCheck):
 
     def __init__(self, name, message, description, reference_url, tags, label, required, value_regex=None):
-        super(self.__class__, self) \
+        super(DockerfileLabelCheck, self) \
             .__init__(name, message, description, reference_url, tags)
         self.label = label
         self.required = required
