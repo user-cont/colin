@@ -44,13 +44,13 @@ maintainer_label_required
    -> Label 'maintainer' has to be specified.
    -> The name and email of the maintainer (usually the submitter).
    -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-   -> ['maintainer', 'label', 'required']
+   -> ['maintainer', 'label']
    -> required
 
 DOCKERFILE:
 maintainer_deprecated
-   -> 
-   -> 
+   -> Dockerfile instruction `MAINTAINER` is deprecated.
+   -> Replace with label 'maintainer'.
    -> https://docs.docker.com/engine/reference/builder/#maintainer-deprecated
    -> ['maintainer', 'dockerfile', 'deprecated']
    -> required
