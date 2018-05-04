@@ -19,6 +19,7 @@ import logging
 from six import iteritems
 
 from ..checks.result import CheckResults, FailedCheckResult
+from ..utils.caching_iterable import CachingIterable
 
 logger = logging.getLogger(__name__)
 
@@ -43,5 +44,5 @@ def _result_generator(target, checks):
 def _group_generator(target, checks):
     for (group, group_checks) in iteritems(checks):
         logger.debug("Checking group: {}".format(group))
-        yield group, _result_generator(target=target,
-                                       checks=group_checks)
+        yield group, CachingIterable(_result_generator(target=target,
+                                                       checks=group_checks))

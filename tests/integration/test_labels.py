@@ -43,7 +43,7 @@ def test_labels_in_image():
                      "io.k8s.description_label": "PASS",
                      "vcs-url_label": "WARN",
                      "io.openshift.expose-services_label": "WARN",
-                     "help_file_or_readme_required": "ERROR",
+                     "help_file_or_readme_required": "FAIL",
                      "cmd_or_entrypoint": "PASS",
                      "no_root": "FAIL",
     }
