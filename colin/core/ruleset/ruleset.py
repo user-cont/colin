@@ -17,14 +17,10 @@
 import logging
 import os
 
-import six
-from six import iteritems
-
-from colin.core.ruleset.loader import RulesetStruct
-from .loader import get_ruleset_struct_from_file, get_ruleset_struct_from_fileobj
+from .loader import get_ruleset_struct_from_file, get_ruleset_struct_from_fileobj, RulesetStruct
 from ..constant import JSON, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME
 from ..exceptions import ColinRulesetException
-from ..loader import load_check_implementation
+from ..loader import CheckLoader
 from ..target import is_compatible
 
 logger = logging.getLogger(__name__)
@@ -40,6 +36,7 @@ class Ruleset(object):
         :param ruleset_file: fileobj instance holding ruleset configuration
         :param ruleset: dict, content of a ruleset file
         """
+        self.check_loader = CheckLoader(get_checks_path())
         if ruleset:
             self.ruleset_struct = RulesetStruct(ruleset)
         elif ruleset_file:
@@ -57,7 +54,7 @@ class Ruleset(object):
         :param tags: list of str
         :return: list of check instances
         """
-        check_instances = []
+        result = []
         for check_struct in self.ruleset_struct.checks:
             logger.debug("Processing check_struct {}.".format(check_struct))
 
@@ -65,13 +62,20 @@ class Ruleset(object):
             if target_type and usable_targets and target_type.name not in usable_targets:
                 logger.info("Skipping... Target type does not match.")
                 continue
-            # FIXME: tags filtering is definitely broken
 
-            check_instances += load_check_implementation(
-                path=Ruleset.get_check_file(check_struct.name))
+            try:
+                check_instance = self.check_loader.mapping[check_struct.name]
+            except KeyError:
+                raise ColinRulesetException("Can't find code for check %s.", check_struct.name)
 
-        result = []
-        for check_instance in check_instances:
+            if check_struct.tags:
+                logger.info("Overriding check's tags %s with the one defined in ruleset: %s",
+                            check_instance.tags, check_struct.tags)
+                check_instance.tags = check_struct.tags.copy()
+            if check_struct.additional_tags:
+                logger.info("Adding additional tags: %s", check_struct.additional_tags)
+                check_instance.tags += check_struct.additional_tags
+
             if not is_compatible(target_type=target_type, check_instance=check_instance):
                 logger.error(
                     "Check '{}' not compatible with the target type: {}".format(
@@ -89,18 +93,6 @@ class Ruleset(object):
             logger.debug("Check instance {} added.".format(check_instance.name))
 
         return result
-
-    @staticmethod
-    def get_check_file(group, name):
-        """
-        Get the check file from given group with given name.
-
-        :param group: str
-        :param name: str
-        :return: str (path)
-        """
-        logger.debug("Loading check instance for {}".format(r))
-        return os.path.join(get_checks_path(), group, name + ".py")
 
 
 def get_checks_path():
