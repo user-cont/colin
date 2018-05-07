@@ -23,16 +23,15 @@ from .target import Target
 logger = logging.getLogger(__name__)
 
 
-def run(target, group=None, severity=None, tags=None, ruleset_name=None, ruleset_file=None,
+def run(target, tags=None, ruleset_name=None, ruleset_file=None,
         ruleset=None, logging_level=logging.WARNING):
     """
     Runs the sanity checks for the target.
 
     :param target: str
-                    or Image/Container (name of the container/image or Image/Container instance from conu)
+                    or Image/Container (name of the container/image or Image/Container
+                                        instance from conu)
                     or path or file-like object for dockerfile
-    :param group: str (name of the folder with group of checks, if None, all of them will be checked.)
-    :param severity: str (if not None, only those checks will be run -- optional x required x warn ...)
     :param tags: list of str (if not None, the checks will be filtered by tags.)
     :param ruleset_name: str (e.g. fedora; if None, default would be used)
     :param ruleset_file: fileobj instance holding ruleset configuration
@@ -45,54 +44,45 @@ def run(target, group=None, severity=None, tags=None, ruleset_name=None, ruleset
     target = Target(target=target,
                     logging_level=logging_level)
     checks_to_run = _get_checks(target_type=target.target_type,
-                                group=group,
-                                severity=severity,
                                 tags=tags,
                                 ruleset_name=ruleset_name,
                                 ruleset_file=ruleset_file,
-                                ruleset=ruleset,
-    )
+                                ruleset=ruleset)
     result = go_through_checks(target=target,
                                checks=checks_to_run)
     return result
 
 
-def get_checks(target_type=None, group=None, severity=None, tags=None, ruleset_name=None,
+def get_checks(target_type=None, tags=None, ruleset_name=None,
                ruleset_file=None, ruleset=None, logging_level=logging.WARNING):
     """
     Get the sanity checks for the target.
 
     :param target_type: TargetType enum
-    :param group: str (name of the folder with group of checks, if None, all of them will be checked.)
-    :param severity: str (if not None, only those checks will be run -- optional x required x warn ...)
     :param tags: list of str (if not None, the checks will be filtered by tags.)
     :param ruleset_name: str (e.g. fedora; if None, default would be used)
     :param ruleset_file: fileobj instance holding ruleset configuration
     :param ruleset: dict, content of a ruleset file
     :param logging_level: logging level (default logging.WARNING)
-    :return: list of groups of checks
+    :return: list of checks
     """
     _set_logging(level=logging_level)
     logger.debug("Finding checks started.")
-    return _get_checks(target_type=target_type,
-                       group=group,
-                       severity=severity,
-                       tags=tags,
-                       ruleset_name=ruleset_name,
-                       ruleset_file=ruleset_file,
-                       ruleset=ruleset
+    return _get_checks(
+        target_type=target_type,
+        tags=tags,
+        ruleset_name=ruleset_name,
+        ruleset_file=ruleset_file,
+        ruleset=ruleset
     )
 
 
-def _get_checks(target_type, group=None, severity=None, tags=None,
+def _get_checks(target_type, tags=None,
                 ruleset_name=None, ruleset_file=None, ruleset=None):
     ruleset = Ruleset(ruleset_name=ruleset_name,
                       ruleset_file=ruleset_file,
                       ruleset=ruleset)
-    return ruleset.get_checks(group=group,
-                              severity=severity,
-                              tags=tags,
-                              target_type=target_type)
+    return ruleset.get_checks(tags=tags, target_type=target_type)
 
 
 def _set_logging(
