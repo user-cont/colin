@@ -1,8 +1,8 @@
 {
   "version": "1",
   "name": "Ruleset for Fedora containers/images/dockerfiles.",
-  "description": "This set of checks is defined by the fedora guideline.",
-  "contact_email": "user-cont@redhat.com",
+  "description": "This set of checks is defined by the Fedora Container Guidelines.",
+  "contact_email": "flachman@redhat.com",
   "checks": [
     {
       "name": "architecture_label"

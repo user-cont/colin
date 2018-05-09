@@ -1,8 +1,8 @@
 {
   "version": "1",
   "name": "Default ruleset for checking containers/images/dockerfiles.",
-  "description": "This set of checks contains general checks.",
-  "contact_email": "user-cont@redhat.com",
+  "description": "This set contains general checks applicable to any target.",
+  "contact_email": "flachman@redhat.com",
   "checks": [
     {
       "name": "maintainer_label",
