@@ -15,7 +15,7 @@
     subject: ""
 
     # our default ruleset for colin
-    config: "fedora"
+    ruleset: "fedora"
 
     # path where the test artifacts will be stored - logs
     artifacts_dir: "{{ playbook_dir }}/artifacts/"
@@ -76,5 +76,5 @@
 
   - block:
     - name: Execute colin which performs sanity-testing
-      command: python3 -m colin.cli.colin check --json {{ artifacts_dir }}/{{ results }} -r {{ config }} {{ subject }}
+      command: python3 -m colin.cli.colin check --json {{ artifacts_dir }}/{{ results }} -r {{ ruleset }} {{ subject }}
 
