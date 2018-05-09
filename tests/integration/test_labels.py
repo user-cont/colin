@@ -20,36 +20,38 @@ import colin
 def get_results_from_colin_labels_image():
     return colin.run("colin-labels", ruleset_name="fedora")
 
+
 def test_colin_image():
     assert get_results_from_colin_labels_image()
+
 
 def test_labels_in_image():
     result = get_results_from_colin_labels_image()
     assert result
-    expected_dict = {"maintainer_label_required": "PASS",
-                     "name_label_required": "PASS",
-                     "com_redhat_component_label_required": "PASS",
-                     "summary_label_required": "PASS",
-                     "version_label_required": "PASS",
-                     "usage_label_required": "FAIL",
+    expected_dict = {"maintainer_label": "PASS",
+                     "name_label": "PASS",
+                     "com.redhat.component_label": "PASS",
+                     "summary_label": "PASS",
+                     "version_label": "PASS",
+                     "usage_label": "FAIL",
                      "release_label": "FAIL",
                      "architecture_label": "FAIL",
-                     "url_label": "WARN",
-                     "help_label": "WARN",
-                     "build-date_label": "WARN",
-                     "distribution-scope_label": "WARN",
-                     "vcs-ref_label": "WARN",
-                     "vcs-type_label": "WARN",
+                     "url_label": "FAIL",
+                     "help_label": "FAIL",
+                     "build-date_label": "FAIL",
+                     "distribution-scope_label": "FAIL",
+                     "vcs-ref_label": "FAIL",
+                     "vcs-type_label": "FAIL",
                      "description_label": "PASS",
                      "io.k8s.description_label": "PASS",
-                     "vcs-url_label": "WARN",
-                     "io.openshift.expose-services_label": "WARN",
-                     "help_file_or_readme_required": "FAIL",
+                     "vcs-url_label": "FAIL",
+                     "io.openshift.expose-services_label": "FAIL",
+                     "help_file_or_readme": "FAIL",
                      "cmd_or_entrypoint": "PASS",
                      "no_root": "FAIL",
-    }
+                     }
     labels_dict = {}
-    for res in result.all_results:
+    for res in result.results:
         labels_dict[res.check_name] = res.status
     for key in expected_dict.keys():
         assert labels_dict[key] == expected_dict[key]

@@ -23,11 +23,15 @@ from conu import DockerBackend
 @pytest.fixture()
 def ruleset():
     return {
-        "dynamic": {
-            "required": [
-                "shell"
-            ]
-        }
+        "version": "1",
+        "name": "Laughing out loud ruleset",
+        "description": "This set of checks is required to pass because we said it",
+        "contact_email": "forgot-to-reply@example.nope",
+        "checks": [
+            {
+                "name": "shell_runnable"
+            }
+        ]
     }
 
 

@@ -24,17 +24,34 @@ import pytest
 @pytest.fixture()
 def ruleset():
     return {
-        "labels": {
-            "required": [
-                "maintainer",
-                "name",
-                "com_redhat_component"
-            ],
-            "optional": [
-                "help"
-            ]
-        },
+        "version": "1",
+        "name": "Laughing out loud ruleset",
+        "description": "This set of checks is required to pass because we said it",
+        "contact_email": "forgot-to-reply@example.nope",
+        "checks": [
+            {
+                "name": "maintainer_label"
+            },
+            {
+                "name": "name_label"
+            },
+            {
+                "name": "com.redhat.component_label"
+            },
+            {
+                "name": "help_label"
+            }
+        ]
     }
+
+
+@pytest.fixture()
+def expected_dict():
+    return {"maintainer_label": "PASS",
+            "name_label": "PASS",
+            "com.redhat.component_label": "PASS",
+            "help_label": "FAIL",
+            }
 
 
 def get_results_from_colin_labels_image(ruleset_name=None, ruleset_file=None, ruleset=None):
@@ -42,7 +59,7 @@ def get_results_from_colin_labels_image(ruleset_name=None, ruleset_file=None, ru
                      ruleset_file=ruleset_file, ruleset=ruleset)
 
 
-def test_specific_ruleset_as_fileobj(tmpdir, ruleset):
+def test_specific_ruleset_as_fileobj(tmpdir, ruleset, expected_dict):
     (_, t) = tempfile.mkstemp(dir=str(tmpdir))
 
     with open(t, "w") as f:
@@ -50,28 +67,18 @@ def test_specific_ruleset_as_fileobj(tmpdir, ruleset):
     with open(t, "r") as f:
         result = get_results_from_colin_labels_image(ruleset_file=f)
     assert result
-    expected_dict = {"maintainer_label_required": "PASS",
-                     "name_label_required": "PASS",
-                     "com_redhat_component_label_required": "PASS",
-                     "help_label": "WARN",
-    }
     labels_dict = {}
-    for res in result.all_results:
+    for res in result.results:
         labels_dict[res.check_name] = res.status
     for key in expected_dict.keys():
         assert labels_dict[key] == expected_dict[key]
 
 
-def test_specific_ruleset_directly(ruleset):
+def test_specific_ruleset_directly(ruleset, expected_dict):
     result = get_results_from_colin_labels_image(ruleset=ruleset)
     assert result
-    expected_dict = {"maintainer_label_required": "PASS",
-                     "name_label_required": "PASS",
-                     "com_redhat_component_label_required": "PASS",
-                     "help_label": "WARN",
-                     }
     labels_dict = {}
-    for res in result.all_results:
+    for res in result.results:
         labels_dict[res.check_name] = res.status
     for key in expected_dict.keys():
         assert labels_dict[key] == expected_dict[key]

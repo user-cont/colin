@@ -63,7 +63,7 @@ class Ruleset(object):
             logger.debug("Processing check_struct {}.".format(check_struct))
 
             usable_targets = check_struct.usable_targets
-            if target_type and usable_targets and target_type.name not in usable_targets:
+            if target_type and usable_targets and target_type.name.lower() not in usable_targets:
                 logger.info("Skipping... Target type does not match.")
                 continue
 
