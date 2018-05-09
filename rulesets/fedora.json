@@ -86,24 +86,38 @@
       "name": "from_tag_not_latest",
       "additional_tags": [
         "required"
+      ],
+      "usable_targets": [
+        "dockerfile"
       ]
     },
     {
       "name": "maintainer_deprecated",
       "additional_tags": [
         "required"
+      ],
+      "usable_targets": [
+        "dockerfile"
       ]
     },
     {
       "name": "cmd_or_entrypoint",
       "additional_tags": [
         "required"
+      ],
+      "usable_targets": [
+        "image",
+        "container"
       ]
     },
     {
       "name": "help_file_or_readme",
       "additional_tags": [
         "required"
+      ],
+      "usable_targets": [
+        "image",
+        "container"
       ]
     },
     {
