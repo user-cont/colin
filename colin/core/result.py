@@ -19,28 +19,22 @@ import json
 import six
 
 from ..utils.caching_iterable import CachingIterable
-from .constant import (COLOURS, ERROR, FAILED, OPTIONAL, OUTPUT_CHARS, PASSED,
-                       REQUIRED, WARNING)
+from .constant import (COLOURS, ERROR, FAILED, OUTPUT_CHARS, PASSED)
 
 
 class CheckResult(object):
 
-    def __init__(self, ok, description, message, reference_url, check_name, severity, logs):
+    def __init__(self, ok, description, message, reference_url, check_name, logs):
         self.ok = ok
         self.description = description
         self.message = message
         self.reference_url = reference_url
         self.check_name = check_name
-        self.severity = severity
         self.logs = logs
 
     @property
     def status(self):
-        statuses = {REQUIRED: (PASSED, FAILED),
-                    OPTIONAL: (PASSED, WARNING)}
-        status_ok, status_nok = statuses[self.severity]
-
-        return status_ok if self.ok else status_nok
+        return PASSED if self.ok else FAILED
 
     def __str__(self):
         return "{}:{}".format(self.status,
@@ -49,10 +43,10 @@ class CheckResult(object):
 
 class DockerfileCheckResult(CheckResult):
 
-    def __init__(self, ok, description, message, reference_url, check_name, severity, lines=None,
+    def __init__(self, ok, description, message, reference_url, check_name, lines=None,
                  correction_diff=None):
         super(self.__class__, self) \
-            .__init__(ok, description, message, reference_url, check_name, severity)
+            .__init__(ok, description, message, reference_url, check_name)
         self.lines = lines
         self.correction_diff = correction_diff
 
@@ -70,20 +64,19 @@ class CheckResults(object):
         :return: dict (str -> dict (str -> str))
         """
         result_json = {}
-        for group, results in self.results:
-            result_list = []
-            for r in results:
-                result_list.append({
-                    'name': r.check_name,
-                    'ok': r.ok,
-                    'status': r.status,
-                    'description': r.description,
-                    'message': r.message,
-                    'reference_url': r.reference_url,
-                    'severity': r.severity,
-                    'logs': r.logs,
-                })
-            result_json[group] = result_list
+
+        result_list = []
+        for r in self.results:
+            result_list.append({
+                'name': r.check_name,
+                'ok': r.ok,
+                'status': r.status,
+                'description': r.description,
+                'message': r.message,
+                'reference_url': r.reference_url,
+                'logs': r.logs,
+            })
+        result_json["checks"] = result_list
         return result_json
 
     @property
@@ -94,18 +87,6 @@ class CheckResults(object):
         :return: str
         """
         return json.dumps(self._dict_of_results, indent=4)
-
-    @property
-    def all_results(self):
-        """
-        Get the list of all results
-
-        :return: list of Result instances
-        """
-        result = []
-        for _, checks in self.results:
-            result += checks
-        return result
 
     def save_json_to_file(self, file):
         json.dump(obj=self._dict_of_results,
@@ -120,7 +101,7 @@ class CheckResults(object):
         :return: dict(str -> int)
         """
         result = {}
-        for r in self.all_results:
+        for r in self.results:
             result.setdefault(r.status, 0)
             result[r.status] += 1
         return result
@@ -153,36 +134,26 @@ class CheckResults(object):
         :param verbose: bool
         :param output_function: function to send output to
         """
-        for group, check_results in self.results:
 
-            group_title_printed = False
-            for r in check_results:
+        for r in self.results:
 
-                if not group_title_printed:
-                    output_function("{}:".format(group.upper()),
-                                    nl=not stat)
-                    group_title_printed = True
-
-                if stat:
-                    output_function(OUTPUT_CHARS[r.status],
-                                    fg=COLOURS[r.status],
-                                    nl=False)
-                else:
-                    output_function(str(r), fg=COLOURS[r.status])
-                    if verbose:
-                        output_function("  -> {}\n"
-                                        "  -> {}".format(r.description,
-                                                         r.reference_url),
+            if stat:
+                output_function(OUTPUT_CHARS[r.status],
+                                fg=COLOURS[r.status],
+                                nl=False)
+            else:
+                output_function(str(r), fg=COLOURS[r.status])
+                if verbose:
+                    output_function("  -> {}\n"
+                                    "  -> {}".format(r.description,
+                                                     r.reference_url),
+                                    fg=COLOURS[r.status])
+                    if logs and r.logs:
+                        output_function("  -> logs:",
                                         fg=COLOURS[r.status])
-                        if logs and r.logs:
-                            output_function("  -> logs:",
+                        for l in r.logs:
+                            output_function("    -> {}".format(l),
                                             fg=COLOURS[r.status])
-                            for l in r.logs:
-                                output_function("    -> {}".format(l),
-                                                fg=COLOURS[r.status])
-
-            if group_title_printed and stat:
-                output_function("")
 
         if not stat or verbose:
             output_function("")
@@ -214,7 +185,6 @@ class FailedCheckResult(CheckResult):
                       description=check.description,
                       reference_url=check.reference_url,
                       check_name=check.name,
-                      severity=check.severity,
                       logs=logs or []
                       )
 

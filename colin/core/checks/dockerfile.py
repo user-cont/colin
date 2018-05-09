@@ -63,7 +63,6 @@ class InstructionCheck(DockerfileCheck):
             logger.debug(log)
 
         return CheckResult(ok=passed,
-                           severity=self.severity,
                            description=self.description,
                            message=self.message,
                            reference_url=self.reference_url,
@@ -95,7 +94,6 @@ class InstructionCountCheck(DockerfileCheck):
             passed = passed and count <= self.max_count
 
         return CheckResult(ok=passed,
-                           severity=self.severity,
                            description=self.description,
                            message=self.message,
                            reference_url=self.reference_url,
@@ -120,7 +118,6 @@ class DockerfileLabelCheck(DockerfileCheck):
                              labels=labels)
 
         return CheckResult(ok=passed,
-                           severity=self.severity,
                            description=self.description,
                            message=self.message,
                            reference_url=self.reference_url,

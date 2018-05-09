@@ -34,7 +34,6 @@ class FromTagNotLatestCheck(DockerfileCheck):
         im = ImageName.parse(target.instance.baseimage)
         passed = im.tag and im.tag != "latest"
         return CheckResult(ok=passed,
-                           severity=self.severity,
                            description=self.description,
                            message=self.message,
                            reference_url=self.reference_url,

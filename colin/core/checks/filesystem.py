@@ -49,7 +49,6 @@ class FileSystemCheck(ContainerCheck, ImageCheck):
                         passed = f_present or passed
 
                 return CheckResult(ok=passed,
-                                   severity=self.severity,
                                    description=self.description,
                                    message=self.message,
                                    reference_url=self.reference_url,

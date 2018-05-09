@@ -56,7 +56,6 @@ class EnvCheck(ContainerCheck, ImageCheck):
             passed = not self.required
 
         return CheckResult(ok=passed,
-                           severity=self.severity,
                            description=self.description,
                            message=self.message,
                            reference_url=self.reference_url,

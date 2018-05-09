@@ -47,7 +47,6 @@ class CmdOrEntrypointCheck(ContainerCheck, ImageCheck):
 
         passed = cmd_present or entrypoint_present
         return CheckResult(ok=passed,
-                           severity=self.severity,
                            description=self.description,
                            message=self.message,
                            reference_url=self.reference_url,
@@ -100,7 +99,6 @@ class NoRootCheck(ContainerCheck, ImageCheck):
         root_present = "User" in metadata and metadata["User"] in ["", "0", "root"]
 
         return CheckResult(ok=not root_present,
-                           severity=self.severity,
                            description=self.description,
                            message=self.message,
                            reference_url=self.reference_url,

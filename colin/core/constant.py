@@ -20,22 +20,16 @@ JSON = ".json"
 
 PASSED = "PASS"
 FAILED = "FAIL"
-WARNING = "WARN"
 ERROR = "ERROR"
-
-REQUIRED = "required"
-OPTIONAL = "optional"
 
 COLOURS = {
     PASSED: "green",
-    WARNING: "yellow",
     FAILED: "red",
     ERROR: "red"
 }
 
 OUTPUT_CHARS = {
     PASSED: ".",
-    WARNING: "!",
     FAILED: "x",
     ERROR: "#"
 }

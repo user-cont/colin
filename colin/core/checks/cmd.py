@@ -41,7 +41,6 @@ class CmdCheck(ContainerCheck, ImageCheck):
         except ConuException as ex:
             if str(ex).endswith("exit code 126") or str(ex).endswith("error: 127"):
                 return CheckResult(ok=False,
-                                   severity=self.severity,
                                    description=self.description,
                                    message=self.message,
                                    reference_url=self.reference_url,
@@ -87,7 +86,6 @@ class CmdCheck(ContainerCheck, ImageCheck):
                 passed = False
 
         return CheckResult(ok=passed,
-                           severity=self.severity,
                            description=self.description,
                            message=self.message,
                            reference_url=self.reference_url,

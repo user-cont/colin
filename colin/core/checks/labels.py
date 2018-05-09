@@ -36,7 +36,6 @@ class LabelCheck(ContainerCheck, ImageCheck, DockerfileCheck):
                              labels=target.labels)
 
         return CheckResult(ok=passed,
-                           severity=self.severity,
                            description=self.description,
                            message=self.message,
                            reference_url=self.reference_url,
@@ -59,7 +58,6 @@ class DeprecatedLabelCheck(ContainerCheck, ImageCheck, DockerfileCheck):
         passed = (not old_present) or (self.new_label in labels)
 
         return CheckResult(ok=passed,
-                           severity=self.severity,
                            description=self.description,
                            message=self.message,
                            reference_url=self.reference_url,
