@@ -1,4 +1,4 @@
-from colin.checks.abstract.abstract_check import AbstractCheck
+from colin.core.checks.abstract_check import AbstractCheck
 
 
 class FunkyCheck(AbstractCheck):

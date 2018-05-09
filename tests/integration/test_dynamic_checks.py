@@ -15,10 +15,9 @@
 #
 import os
 
+import colin
 import pytest
 from conu import DockerBackend
-
-import colin
 
 
 @pytest.fixture()

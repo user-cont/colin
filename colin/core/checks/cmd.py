@@ -15,11 +15,12 @@
 #
 import re
 
-from colin.checks.abstract.containers import ContainerCheck
-from colin.checks.abstract.images import ImageCheck
-from colin.checks.result import CheckResult, FailedCheckResult
-from colin.core.exceptions import ColinException
 from conu import ConuException
+
+from ..exceptions import ColinException
+from ..result import CheckResult, FailedCheckResult
+from .containers import ContainerCheck
+from .images import ImageCheck
 
 
 class CmdCheck(ContainerCheck, ImageCheck):

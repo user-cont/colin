@@ -19,8 +19,8 @@ import traceback
 
 from six import iteritems
 
-from ..checks.result import CheckResults, FailedCheckResult
 from ..utils.caching_iterable import CachingIterable
+from .result import CheckResults, FailedCheckResult
 
 logger = logging.getLogger(__name__)
 

@@ -17,11 +17,12 @@
 import logging
 import os
 
-from .loader import get_ruleset_struct_from_file, get_ruleset_struct_from_fileobj, RulesetStruct
 from ..constant import JSON, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME
 from ..exceptions import ColinRulesetException
 from ..loader import CheckLoader
 from ..target import is_compatible
+from .loader import (RulesetStruct, get_ruleset_struct_from_file,
+                     get_ruleset_struct_from_fileobj)
 
 logger = logging.getLogger(__name__)
 

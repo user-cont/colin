@@ -1,7 +1,6 @@
 import os
 
 import pytest
-
 from colin.core.ruleset.ruleset import Ruleset
 
 

@@ -16,9 +16,9 @@
 import logging
 import re
 
-from ..check_utils import check_label
 from ..result import CheckResult
 from .abstract_check import AbstractCheck
+from .check_utils import check_label
 
 logger = logging.getLogger(__name__)
 

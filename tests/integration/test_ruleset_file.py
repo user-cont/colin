@@ -16,8 +16,8 @@
 
 import json
 import tempfile
-import colin
 
+import colin
 import pytest
 
 

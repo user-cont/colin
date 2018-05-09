@@ -18,9 +18,9 @@ import json
 
 import six
 
-from ..core.constant import (COLOURS, ERROR, FAILED, OPTIONAL, OUTPUT_CHARS,
-                             PASSED, REQUIRED, WARNING)
 from ..utils.caching_iterable import CachingIterable
+from .constant import (COLOURS, ERROR, FAILED, OPTIONAL, OUTPUT_CHARS, PASSED,
+                       REQUIRED, WARNING)
 
 
 class CheckResult(object):

@@ -22,7 +22,6 @@ import logging
 
 from ..exceptions import ColinRulesetException
 
-
 logger = logging.getLogger(__name__)
 
 
