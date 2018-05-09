@@ -39,8 +39,13 @@ in as many details as possible.
 * The tests have to pass.
 
 # How to write the new check to colin
-All checks are stored in the directory [checks](https://github.com/user-cont/colin/tree/master/colin/checks).
-[Loader](https://github.com/user-cont/colin/tree/master/colin/core/loader.py) scans this directory and looks for instances of AbstractCheck class.
+All checks are stored in the directory
+[checks](https://github.com/user-cont/colin/tree/master/colin/checks).
+[Loader](https://github.com/user-cont/colin/tree/master/colin/core/loader.py)
+obtains checks from there, and here's how:
+ * classes which end with `AbstractCheck` are NOT loaded
+ * only classes which with `Check` are loaded
+ * the check class needs to be a child of a `AbstractCheck`
 
 Here's a simple template how you can create a new check:
 

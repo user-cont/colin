@@ -35,4 +35,4 @@ def test_loading_custom_check(tmpdir):
     a_check_dir = os.path.join(tests_dir, "data", "a_check")
     shutil.copytree(a_check_dir, str(tmpdir.join("a_check")))
     l = CheckLoader(str(tmpdir))
-    assert len(l.check_classes) == 2  # the check and abstract check
+    assert len(l.check_classes) == 1

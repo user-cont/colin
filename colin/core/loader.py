@@ -62,7 +62,14 @@ def _load_module(path, top_path):
         return m
 
 
-def is_subclass_of_abstract_check(kls):
+def should_we_load(kls):
+    """ should we load this class as a check? """
+    # we don't load abstract classes
+    if kls.__name__.endswith("AbstractCheck"):
+        return False
+    # and we only load checks
+    if not kls.__name__.endswith("Check"):
+        return False
     mro = kls.__mro__
     for m in mro:
         if m.__name__ == "AbstractCheck":
@@ -76,8 +83,7 @@ def load_check_classes_from_file(path, top_path):
 
     check_classes = []
     for name, obj in inspect.getmembers(m, inspect.isclass):
-        # FIXME: we should put a property 'loadable' on checks which are meant to be loaded
-        if is_subclass_of_abstract_check(obj):
+        if should_we_load(obj):
             check_classes.append(obj)
             logger.debug("Check class '{}' found.".format(obj.__name__))
     return check_classes
