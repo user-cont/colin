@@ -46,6 +46,9 @@ class Ruleset(object):
             logger.debug("Loading ruleset with the name '{}'.".format(ruleset_name))
             ruleset_path = get_ruleset_file(ruleset=ruleset_name)
             self.ruleset_struct = get_ruleset_struct_from_file(ruleset_path)
+        if self.ruleset_struct.version not in ["1", 1]:
+            raise ColinRulesetException("colin accepts only ruleset version '1'. You provided %r"
+                                        % self.ruleset_struct.version)
 
     def get_checks(self, target_type, tags=None):
         """

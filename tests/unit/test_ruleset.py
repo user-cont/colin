@@ -1,6 +1,8 @@
 import os
 
 import pytest
+
+from colin.core.exceptions import ColinRulesetException
 from colin.core.ruleset.ruleset import Ruleset
 
 
@@ -47,7 +49,7 @@ def test_ruleset_additional_tags():
     assert list(set(tags).intersection(set(checks[0].tags))) == tags
 
 
-@pytest.mark.parametrize("tags,expected_check_name",[
+@pytest.mark.parametrize("tags,expected_check_name", [
     (["banana"], None),
     (["name"], "name_label_required")
 ])
@@ -67,3 +69,24 @@ def test_ruleset_tags_filtering(tags, expected_check_name):
         assert checks[0].name == expected_check_name
     else:
         assert len(checks) == 0
+
+
+# version in ruleset, should this case raise an exception?
+@pytest.mark.parametrize("version,should_raise", [
+    (1, False),
+    ("1", False),
+    ("banana", True),
+    (None, True),
+    ("", True),
+    ("<blank>", True),
+])
+def test_ruleset_version(version, should_raise):
+    if version == "<blank>":
+        r = {"banana": 123}
+    else:
+        r = {"version": version}
+    if should_raise:
+        with pytest.raises(ColinRulesetException):
+            Ruleset(ruleset=r)
+    else:
+        assert Ruleset(ruleset=r)
