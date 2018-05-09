@@ -93,6 +93,12 @@ class Ruleset(object):
                     logger.debug("Check '{}' not passed the tag control: {}".format(check_instance.name,
                                                                                     tags))
                     continue
+
+            # and finally, attach attributes from ruleset to the check instance
+            for k, v in check_struct.other_attributes.items():
+                # yes, this overrides things; yes, users may easily and severely broke their setup
+                setattr(check_instance, k, v)
+
             result.append(check_instance)
             logger.debug("Check instance {} added.".format(check_instance.name))
 

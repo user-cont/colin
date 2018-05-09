@@ -5,7 +5,7 @@
   "contact_email": "forgot-to-reply@example.nope",
   "checks": [
     {
-      "name": "name_label_required",
+      "name": "name_label",
       "additional_tags": [
         "fuj",
         "bar"

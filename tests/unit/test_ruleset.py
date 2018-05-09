@@ -37,7 +37,7 @@ def test_ruleset_tags():
         "version": "1",
         "checks": [
             {
-                "name": "name_label_required",
+                "name": "name_label",
                 "tags": tags.copy()
             }
         ]
@@ -54,7 +54,7 @@ def test_ruleset_additional_tags():
         "version": "1",
         "checks": [
             {
-                "name": "name_label_required",
+                "name": "name_label",
                 "additional_tags": tags.copy()
             }
         ]
@@ -67,14 +67,14 @@ def test_ruleset_additional_tags():
 
 @pytest.mark.parametrize("tags,expected_check_name", [
     (["banana"], None),
-    (["name"], "name_label_required")
+    (["name"], "name_label")
 ])
 def test_ruleset_tags_filtering(tags, expected_check_name):
     r = {
         "version": "1",
         "checks": [
             {
-                "name": "name_label_required"
+                "name": "name_label"
             }
         ]
     }
@@ -106,3 +106,23 @@ def test_ruleset_version(version, should_raise):
             Ruleset(ruleset=r)
     else:
         assert Ruleset(ruleset=r)
+
+
+def test_ruleset_override():
+    m = "my-message!"
+    r = {
+        "version": "1",
+        "checks": [
+            {
+                "name": "name_label",
+                "tags": ["a", "b"],
+                "just": "testing",
+                "message": m
+            }
+        ]
+    }
+    r = Ruleset(ruleset=r)
+    checks = r.get_checks(None)
+    assert len(checks) == 1
+    assert checks[0].message == m
+    assert checks[0].just == "testing"

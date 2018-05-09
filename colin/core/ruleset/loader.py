@@ -108,6 +108,12 @@ class CheckStruct(object):
     def usable_targets(self):
         return self._get(False, "usable_targets")
 
+    @property
+    def other_attributes(self):
+        """ return dict with all other data except for the described above"""
+        return {k: v for k, v in self.c.items() if
+                k not in ["name", "tags", "additional_tags", "usable_targets"]}
+
 
 class RulesetStruct(object):
     """
