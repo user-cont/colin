@@ -55,34 +55,32 @@ def test_check_help_command():
 
 def test_list_checks():
     result = _call_colin(list_checks)
-    expected_output = """LABELS:
-maintainer_label_required
+    expected_output = """maintainer_label
    -> Label 'maintainer' has to be specified.
    -> The name and email of the maintainer (usually the submitter).
    -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-   -> ['maintainer', 'label']
-   -> required
-
-DOCKERFILE:
-maintainer_deprecated
-   -> Dockerfile instruction `MAINTAINER` is deprecated.
-   -> Replace with label 'maintainer'.
-   -> https://docs.docker.com/engine/reference/builder/#maintainer-deprecated
-   -> ['maintainer', 'dockerfile', 'deprecated']
-   -> required
+   -> ['maintainer', 'label', 'required']
+   -> None
 
 from_tag_not_latest
    -> In FROM, tag has to be specified and not 'latest'.
    -> Using the 'latest' tag may cause unpredictable builds.It is recommended that a specific tag is used in the FROM.
    -> https://fedoraproject.org/wiki/Container:Guidelines#FROM
-   -> ['from', 'dockerfile', 'baseimage', 'latest']
-   -> optional
+   -> ['from', 'dockerfile', 'baseimage', 'latest', 'required']
+   -> None
+
+maintainer_deprecated
+   -> Dockerfile instruction `MAINTAINER` is deprecated.
+   -> Replace with label 'maintainer'.
+   -> https://docs.docker.com/engine/reference/builder/#maintainer-deprecated
+   -> ['maintainer', 'dockerfile', 'deprecated', 'required']
+   -> None
 
 """
     assert result.exit_code == 0
     assert result.output == expected_output
     assert _call_colin(list_checks, parameters=["-r", "default"]).output == \
-        _call_colin(list_checks).output
+           _call_colin(list_checks).output
 
 
 def test_list_checks_help_command():
@@ -94,7 +92,7 @@ def test_list_checks_help_command():
 def test_list_checks_fedora():
     result = _call_colin(list_checks, parameters=["-r", "fedora"])
     assert result.exit_code == 0
-    assert "maintainer_label_required" in result.output
+    assert "maintainer_label" in result.output
     assert "maintainer_deprecated" in result.output
     assert "from_tag_not_latest" in result.output
 

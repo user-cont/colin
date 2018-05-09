@@ -191,16 +191,8 @@ def _print_results(results, stat=False, verbose=False):
 
 
 def _print_checks(checks):
-    for (group, group_checks) in iteritems(checks):
-
-        group_title_printed = False
-        for check in group_checks:
-
-            if not group_title_printed:
-                click.secho("{}:".format(group.upper()))
-                group_title_printed = True
-
-            click.echo(str(check))
+    for check in checks:
+        click.echo(str(check))
 
 
 def _get_log_level(debug, verbose):
