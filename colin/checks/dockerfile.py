@@ -1,6 +1,5 @@
-from colin.checks.abstract.dockerfile import (DockerfileCheck,
-                                              InstructionCountCheck)
-from colin.checks.result import CheckResult
+from colin.core.checks.dockerfile import DockerfileCheck, InstructionCountCheck
+from colin.core.result import CheckResult
 from colin.core.target import ImageName
 
 

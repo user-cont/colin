@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from ...core.exceptions import ColinException
+from ..exceptions import ColinException
 from ..result import CheckResult
 from .containers import ContainerCheck
 from .images import ImageCheck

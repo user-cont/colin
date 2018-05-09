@@ -1,4 +1,4 @@
-from colin.checks.abstract.cmd import CmdCheck
+from colin.core.checks.cmd import CmdCheck
 
 
 class ShellRunableCheck(CmdCheck):

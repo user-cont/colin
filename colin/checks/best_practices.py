@@ -1,9 +1,9 @@
 import logging
 
-from colin.checks.abstract.containers import ContainerCheck
-from colin.checks.abstract.filesystem import FileSystemCheck
-from colin.checks.abstract.images import ImageCheck
-from colin.checks.result import CheckResult
+from colin.core.checks.containers import ContainerCheck
+from colin.core.checks.filesystem import FileSystemCheck
+from colin.core.checks.images import ImageCheck
+from colin.core.result import CheckResult
 
 logger = logging.getLogger(__name__)
 

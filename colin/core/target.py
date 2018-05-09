@@ -26,10 +26,10 @@ from conu.apidefs.image import Image
 from docker.errors import NotFound
 from dockerfile_parse import DockerfileParser
 
-from ..checks.abstract.containers import ContainerCheck
-from ..checks.abstract.dockerfile import DockerfileCheck
-from ..checks.abstract.images import ImageCheck
 from ..core.exceptions import ColinException
+from .checks.containers import ContainerCheck
+from .checks.dockerfile import DockerfileCheck
+from .checks.images import ImageCheck
 
 logger = logging.getLogger(__name__)
 

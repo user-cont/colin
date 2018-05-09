@@ -16,6 +16,7 @@
 
 import colin
 
+
 def get_results_from_colin_labels_image():
     return colin.run("colin-labels", ruleset_name="fedora")
 

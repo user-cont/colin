@@ -1,4 +1,4 @@
-from colin.checks.abstract.labels import LabelCheck
+from colin.core.checks.labels import LabelCheck
 
 
 class ArchitectureLabelCheck(LabelCheck):

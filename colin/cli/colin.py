@@ -19,9 +19,9 @@ import sys
 
 import click as click
 import six
+from colin.core.checks.abstract_check import AbstractCheck
 from six import iteritems
 
-from ..checks.abstract.abstract_check import AbstractCheck
 from ..core.colin import get_checks, run
 from ..core.exceptions import ColinException
 from ..core.ruleset.ruleset import get_rulesets

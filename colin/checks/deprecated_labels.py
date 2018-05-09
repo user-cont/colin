@@ -1,4 +1,4 @@
-from colin.checks.abstract.labels import DeprecatedLabelCheck
+from colin.core.checks.labels import DeprecatedLabelCheck
 
 
 class ArchitectureLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
