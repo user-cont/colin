@@ -28,9 +28,9 @@ class FunkyCheck(AbstractCheck):
         )
 
 
-class ThisIsNotAČěck(AbstractCheck):
+class ThisIsNotAChekk(AbstractCheck):
     def __init__(self):
-        super(ThisIsNotAČěck, self).__init__(
+        super(ThisIsNotAChekk, self).__init__(
             name="this-is-not-a-check",
             message="yes!",
             description="no",
@@ -39,9 +39,9 @@ class ThisIsNotAČěck(AbstractCheck):
         )
 
 
-class ThisIsAlsoNotAČěck(object):
+class ThisIsAlsoNotAChekk(object):
     def __init__(self):
-        super(ThisIsAlsoNotAČěck, self).__init__(
+        super(ThisIsAlsoNotAChekk, self).__init__(
             name="this-is-also-not-a-check",
             message="yes!",
             description="no",

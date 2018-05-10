@@ -16,11 +16,11 @@
 
 from ..exceptions import ColinException
 from ..result import CheckResult
-from .containers import ContainerCheck
-from .images import ImageCheck
+from .containers import ContainerAbstractCheck
+from .images import ImageAbstractCheck
 
 
-class FileSystemCheck(ContainerCheck, ImageCheck):
+class FileSystemCheck(ContainerAbstractCheck, ImageAbstractCheck):
 
     def __init__(self, name, message, description, reference_url, tags, files, all_must_be_present):
         super(FileSystemCheck, self) \

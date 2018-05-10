@@ -37,13 +37,13 @@ def ruleset():
 
 def test_dynamic_check_ls(ruleset):
     image = build_image(dockerfile="Dockerfile-ls")
-    results = colin.run(target=image, ruleset=ruleset)
+    results = colin.run(target=image, ruleset=ruleset, logging_level=10)
     assert not results.ok
 
 
 def test_dynamic_check_bash(ruleset):
     image = build_image(dockerfile="Dockerfile-bash")
-    results = colin.run(target=image, ruleset=ruleset)
+    results = colin.run(target=image, ruleset=ruleset, logging_level=10)
     assert results.ok
 
 

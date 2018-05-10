@@ -70,12 +70,13 @@ class Ruleset(object):
             try:
                 check_instance = self.check_loader.mapping[check_struct.name]
             except KeyError:
-                raise ColinRulesetException("Can't find code for check %s.", check_struct.name)
+                raise ColinRulesetException(
+                    "Can't find code for check {}.".format(check_struct.name))
 
             if check_struct.tags:
                 logger.info("Overriding check's tags %s with the one defined in ruleset: %s",
                             check_instance.tags, check_struct.tags)
-                check_instance.tags = check_struct.tags.copy()
+                check_instance.tags = check_struct.tags[:]
             if check_struct.additional_tags:
                 logger.info("Adding additional tags: %s", check_struct.additional_tags)
                 check_instance.tags += check_struct.additional_tags

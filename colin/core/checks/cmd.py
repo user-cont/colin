@@ -19,16 +19,16 @@ from conu import ConuException
 
 from ..exceptions import ColinException
 from ..result import CheckResult, FailedCheckResult
-from .containers import ContainerCheck
-from .images import ImageCheck
+from .containers import ContainerAbstractCheck
+from .images import ImageAbstractCheck
 
 
-class CmdCheck(ContainerCheck, ImageCheck):
+class CmdCheck(ContainerAbstractCheck, ImageAbstractCheck):
 
     def __init__(self, name, message, description, reference_url, tags, cmd, expected_output=None,
                  expected_regex=None,
                  substring=None):
-        super().__init__(name, message, description, reference_url, tags)
+        super(CmdCheck, self).__init__(name, message, description, reference_url, tags)
         self.cmd = cmd
         self.expected_output = expected_output
         self.expected_regex = expected_regex

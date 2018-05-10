@@ -35,11 +35,11 @@ def get_instructions_from_dockerfile_parse(dfp, instruction):
     return [inst for inst in dfp.structure if inst["instruction"] == instruction]
 
 
-class DockerfileCheck(AbstractCheck):
+class DockerfileAbstractCheck(AbstractCheck):
     pass
 
 
-class InstructionCheck(DockerfileCheck):
+class InstructionCheck(DockerfileAbstractCheck):
 
     def __init__(self, name, message, description, reference_url, tags, instruction, value_regex, required):
         super(InstructionCheck, self) \
@@ -70,7 +70,7 @@ class InstructionCheck(DockerfileCheck):
                            logs=logs)
 
 
-class InstructionCountCheck(DockerfileCheck):
+class InstructionCountCheck(DockerfileAbstractCheck):
 
     def __init__(self, name, message, description, reference_url, tags, instruction, min_count=None, max_count=None):
         super(InstructionCountCheck, self) \
@@ -101,7 +101,7 @@ class InstructionCountCheck(DockerfileCheck):
                            logs=[log])
 
 
-class DockerfileLabelCheck(DockerfileCheck):
+class DockerfileLabelCheck(DockerfileAbstractCheck):
 
     def __init__(self, name, message, description, reference_url, tags, label, required, value_regex=None):
         super(DockerfileLabelCheck, self) \

@@ -38,7 +38,7 @@ def test_ruleset_tags():
         "checks": [
             {
                 "name": "name_label",
-                "tags": tags.copy()
+                "tags": tags[:]
             }
         ]
     }
@@ -55,7 +55,7 @@ def test_ruleset_additional_tags():
         "checks": [
             {
                 "name": "name_label",
-                "additional_tags": tags.copy()
+                "additional_tags": tags[:]
             }
         ]
     }

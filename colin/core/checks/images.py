@@ -17,9 +17,9 @@
 from .abstract_check import AbstractCheck
 
 
-class ImageCheck(AbstractCheck):
+class ImageAbstractCheck(AbstractCheck):
     pass
 
 
-class FilesystemCheck(AbstractCheck):
+class FilesystemAbstractCheck(AbstractCheck):
     pass

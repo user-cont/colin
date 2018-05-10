@@ -64,7 +64,7 @@ def get_checks(target_type=None, tags=None, ruleset_name=None,
     :param ruleset_file: fileobj instance holding ruleset configuration
     :param ruleset: dict, content of a ruleset file
     :param logging_level: logging level (default logging.WARNING)
-    :return: list of checks
+    :return: list of check instances
     """
     _set_logging(level=logging_level)
     logger.debug("Finding checks started.")

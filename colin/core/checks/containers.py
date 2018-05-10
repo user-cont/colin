@@ -17,5 +17,5 @@
 from .abstract_check import AbstractCheck
 
 
-class ContainerCheck(AbstractCheck):
+class ContainerAbstractCheck(AbstractCheck):
     pass

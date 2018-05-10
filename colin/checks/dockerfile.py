@@ -14,12 +14,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from colin.core.checks.dockerfile import DockerfileCheck, InstructionCountCheck
+from colin.core.checks.dockerfile import DockerfileAbstractCheck, InstructionCountCheck
 from colin.core.result import CheckResult
 from colin.core.target import ImageName
 
 
-class FromTagNotLatestCheck(DockerfileCheck):
+class FromTagNotLatestCheck(DockerfileAbstractCheck):
 
     def __init__(self):
         super(FromTagNotLatestCheck, self) \

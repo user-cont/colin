@@ -27,9 +27,9 @@ from docker.errors import NotFound
 from dockerfile_parse import DockerfileParser
 
 from ..core.exceptions import ColinException
-from .checks.containers import ContainerCheck
-from .checks.dockerfile import DockerfileCheck
-from .checks.images import ImageCheck
+from .checks.containers import ContainerAbstractCheck
+from .checks.dockerfile import DockerfileAbstractCheck
+from .checks.images import ImageAbstractCheck
 
 logger = logging.getLogger(__name__)
 
@@ -44,9 +44,9 @@ def is_compatible(target_type, check_instance):
     """
     if not target_type:
         return True
-    return (target_type == TargetType.DOCKERFILE and isinstance(check_instance, DockerfileCheck)) \
-           or (target_type == TargetType.CONTAINER and isinstance(check_instance, ContainerCheck)) \
-           or (target_type == TargetType.IMAGE and isinstance(check_instance, ImageCheck))
+    return (target_type == TargetType.DOCKERFILE and isinstance(check_instance, DockerfileAbstractCheck)) \
+           or (target_type == TargetType.CONTAINER and isinstance(check_instance, ContainerAbstractCheck)) \
+           or (target_type == TargetType.IMAGE and isinstance(check_instance, ImageAbstractCheck))
 
 
 class Target(object):

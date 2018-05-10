@@ -15,12 +15,12 @@
 #
 from ..result import CheckResult
 from .check_utils import check_label
-from .containers import ContainerCheck
-from .dockerfile import DockerfileCheck
-from .images import ImageCheck
+from .containers import ContainerAbstractCheck
+from .dockerfile import DockerfileAbstractCheck
+from .images import ImageAbstractCheck
 
 
-class LabelCheck(ContainerCheck, ImageCheck, DockerfileCheck):
+class LabelCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileAbstractCheck):
 
     def __init__(self, name, message, description, reference_url, tags, label, required, value_regex=None):
         super(LabelCheck, self) \
@@ -43,7 +43,7 @@ class LabelCheck(ContainerCheck, ImageCheck, DockerfileCheck):
                            logs=[])
 
 
-class DeprecatedLabelCheck(ContainerCheck, ImageCheck, DockerfileCheck):
+class DeprecatedLabelCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileAbstractCheck):
 
     def __init__(self, name, message, description, reference_url, tags, old_label, new_label):
         super(DeprecatedLabelCheck, self) \

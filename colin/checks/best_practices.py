@@ -16,15 +16,15 @@
 
 import logging
 
-from colin.core.checks.containers import ContainerCheck
+from colin.core.checks.containers import ContainerAbstractCheck
 from colin.core.checks.filesystem import FileSystemCheck
-from colin.core.checks.images import ImageCheck
+from colin.core.checks.images import ImageAbstractCheck
 from colin.core.result import CheckResult
 
 logger = logging.getLogger(__name__)
 
 
-class CmdOrEntrypointCheck(ContainerCheck, ImageCheck):
+class CmdOrEntrypointCheck(ContainerAbstractCheck, ImageAbstractCheck):
 
     def __init__(self):
         super(CmdOrEntrypointCheck, self) \
@@ -84,7 +84,7 @@ class HelpFileCheck(FileSystemCheck):
                       all_must_be_present=False)
 
 
-class NoRootCheck(ContainerCheck, ImageCheck):
+class NoRootCheck(ContainerAbstractCheck, ImageAbstractCheck):
 
     def __init__(self):
         super(NoRootCheck, self) \

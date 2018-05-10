@@ -182,7 +182,7 @@ def _print_results(results, stat=False, verbose=False):
     Prints the results to the stdout
 
     :type verbose: bool
-    :param results: generator of group results
+    :param results: generator of results
     :param stat: if True print stat instead of full output
     """
     results.generate_pretty_output(stat=stat,

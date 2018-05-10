@@ -17,11 +17,11 @@
 import re
 
 from ..result import CheckResult
-from .containers import ContainerCheck
-from .images import ImageCheck
+from .containers import ContainerAbstractCheck
+from .images import ImageAbstractCheck
 
 
-class EnvCheck(ContainerCheck, ImageCheck):
+class EnvCheck(ContainerAbstractCheck, ImageAbstractCheck):
 
     def __init__(self, name, message, description, reference_url, tags, env_var, required, value_regex=None):
         super(EnvCheck, self) \

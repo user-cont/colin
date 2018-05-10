@@ -37,12 +37,12 @@ class AbstractCheck(object):
                "   -> {}\n" \
                "   -> {}\n" \
                "   -> {}\n" \
-               "   -> {}\n".format(self.name,
-                                   self.message,
-                                   self.description,
-                                   self.reference_url,
-                                   self.tags,
-                                   self.severity)
+               "   -> Required: {}\n".format(self.name,
+                                             self.message,
+                                             self.description,
+                                             self.reference_url,
+                                             ", ".join(self.tags),
+                                             self.severity)
 
     @property
     def json(self):
