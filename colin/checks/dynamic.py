@@ -14,10 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from colin.core.checks.cmd import CmdCheck
+from colin.core.checks.cmd import CmdAbstractCheck
 
 
-class ShellRunableCheck(CmdCheck):
+class ShellRunableCheck(CmdAbstractCheck):
 
     def __init__(self):
         super(ShellRunableCheck, self) \
