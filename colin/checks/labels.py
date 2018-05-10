@@ -152,7 +152,7 @@ class IoK8sDisplayNameLabelCheck(LabelCheck):
 
     def __init__(self):
         super(IoK8sDisplayNameLabelCheck, self) \
-            .__init__(name="io_k8s_display-name_label",
+            .__init__(name="io.k8s.display-name_label",
                       message="Label 'io.k8s.display-name' has to be specified.",
                       description="This label is used to display a human readable name of an image inside the Image / Repo Overview page.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
