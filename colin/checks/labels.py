@@ -105,10 +105,10 @@ class DescriptionLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class DescriptionScopeLabelCheck(LabelCheck):
+class DistributionScopeLabelCheck(LabelCheck):
 
     def __init__(self):
-        super(DescriptionScopeLabelCheck, self) \
+        super(DistributionScopeLabelCheck, self) \
             .__init__(name="distribution-scope_label",
                       message="Label 'distribution-scope' has to be specified.",
                       description="Scope of intended distribution of the image. (private/authoritative-source-only/restricted/public)",
