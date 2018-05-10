@@ -191,6 +191,9 @@ def _print_results(results, stat=False, verbose=False):
 
 
 def _print_checks(checks):
+    if not checks:
+        click.echo("No check found.")
+        return
     for check in checks:
         click.echo(str(check))
 

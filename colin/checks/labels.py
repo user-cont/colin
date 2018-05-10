@@ -105,10 +105,10 @@ class DescriptionLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class DescriptionScopeLabelCheck(LabelCheck):
+class DistributionScopeLabelCheck(LabelCheck):
 
     def __init__(self):
-        super(DescriptionScopeLabelCheck, self) \
+        super(DistributionScopeLabelCheck, self) \
             .__init__(name="distribution-scope_label",
                       message="Label 'distribution-scope' has to be specified.",
                       description="Scope of intended distribution of the image. (private/authoritative-source-only/restricted/public)",
@@ -152,7 +152,7 @@ class IoK8sDisplayNameLabelCheck(LabelCheck):
 
     def __init__(self):
         super(IoK8sDisplayNameLabelCheck, self) \
-            .__init__(name="io_k8s_display-name_label",
+            .__init__(name="io.k8s.display-name_label",
                       message="Label 'io.k8s.display-name' has to be specified.",
                       description="This label is used to display a human readable name of an image inside the Image / Repo Overview page.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
