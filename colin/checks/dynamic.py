@@ -14,22 +14,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-RULESET_DIRECTORY_NAME = "rulesets"
-RULESET_DIRECTORY = "share/colin/" + RULESET_DIRECTORY_NAME
-JSON = ".json"
+from colin.core.checks.cmd import CmdCheck
 
-PASSED = "PASS"
-FAILED = "FAIL"
-ERROR = "ERROR"
 
-COLOURS = {
-    PASSED: "green",
-    FAILED: "red",
-    ERROR: "red"
-}
+class ShellRunableCheck(CmdCheck):
 
-OUTPUT_CHARS = {
-    PASSED: ".",
-    FAILED: "x",
-    ERROR: "#"
-}
+    def __init__(self):
+        super(ShellRunableCheck, self) \
+            .__init__(name="shell_runnable",
+                      message="Shell has to be runnable.",
+                      description="The target has to be able to invoke shell.",
+                      reference_url="https://docs.docker.com/engine/reference/run/",
+                      tags=["sh", "cmd", "shell", "output"],
+                      cmd=['sh', '-c', 'exit', '0'])

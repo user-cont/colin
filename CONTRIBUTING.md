@@ -39,13 +39,13 @@ in as many details as possible.
 * The tests have to pass.
 
 # How to write the new check to colin
-All checks are stored in the directory [checks](https://github.com/user-cont/colin/tree/master/colin/checks).
-Think about what kind of check you would like to write and browse for already existing checks:
- - [best practices](https://github.com/user-cont/colin/tree/master/colin/checks/best_practices)
- - [containers](https://github.com/user-cont/colin/tree/master/colin/checks/containers)
- - [dockerfile](https://github.com/user-cont/colin/tree/master/colin/checks/dockerfile)
- - [images](https://github.com/user-cont/colin/tree/master/colin/checks/images)
- - [labels](https://github.com/user-cont/colin/tree/master/colin/checks/labels)
+All checks are stored in the directory
+[checks](https://github.com/user-cont/colin/tree/master/colin/checks).
+[Loader](https://github.com/user-cont/colin/tree/master/colin/core/loader.py)
+obtains checks from there, and here's how:
+ * classes which end with `AbstractCheck` are NOT loaded
+ * only classes which with `Check` are loaded
+ * the check class needs to be a child of a `AbstractCheck`
 
 Here's a simple template how you can create a new check:
 
@@ -100,18 +100,17 @@ all_must_be_present=False)
 We only need to describe one argument here:
 - `files` is specific to `FileSystemCheck` class and indicates on what files we want to operate on.
 
-## Add new check into relevant global configuration file
+## Add the new check into a ruleset
 Once code for your check is complete, here's how you can run it.
 
 First create a new ruleset file to test your check:
 ```bash
 $ cat foobar.json
 {
-  "labels": {
-    "required": [
-      "foobar_label"
-      ]
-  }
+    "version": "1",
+    "checks": [{
+        "name": "foobar_label"
+    }]
 }
 ```
 
@@ -122,7 +121,7 @@ $ python3 -m colin.cli.colin -f ./foobar.json <IMAGE-OR-DOCKERFILE>
 ```
 
 The checks which are verified by colin are specified within ruleset files which
-you find [in this
+you can find [in this
 directory](https://github.com/user-cont/colin/tree/master/rulesets).
 
 If your check is generic enough, it may make sense to add it to [default ruleset](https://github.com/user-cont/colin/blob/master/rulesets/default.json).

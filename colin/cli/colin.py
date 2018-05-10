@@ -17,11 +17,11 @@
 import logging
 import sys
 
-import click as click
+import click
 import six
 from six import iteritems
 
-from ..checks.abstract.abstract_check import AbstractCheck
+from ..core.checks.abstract_check import AbstractCheck
 from ..core.colin import get_checks, run
 from ..core.exceptions import ColinException
 from ..core.ruleset.ruleset import get_rulesets
@@ -182,7 +182,7 @@ def _print_results(results, stat=False, verbose=False):
     Prints the results to the stdout
 
     :type verbose: bool
-    :param results: generator of group results
+    :param results: generator of results
     :param stat: if True print stat instead of full output
     """
     results.generate_pretty_output(stat=stat,
@@ -191,16 +191,8 @@ def _print_results(results, stat=False, verbose=False):
 
 
 def _print_checks(checks):
-    for (group, group_checks) in iteritems(checks):
-
-        group_title_printed = False
-        for check in group_checks:
-
-            if not group_title_printed:
-                click.secho("{}:".format(group.upper()))
-                group_title_printed = True
-
-            click.echo(str(check))
+    for check in checks:
+        click.echo(str(check))
 
 
 def _get_log_level(debug, verbose):

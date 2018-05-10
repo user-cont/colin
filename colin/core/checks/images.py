@@ -14,22 +14,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-RULESET_DIRECTORY_NAME = "rulesets"
-RULESET_DIRECTORY = "share/colin/" + RULESET_DIRECTORY_NAME
-JSON = ".json"
+from .abstract_check import AbstractCheck
 
-PASSED = "PASS"
-FAILED = "FAIL"
-ERROR = "ERROR"
 
-COLOURS = {
-    PASSED: "green",
-    FAILED: "red",
-    ERROR: "red"
-}
+class ImageAbstractCheck(AbstractCheck):
+    pass
 
-OUTPUT_CHARS = {
-    PASSED: ".",
-    FAILED: "x",
-    ERROR: "#"
-}
+
+class FilesystemAbstractCheck(AbstractCheck):
+    pass

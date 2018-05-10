@@ -1,16 +1,26 @@
 {
-  "labels": {
-    "required": [
-      "maintainer"
-    ],
-    "optional": []
-  },
-  "dockerfile": {
-    "required": [
-      "maintainer_deprecated"
-    ],
-    "optional": [
-      "from_tag"
-    ]
-  }
+  "version": "1",
+  "name": "Default ruleset for checking containers/images/dockerfiles.",
+  "description": "This set contains general checks applicable to any target.",
+  "contact_email": "flachman@redhat.com",
+  "checks": [
+    {
+      "name": "maintainer_label",
+      "additional_tags": [
+        "required"
+      ]
+    },
+    {
+      "name": "from_tag_not_latest",
+      "additional_tags": [
+        "required"
+      ]
+    },
+    {
+      "name": "maintainer_deprecated",
+      "additional_tags": [
+        "required"
+      ]
+    }
+  ]
 }

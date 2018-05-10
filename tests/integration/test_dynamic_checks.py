@@ -15,32 +15,35 @@
 #
 import os
 
+import colin
 import pytest
 from conu import DockerBackend
-
-import colin
 
 
 @pytest.fixture()
 def ruleset():
     return {
-        "dynamic": {
-            "required": [
-                "shell"
-            ]
-        }
+        "version": "1",
+        "name": "Laughing out loud ruleset",
+        "description": "This set of checks is required to pass because we said it",
+        "contact_email": "forgot-to-reply@example.nope",
+        "checks": [
+            {
+                "name": "shell_runnable"
+            }
+        ]
     }
 
 
 def test_dynamic_check_ls(ruleset):
     image = build_image(dockerfile="Dockerfile-ls")
-    results = colin.run(target=image, ruleset=ruleset)
+    results = colin.run(target=image, ruleset=ruleset, logging_level=10)
     assert not results.ok
 
 
 def test_dynamic_check_bash(ruleset):
     image = build_image(dockerfile="Dockerfile-bash")
-    results = colin.run(target=image, ruleset=ruleset)
+    results = colin.run(target=image, ruleset=ruleset, logging_level=10)
     assert results.ok
 
 

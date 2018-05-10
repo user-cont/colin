@@ -26,10 +26,10 @@ from conu.apidefs.image import Image
 from docker.errors import NotFound
 from dockerfile_parse import DockerfileParser
 
-from ..checks.abstract.containers import ContainerCheck
-from ..checks.abstract.dockerfile import DockerfileCheck
-from ..checks.abstract.images import ImageCheck
 from ..core.exceptions import ColinException
+from .checks.containers import ContainerAbstractCheck
+from .checks.dockerfile import DockerfileAbstractCheck
+from .checks.images import ImageAbstractCheck
 
 logger = logging.getLogger(__name__)
 
@@ -44,9 +44,9 @@ def is_compatible(target_type, check_instance):
     """
     if not target_type:
         return True
-    return (target_type == TargetType.DOCKERFILE and isinstance(check_instance, DockerfileCheck)) \
-           or (target_type == TargetType.CONTAINER and isinstance(check_instance, ContainerCheck)) \
-           or (target_type == TargetType.CONTAINER_IMAGE and isinstance(check_instance, ImageCheck))
+    return (target_type == TargetType.DOCKERFILE and isinstance(check_instance, DockerfileAbstractCheck)) \
+           or (target_type == TargetType.CONTAINER and isinstance(check_instance, ContainerAbstractCheck)) \
+           or (target_type == TargetType.IMAGE and isinstance(check_instance, ImageAbstractCheck))
 
 
 class Target(object):
@@ -112,7 +112,7 @@ class Target(object):
         :return: TargetType enum
         """
         if isinstance(self.instance, Image):
-            return TargetType.CONTAINER_IMAGE
+            return TargetType.IMAGE
         elif isinstance(self.instance, Container):
             return TargetType.CONTAINER
         elif isinstance(self.instance, DockerfileParser):
@@ -143,7 +143,7 @@ class Target(object):
             if exit_code != 0:
                 raise ColinException("Container exited with the code {}. Output:\n{}".format(exit_code, output))
 
-        elif self.target_type == TargetType.CONTAINER_IMAGE:
+        elif self.target_type == TargetType.IMAGE:
             container = self.instance.run_via_binary(command=cmd)
             container.wait()
             output = "".join([o.decode() for o in container.logs()])
@@ -160,7 +160,7 @@ class Target(object):
 class TargetType(enum.Enum):
     DOCKERFILE = 0
     CONTAINER = 1
-    CONTAINER_IMAGE = 2
+    IMAGE = 2
 
 
 class ImageName(object):

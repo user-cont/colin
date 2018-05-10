@@ -1,44 +1,130 @@
 {
-  "labels": {
-    "required": [
-      "maintainer",
-      "name",
-      "com_redhat_component",
-      "summary",
-      "version",
-      "usage",
-      "release",
-      "architecture"
-    ],
-    "optional": [
-      "url",
-      "help",
-      "build_date",
-      "distribution_scope",
-      "vcs_ref",
-      "vcs_type",
-      "description",
-      "io_k8s_description",
-      "vcs_url",
-      "maintainer",
-      "io_openshift_expose_services"
-    ]
-  },
-  "dockerfile": {
-    "required": [
-      "maintainer_deprecated",
-      "from_tag"
-    ],
-    "optional": [
-    ]
-  },
-  "best_practices": {
-    "required": [
-      "help_file_or_readme",
-      "cmd_or_entrypoint",
-      "no_root"
-    ],
-    "optional": [
-    ]
-  }
+  "version": "1",
+  "name": "Ruleset for Fedora containers/images/dockerfiles.",
+  "description": "This set of checks is defined by the Fedora Container Guidelines.",
+  "contact_email": "flachman@redhat.com",
+  "checks": [
+    {
+      "name": "architecture_label"
+    },
+    {
+      "name": "build-date_label"
+    },
+    {
+      "name": "com.redhat.component_label",
+      "additional_tags": [
+        "required"
+      ]
+    },
+    {
+      "name": "description_label"
+    },
+    {
+      "name": "distribution-scope_label"
+    },
+    {
+      "name": "help_label"
+    },
+    {
+      "name": "io.k8s.description_label"
+    },
+    {
+      "name": "io.openshift.expose-services_label"
+    },
+    {
+      "name": "io.openshift.tags_label"
+    },
+    {
+      "name": "maintainer_label",
+      "additional_tags": [
+        "required"
+      ]
+    },
+    {
+      "name": "name_label",
+      "additional_tags": [
+        "required"
+      ]
+    },
+    {
+      "name": "release_label",
+      "additional_tags": [
+        "required"
+      ]
+    },
+    {
+      "name": "summary_label",
+      "additional_tags": [
+        "required"
+      ]
+    },
+    {
+      "name": "url_label"
+    },
+    {
+      "name": "usage_label",
+      "additional_tags": [
+        "required"
+      ]
+    },
+    {
+      "name": "vcs-ref_label"
+    },
+    {
+      "name": "vcs-type_label"
+    },
+    {
+      "name": "vcs-url_label"
+    },
+    {
+      "name": "version_label",
+      "additional_tags": [
+        "required"
+      ]
+    },
+    {
+      "name": "from_tag_not_latest",
+      "additional_tags": [
+        "required"
+      ],
+      "usable_targets": [
+        "dockerfile"
+      ]
+    },
+    {
+      "name": "maintainer_deprecated",
+      "additional_tags": [
+        "required"
+      ],
+      "usable_targets": [
+        "dockerfile"
+      ]
+    },
+    {
+      "name": "cmd_or_entrypoint",
+      "additional_tags": [
+        "required"
+      ],
+      "usable_targets": [
+        "image",
+        "container"
+      ]
+    },
+    {
+      "name": "help_file_or_readme",
+      "additional_tags": [
+        "required"
+      ],
+      "usable_targets": [
+        "image",
+        "container"
+      ]
+    },
+    {
+      "name": "no_root",
+      "additional_tags": [
+        "required"
+      ]
+    }
+  ]
 }

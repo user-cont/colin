@@ -17,18 +17,15 @@
 import logging
 import traceback
 
-from six import iteritems
-
-from ..checks.result import CheckResults, FailedCheckResult
-from ..utils.caching_iterable import CachingIterable
+from .result import CheckResults, FailedCheckResult
 
 logger = logging.getLogger(__name__)
 
 
 def go_through_checks(target, checks):
     logger.debug("Going through checks.")
-    results = _group_generator(target=target,
-                               checks=checks)
+    results = _result_generator(target=target,
+                                checks=checks)
     return CheckResults(results=results)
 
 
@@ -42,10 +39,3 @@ def _result_generator(target, checks):
             logger.warning(
                 "There occurred an error when executing the check: {}".format(tb))
             yield FailedCheckResult(check, logs=[str(ex)])
-
-
-def _group_generator(target, checks):
-    for (group, group_checks) in iteritems(checks):
-        logger.debug("Checking group: {}".format(group))
-        yield group, CachingIterable(_result_generator(target=target,
-                                                       checks=group_checks))

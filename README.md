@@ -9,9 +9,8 @@ Tool to check generic rules/best-practices for containers/images/dockerfiles.
 
 Initial plan is to validate containers/images/dockerfiles against different ecosystems:
  - Red Hat Container Catalogue
- - Fedora Infra (and container guidelines)
- - CentOS
- - Atomic Container Best Practices
+ - Fedora Infrastructure (and [Fedora Container Guidelines](https://fedoraproject.org/wiki/Container:Guidelines))
+ - Project Atomic [Container Best Practices](http://docs.projectatomic.io/container-best-practices/)
 
 *Colin* will also provide generic checks for maintainers or users of containerized content.
 
@@ -20,43 +19,27 @@ For more information, please check our [documentation on colin.readthedocs.io](h
 ![example](./docs/example.gif)
 
 
-## Usage
+## Installation
 
-### How to test a container image and Dockerfile with Colin locally
 
-```bash
-    make check-local -e TEST_IMAGE_NAME=<image_name> -e ANSIBLE_EXTRA_ARGS=-vv -e CONFIG=<config_file> -e ARTIFACTS_DIR=<directory_for_results> -e RESULTS=<result_file>  -e setup=true
-```
+### Via `pip`
 
-which runs ansible playbook, by a command:
-
-```bash
-    ansible-playbook $(ANSIBLE_EXTRA_ARGS) -e config=$(CONFIG) -e subject=$(TEST_IMAGE_NAME) -e results=$(RESULTS) -e artifacts_dir=$(ARTIFACTS_DIR) ./local.yml -e setup=true
-```
-
-The parameters used in command specify:
-- TEST_IMAGE_NAME ... name of the image which colin tests
-- ANSIBLE_EXTRA_ARGS ... extra arguments for ansible command
-- CONFIG ... name of default configuration file which is being used. By default `fedora`
-- ARTIFACTS_DIR ... directory where the results are stored. Ansible playbook creates it if needed. By default `./artifacts`
-- RESULTS ... filename which is being used by `colin` for storing results. By default `colin.json`
-
-E.g. checking `fedora:27` image with ruleset `fedora` and stored results `colin.json` into directory `artifacts`:
-
-```bash
-make check-local -e TEST_IMAGE_NAME=fedora:27 -e CONFIG=fedora -e ARTIFACTS_DIR=./artifacts
-```
-
-### Installing via `pip`
-
+If you are on Fedora distribution, please install python3-pyxattr so you don't have to compile yourself when getting it from PyPI.
 
 ```bash
 $ pip3 install --user colin
 ```
 
-> If you are on Fedora distribution, please install python3-pyxattr so you don't have to compile yourself when getting it from PyPI.
 
-This is how you can use colin afterwards:
+### On Fedora distribution
+
+colin is packaged in official Fedora repositories:
+```
+$ dnf install -y colin
+```
+
+
+## Usage
 
 ```
 $ colin -h
@@ -73,6 +56,7 @@ Commands:
   list-checks    Print the checks.
   list-rulesets  List available rulesets.
 ```
+
 ```
 $ colin check -h
 Usage: colin check [OPTIONS] TARGET
@@ -128,10 +112,37 @@ FAIL:Label 'name' has to be specified.
 ...
 ```
 
+### How to test a container image and Dockerfile with Colin locally
+
+We provide a simple Ansible playbook which you can put inside your CI system and use colin in there. It installs and executes colin.
+
+```bash
+make check-local -e TEST_IMAGE_NAME=<image_name> -e ANSIBLE_EXTRA_ARGS=-vv -e RULESET=fedora -e ARTIFACTS_DIR=<directory_for_results> -e RESULTS=<result_file>  -e setup=true
+```
+
+The makefile target above executes the playbook like this:
+
+```bash
+ansible-playbook $(ANSIBLE_EXTRA_ARGS) -e ruleset=$(RULESET) -e subject=$(TEST_IMAGE_NAME) -e results=$(RESULTS) -e artifacts_dir=$(ARTIFACTS_DIR) ./local.yml -e setup=true
+```
+
+Description of the parameters:
+- `TEST_IMAGE_NAME` — name of the image to check.
+- `ANSIBLE_EXTRA_ARGS` — extra arguments for `ansible-playbook` command.
+- `RULESET` — name of ruleset to use. By default it's `fedora` ruleset.
+- `ARTIFACTS_DIR` — directory where the results are stored. Ansible playbook creates it if needed. By default `./artifacts`.
+- `RESULTS` — filename which is being used by `colin` for storing results. By default `colin.json`.
+
+E.g. checking `fedora:27` image with ruleset `fedora` and stored results `colin.json` into directory `artifacts`:
+
+```bash
+make check-local -e TEST_IMAGE_NAME=fedora:27 -e RULESET=fedora -e ARTIFACTS_DIR=./artifacts
+```
+
 
 ### Directly from git
 
-Once you clone colin locally, you can invoke it directly from cloned git repository:
+It's possible to use colin directly from git:
 
 ```
 $ git clone https://github.com/user-cont/colin.git
@@ -189,12 +200,4 @@ Colin can exit with several codes:
 
 ## Technical details
 
-*Colin* will be available as a Python API, and will provide command line interface so you can easily use it locally.
-
-Each ecosystem will define a set of checks to validate the artifacts. Checks will have different severity level so that we can classify checks as required or optional.
-
 ![Scheme](./docs/scheme.png)
-
-## TODO
-
-- [ ] support Fedora infrastructure ([see issue about GSoC project for more information](https://github.com/user-cont/colin/issues/3))
