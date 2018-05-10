@@ -124,6 +124,10 @@
       "name": "no_root",
       "additional_tags": [
         "required"
+      ],
+      "usable_targets": [
+        "image",
+        "container"
       ]
     }
   ]
