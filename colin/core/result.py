@@ -135,8 +135,9 @@ class CheckResults(object):
         :param output_function: function to send output to
         """
 
+        has_check = False
         for r in self.results:
-
+            has_check = True
             if stat:
                 output_function(OUTPUT_CHARS[r.status],
                                 fg=COLOURS[r.status],
@@ -155,7 +156,11 @@ class CheckResults(object):
                             output_function("    -> {}".format(l),
                                             fg=COLOURS[r.status])
 
-        if not stat or verbose:
+        if not has_check:
+            output_function("No check found.")
+        elif stat and not verbose:
+            output_function("")
+        else:
             output_function("")
             for status, count in six.iteritems(self.statistics):
                 output_function("{}:{} ".format(status, count), nl=False)
