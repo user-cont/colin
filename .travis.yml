@@ -4,12 +4,12 @@ notifications:
   email: false
 
 python:
+- '2.7'
 - '3.6'
 before_install:
 - sudo apt-get -y install gcc libattr1-dev
 script:
-  - make check TEST_TARGET=./tests/unit/
-  - make check TEST_TARGET=./tests/integration/
+  - make check TEST_TARGET=./tests/
 deploy:
   provider: pypi
 
