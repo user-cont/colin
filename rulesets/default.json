@@ -14,12 +14,18 @@
       "name": "from_tag_not_latest",
       "additional_tags": [
         "required"
+      ],
+      "usable_targets": [
+        "dockerfile"
       ]
     },
     {
       "name": "maintainer_deprecated",
       "additional_tags": [
         "required"
+      ],
+      "usable_targets": [
+        "dockerfile"
       ]
     }
   ]

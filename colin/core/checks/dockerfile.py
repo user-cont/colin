@@ -39,10 +39,10 @@ class DockerfileAbstractCheck(AbstractCheck):
     pass
 
 
-class InstructionCheck(DockerfileAbstractCheck):
+class InstructionAbstractCheck(DockerfileAbstractCheck):
 
     def __init__(self, name, message, description, reference_url, tags, instruction, value_regex, required):
-        super(InstructionCheck, self) \
+        super(InstructionAbstractCheck, self) \
             .__init__(name, message, description, reference_url, tags)
         self.instruction = instruction
         self.value_regex = value_regex
@@ -70,10 +70,10 @@ class InstructionCheck(DockerfileAbstractCheck):
                            logs=logs)
 
 
-class InstructionCountCheck(DockerfileAbstractCheck):
+class InstructionCountAbstractCheck(DockerfileAbstractCheck):
 
     def __init__(self, name, message, description, reference_url, tags, instruction, min_count=None, max_count=None):
-        super(InstructionCountCheck, self) \
+        super(InstructionCountAbstractCheck, self) \
             .__init__(name, message, description, reference_url, tags)
         self.instruction = instruction
         self.min_count = min_count
@@ -101,10 +101,10 @@ class InstructionCountCheck(DockerfileAbstractCheck):
                            logs=[log])
 
 
-class DockerfileLabelCheck(DockerfileAbstractCheck):
+class DockerfileLabelAbstractCheck(DockerfileAbstractCheck):
 
     def __init__(self, name, message, description, reference_url, tags, label, required, value_regex=None):
-        super(DockerfileLabelCheck, self) \
+        super(DockerfileLabelAbstractCheck, self) \
             .__init__(name, message, description, reference_url, tags)
         self.label = label
         self.required = required
