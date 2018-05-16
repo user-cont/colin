@@ -1,0 +1,9 @@
+strictness: medium
+
+max-line-length: 100
+
+ignore-paths:
+  - docs
+python-targets:
+  - 2
+  - 3
