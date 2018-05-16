@@ -5,6 +5,8 @@
 
 # Colin
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/25a2bac999ad4ab9892ba6fe77b8e4f8)](https://app.codacy.com/app/lachmanfrantisek/colin?utm_source=github.com&utm_medium=referral&utm_content=user-cont/colin&utm_campaign=badger)
+
 Tool to check generic rules/best-practices for containers/images/dockerfiles.
 
 Initial plan is to validate containers/images/dockerfiles against different ecosystems:
