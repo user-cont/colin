@@ -72,21 +72,6 @@ class HelpFileOrReadmeCheck(FileSystemCheck):
                       all_must_be_present=False)
 
 
-class HelpFileCheck(FileSystemCheck):
-    name = "help_file_required"
-
-    def __init__(self):
-        super(HelpFileCheck, self) \
-            .__init__(message="The 'helpfile' has to be provided.",
-                      description="Just like traditional packages, containers need "
-                                  "some 'man page' information about how they are to be used,"
-                                  " configured, and integrated into a larger stack.",
-                      reference_url="https://fedoraproject.org/wiki/Container:Guidelines#Help_File",
-                      files=['/help.1'],
-                      tags=['filesystem', 'helpfile', 'man'],
-                      all_must_be_present=False)
-
-
 class NoRootCheck(ContainerAbstractCheck, ImageAbstractCheck):
     name = "no_root"
 
