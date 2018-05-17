@@ -20,11 +20,11 @@ from colin.core.target import ImageName
 
 
 class FromTagNotLatestCheck(DockerfileAbstractCheck):
+    name = "from_tag_not_latest"
 
     def __init__(self):
         super(FromTagNotLatestCheck, self) \
-            .__init__(name="from_tag_not_latest",
-                      message="In FROM, tag has to be specified and not 'latest'.",
+            .__init__(message="In FROM, tag has to be specified and not 'latest'.",
                       description="Using the 'latest' tag may cause unpredictable builds."
                                   "It is recommended that a specific tag is used in the FROM.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#FROM",
@@ -42,11 +42,11 @@ class FromTagNotLatestCheck(DockerfileAbstractCheck):
 
 
 class MaintainerDeprecatedCheck(InstructionCountAbstractCheck):
+    name = "maintainer_deprecated"
 
     def __init__(self):
         super(MaintainerDeprecatedCheck, self) \
-            .__init__(name="maintainer_deprecated",
-                      message="Dockerfile instruction `MAINTAINER` is deprecated.",
+            .__init__(message="Dockerfile instruction `MAINTAINER` is deprecated.",
                       description="Replace with label 'maintainer'.",
                       reference_url="https://docs.docker.com/engine/reference/builder/#maintainer-deprecated",
                       tags=["maintainer", "dockerfile", "deprecated"],
