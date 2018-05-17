@@ -135,10 +135,5 @@ class CheckLoader(object):
         if self._mapping is None:
             self._mapping = {}
             for c in self.check_classes:
-                try:
-                    i = c()
-                except Exception as ex:
-                    logger.debug("Can't instantiate check %s: %s", c.__name__, ex)
-                    continue
-                self._mapping[i.name] = i
+                self._mapping[c.name] = c
         return self._mapping
