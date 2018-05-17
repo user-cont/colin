@@ -25,10 +25,10 @@ from .images import ImageAbstractCheck
 
 class CmdAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck):
 
-    def __init__(self, name, message, description, reference_url, tags, cmd, expected_output=None,
+    def __init__(self, message, description, reference_url, tags, cmd, expected_output=None,
                  expected_regex=None,
                  substring=None):
-        super(CmdAbstractCheck, self).__init__(name, message, description, reference_url, tags)
+        super(CmdAbstractCheck, self).__init__(message, description, reference_url, tags)
         self.cmd = cmd
         self.expected_output = expected_output
         self.expected_regex = expected_regex
@@ -45,7 +45,8 @@ class CmdAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck):
                                    message=self.message,
                                    reference_url=self.reference_url,
                                    check_name=self.name,
-                                   logs=["exec: '{}': executable file not found in $PATH".format(self.cmd)])
+                                   logs=["exec: '{}': executable file not found in $PATH".format(
+                                       self.cmd)])
             else:
                 return FailedCheckResult(check=self,
                                          logs=[str(ex)])
@@ -80,8 +81,9 @@ class CmdAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck):
                 logs.append("ok: Output of the command '{}' match the regex '{}'." \
                             .format(self.cmd, self.expected_regex))
             else:
-                logs.append("nok: Output of the command '{}' does not match the expected regex: '{}'." \
-                            .format(self.cmd, self.expected_regex))
+                logs.append(
+                    "nok: Output of the command '{}' does not match"
+                    " the expected regex: '{}'.".format(self.cmd, self.expected_regex))
 
                 passed = False
 

@@ -91,8 +91,9 @@ class Ruleset(object):
 
             if tags:
                 if not set(tags) < set(check_instance.tags):
-                    logger.debug("Check '{}' not passed the tag control: {}".format(check_instance.name,
-                                                                                    tags))
+                    logger.debug(
+                        "Check '{}' not passed the tag control: {}".format(check_instance.name,
+                                                                           tags))
                     continue
 
             # and finally, attach attributes from ruleset to the check instance

@@ -22,9 +22,9 @@ from .images import ImageAbstractCheck
 
 class FileSystemCheck(ContainerAbstractCheck, ImageAbstractCheck):
 
-    def __init__(self, name, message, description, reference_url, tags, files, all_must_be_present):
+    def __init__(self, message, description, reference_url, tags, files, all_must_be_present):
         super(FileSystemCheck, self) \
-            .__init__(name, message, description, reference_url, tags)
+            .__init__(message, description, reference_url, tags)
         self.files = files
         self.all_must_be_present = all_must_be_present
 
