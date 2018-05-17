@@ -18,11 +18,11 @@ from colin.core.checks.labels import LabelCheck
 
 
 class ArchitectureLabelCheck(LabelCheck):
+    name = "architecture_label"
 
     def __init__(self):
         super(ArchitectureLabelCheck, self) \
-            .__init__(name="architecture_label",
-                      message="Label 'architecture' has to be specified.",
+            .__init__(message="Label 'architecture' has to be specified.",
                       description="Architecture the software in the image should target. "
                                   "(Optional: if omitted, it will be built "
                                   "for all supported Fedora Architectures)",
@@ -34,11 +34,11 @@ class ArchitectureLabelCheck(LabelCheck):
 
 
 class AuthoritativeSourceUrlLabelCheck(LabelCheck):
+    name = "authoritative_source-url_label"
 
     def __init__(self):
         super(AuthoritativeSourceUrlLabelCheck, self) \
-            .__init__(name="authoritative_source-url_label",
-                      message="Label 'authoritative-source-url' has to be specified.",
+            .__init__(message="Label 'authoritative-source-url' has to be specified.",
                       description="The authoritative registry in which the image is published.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["authoritative-source-url", "label"],
@@ -48,13 +48,15 @@ class AuthoritativeSourceUrlLabelCheck(LabelCheck):
 
 
 class BuildDateLabelCheck(LabelCheck):
+    name = "build-date_label"
 
     def __init__(self):
         super(BuildDateLabelCheck, self) \
-            .__init__(name="build-date_label",
-                      message="Label 'build-date' has to be specified.",
+            .__init__(message="Label 'build-date' has to be specified.",
                       description="Date/Time image was built as RFC 3339 date-time.",
-                      reference_url="https://github.com/projectatomic/ContainerApplicationGenericLabels",
+                      reference_url="https://github.com/projectatomic/"
+                                    "ContainerApplicationGenericLabels/blob/master/vendor/"
+                                    "redhat/labels.md",
                       tags=["build-date", "label"],
                       label="build-date",
                       required=True,
@@ -63,12 +65,13 @@ class BuildDateLabelCheck(LabelCheck):
 
 
 class BuildHostLabelCheck(LabelCheck):
+    name = "com.redhat.build-host_label"
 
     def __init__(self):
         super(BuildHostLabelCheck, self) \
-            .__init__(name="com.redhat.build-host_label",
-                      message="Label 'com.redhat.build-host' has to be specified.",
-                      description="The build host used to create an image for internal use and auditability, similar to the use in RPM.",
+            .__init__(message="Label 'com.redhat.build-host' has to be specified.",
+                      description="The build host used to create an image"
+                                  " for internal use and auditability, similar to the use in RPM.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["com.redhat.build-host", "build-host", "label"],
                       label="com.redhat.build-host",
@@ -77,12 +80,13 @@ class BuildHostLabelCheck(LabelCheck):
 
 
 class ComRedhatComponentLabelCheck(LabelCheck):
+    name = "com.redhat.component_label"
 
     def __init__(self):
         super(ComRedhatComponentLabelCheck, self) \
-            .__init__(name="com.redhat.component_label",
-                      message="Label 'com.redhat.component' has to be specified.",
-                      description="The Bugzilla component name where bugs against this container should be reported by users.",
+            .__init__(message="Label 'com.redhat.component' has to be specified.",
+                      description="The Bugzilla component name where bugs against"
+                                  " this container should be reported by users.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["com.redhat.component", "label"],
                       label="com.redhat.component",
@@ -92,13 +96,15 @@ class ComRedhatComponentLabelCheck(LabelCheck):
 
 
 class DescriptionLabelCheck(LabelCheck):
+    name = "description_label"
 
     def __init__(self):
         super(DescriptionLabelCheck, self) \
-            .__init__(name="description_label",
-                      message="Label 'description' has to be specified.",
+            .__init__(message="Label 'description' has to be specified.",
                       description="Detailed description of the image.",
-                      reference_url="https://github.com/projectatomic/ContainerApplicationGenericLabels",
+                      reference_url="https://github.com/projectatomic/"
+                                    "ContainerApplicationGenericLabels/blob/master/vendor/"
+                                    "redhat/labels.md",
                       tags=["description", "label"],
                       label="description",
                       required=True,
@@ -106,13 +112,16 @@ class DescriptionLabelCheck(LabelCheck):
 
 
 class DistributionScopeLabelCheck(LabelCheck):
+    name = "distribution-scope_label"
 
     def __init__(self):
         super(DistributionScopeLabelCheck, self) \
-            .__init__(name="distribution-scope_label",
-                      message="Label 'distribution-scope' has to be specified.",
-                      description="Scope of intended distribution of the image. (private/authoritative-source-only/restricted/public)",
-                      reference_url="https://github.com/projectatomic/ContainerApplicationGenericLabels",
+            .__init__(message="Label 'distribution-scope' has to be specified.",
+                      description="Scope of intended distribution of the image."
+                                  " (private/authoritative-source-only/restricted/public)",
+                      reference_url="https://github.com/projectatomic/"
+                                    "ContainerApplicationGenericLabels/blob/master/vendor/"
+                                    "redhat/labels.md",
                       tags=["distribution-scope", "label"],
                       label="distribution-scope",
                       required=True,
@@ -120,12 +129,13 @@ class DistributionScopeLabelCheck(LabelCheck):
 
 
 class HelpLabelCheck(LabelCheck):
+    name = "help_label"
 
     def __init__(self):
         super(HelpLabelCheck, self) \
-            .__init__(name="help_label",
-                      message="Label 'help' has to be specified.",
-                      description="A runnable command which results in display of Help information.",
+            .__init__(message="Label 'help' has to be specified.",
+                      description="A runnable command which results"
+                                  " in display of Help information.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["help", "label"],
                       label="help",
@@ -134,14 +144,18 @@ class HelpLabelCheck(LabelCheck):
 
 
 class IoK8sDescriptionLabelCheck(LabelCheck):
+    name = "io.k8s.description_label"
 
     def __init__(self):
         super(IoK8sDescriptionLabelCheck, self) \
-            .__init__(name="io.k8s.description_label",
-                      message="Label 'io.k8s.description' has to be specified.",
+            .__init__(message="Label 'io.k8s.description' has to be specified.",
                       description="Description of the container displayed in Kubernetes",
-                      reference_url=["https://github.com/projectatomic/ContainerApplicationGenericLabels",
-                                     "https://github.com/projectatomic/ContainerApplicationGenericLabels/blob/master/vendor/redhat/labels.md#other-labels"],
+                      reference_url=[
+                          "https://github.com/projectatomic/"
+                          "ContainerApplicationGenericLabels/blob/master/vendor/"
+                          "redhat/labels.md",
+                          "https://github.com/projectatomic/ContainerApplicationGenericLabels/"
+                          "blob/master/vendor/redhat/labels.md#other-labels"],
                       tags=["io.k8s.description", "description", "label"],
                       label="io.k8s.description",
                       required=True,
@@ -149,12 +163,13 @@ class IoK8sDescriptionLabelCheck(LabelCheck):
 
 
 class IoK8sDisplayNameLabelCheck(LabelCheck):
+    name = "io.k8s.display-name_label"
 
     def __init__(self):
         super(IoK8sDisplayNameLabelCheck, self) \
-            .__init__(name="io.k8s.display-name_label",
-                      message="Label 'io.k8s.display-name' has to be specified.",
-                      description="This label is used to display a human readable name of an image inside the Image / Repo Overview page.",
+            .__init__(message="Label 'io.k8s.display-name' has to be specified.",
+                      description="This label is used to display a human readable name"
+                                  " of an image inside the Image / Repo Overview page.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["io.k8s.display-name", "label"],
                       label="io.k8s.display-name",
@@ -163,14 +178,19 @@ class IoK8sDisplayNameLabelCheck(LabelCheck):
 
 
 class IoOpenshiftExposeServicesLabelCheck(LabelCheck):
+    name = "io.openshift.expose-services_label"
 
     def __init__(self):
         super(IoOpenshiftExposeServicesLabelCheck, self) \
-            .__init__(name="io.openshift.expose-services_label",
-                      message="Label 'io.openshift.expose-services' has to be specified.",
-                      description="port:service pairs separated with comma, e.g. \"8080:http,8443:https\"",
-                      reference_url=["https://github.com/projectatomic/ContainerApplicationGenericLabels",
-                                     "https://github.com/projectatomic/ContainerApplicationGenericLabels/blob/master/vendor/redhat/labels.md#other-labels"],
+            .__init__(message="Label 'io.openshift.expose-services' has to be specified.",
+                      description="port:service pairs separated with comma,"
+                                  " e.g. \"8080:http,8443:https\"",
+                      reference_url=[
+                          "https://github.com/projectatomic/"
+                          "ContainerApplicationGenericLabels/blob/master/vendor/"
+                          "redhat/labels.md",
+                          "https://github.com/projectatomic/ContainerApplicationGenericLabels/"
+                          "blob/master/vendor/redhat/labels.md#other-labels"],
                       tags=["io.openshift.expose-services", "label"],
                       label="io.openshift.expose-services",
                       required=True,
@@ -178,12 +198,13 @@ class IoOpenshiftExposeServicesLabelCheck(LabelCheck):
 
 
 class IoOpenShiftTagsLabelCheck(LabelCheck):
+    name = "io.openshift.tags_label"
 
     def __init__(self):
         super(IoOpenShiftTagsLabelCheck, self) \
-            .__init__(name="io.openshift.tags_label",
-                      message="Label 'io.openshift.tags' has to be specified.",
-                      description="The primary purpose of this label is to include all relevant search terms for this image.",
+            .__init__(message="Label 'io.openshift.tags' has to be specified.",
+                      description="The primary purpose of this label is to include"
+                                  " all relevant search terms for this image.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["io.openshift.tags", "label"],
                       label="io.openshift.tags",
@@ -192,11 +213,11 @@ class IoOpenShiftTagsLabelCheck(LabelCheck):
 
 
 class MaintainerLabelCheck(LabelCheck):
+    name = "maintainer_label"
 
     def __init__(self):
         super(MaintainerLabelCheck, self) \
-            .__init__(name="maintainer_label",
-                      message="Label 'maintainer' has to be specified.",
+            .__init__(message="Label 'maintainer' has to be specified.",
                       description="The name and email of the maintainer (usually the submitter).",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["maintainer", "label"],
@@ -206,11 +227,11 @@ class MaintainerLabelCheck(LabelCheck):
 
 
 class NameLabelCheck(LabelCheck):
+    name = "name_label"
 
     def __init__(self):
         super(NameLabelCheck, self) \
-            .__init__(name="name_label",
-                      message="Label 'name' has to be specified.",
+            .__init__(message="Label 'name' has to be specified.",
                       description="Name of the Image or Container.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["name", "label"],
@@ -220,11 +241,11 @@ class NameLabelCheck(LabelCheck):
 
 
 class ReleaseLabelCheck(LabelCheck):
+    name = "release_label"
 
     def __init__(self):
         super(ReleaseLabelCheck, self) \
-            .__init__(name="release_label",
-                      message="Label 'release' has to be specified.",
+            .__init__(message="Label 'release' has to be specified.",
                       description="Release Number for this version.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["release", "label"],
@@ -234,11 +255,11 @@ class ReleaseLabelCheck(LabelCheck):
 
 
 class SummaryLabelCheck(LabelCheck):
+    name = "summary_label"
 
     def __init__(self):
         super(SummaryLabelCheck, self) \
-            .__init__(name="summary_label",
-                      message="Label 'summary' has to be specified.",
+            .__init__(message="Label 'summary' has to be specified.",
                       description="A short description of the image.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["summary", "label"],
@@ -248,11 +269,11 @@ class SummaryLabelCheck(LabelCheck):
 
 
 class UrlLabelCheck(LabelCheck):
+    name = "url_label"
 
     def __init__(self):
         super(UrlLabelCheck, self) \
-            .__init__(name="url_label",
-                      message="Label 'url' has to be specified.",
+            .__init__(message="Label 'url' has to be specified.",
                       description="A URL where the user can find more information about the image.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["url", "label"],
@@ -262,11 +283,11 @@ class UrlLabelCheck(LabelCheck):
 
 
 class UsageLabelCheck(LabelCheck):
+    name = "usage_label"
 
     def __init__(self):
         super(UsageLabelCheck, self) \
-            .__init__(name="usage_label",
-                      message="Label 'usage' has to be specified.",
+            .__init__(message="Label 'usage' has to be specified.",
                       description="A human readable example of container execution.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["usage", "label"],
@@ -276,13 +297,16 @@ class UsageLabelCheck(LabelCheck):
 
 
 class VcsRefLabelCheck(LabelCheck):
+    name = "vcs-ref_label"
 
     def __init__(self):
         super(VcsRefLabelCheck, self) \
-            .__init__(name="vcs-ref_label",
-                      message="Label 'vcs-ref' has to be specified.",
-                      description="A 'reference' within the version control repository; e.g. a git commit, or a subversion branch.",
-                      reference_url="https://github.com/projectatomic/ContainerApplicationGenericLabels",
+            .__init__(message="Label 'vcs-ref' has to be specified.",
+                      description="A 'reference' within the version control repository;"
+                                  " e.g. a git commit, or a subversion branch.",
+                      reference_url="https://github.com/projectatomic/"
+                                    "ContainerApplicationGenericLabels/blob/master/vendor/"
+                                    "redhat/labels.md",
                       tags=["vcs-ref", "vcs", "label"],
                       label="vcs-ref",
                       required=True,
@@ -290,14 +314,16 @@ class VcsRefLabelCheck(LabelCheck):
 
 
 class VcsTypeLabelCheck(LabelCheck):
+    name = "vcs-type_label"
 
     def __init__(self):
         super(VcsTypeLabelCheck, self) \
-            .__init__(name="vcs-type_label",
-                      message="Label 'vcs-type' has to be specified.",
+            .__init__(message="Label 'vcs-type' has to be specified.",
                       description="The type of version control used by the container source."
                                   "Generally one of git, hg, svn, bzr, cvs",
-                      reference_url="https://github.com/projectatomic/ContainerApplicationGenericLabels",
+                      reference_url="https://github.com/projectatomic/"
+                                    "ContainerApplicationGenericLabels/blob/master/vendor/"
+                                    "redhat/labels.md",
                       tags=["vcs-type", "vcs", "label"],
                       label="vcs-type",
                       required=True,
@@ -305,13 +331,15 @@ class VcsTypeLabelCheck(LabelCheck):
 
 
 class VcsUrlLabelCheck(LabelCheck):
+    name = "vcs-url_label"
 
     def __init__(self):
         super(VcsUrlLabelCheck, self) \
-            .__init__(name="vcs-url_label",
-                      message="Label 'vcs-url' has to be specified.",
+            .__init__(message="Label 'vcs-url' has to be specified.",
                       description="URL of the version control repository.",
-                      reference_url="https://github.com/projectatomic/ContainerApplicationGenericLabels",
+                      reference_url="https://github.com/projectatomic/"
+                                    "ContainerApplicationGenericLabels/blob/master/vendor/"
+                                    "redhat/labels.md",
                       tags=["vcs-url", "vcs", "label"],
                       label="vcs-url",
                       required=True,
@@ -319,24 +347,26 @@ class VcsUrlLabelCheck(LabelCheck):
 
 
 class VendorLabelCheck(LabelCheck):
+    name = "vendor_label"
 
     def __init__(self):
         super(VendorLabelCheck, self) \
-            .__init__(name="vendor_label",
-                      message="Label 'vendor' has to be specified.",
+            .__init__(message="Label 'vendor' has to be specified.",
                       description="Name of the vendor.",
-                      reference_url="https://github.com/projectatomic/ContainerApplicationGenericLabels/blob/master/vendor/redhat/labels.md",
+                      reference_url="https://github.com/projectatomic/"
+                                    "ContainerApplicationGenericLabels/blob/master/vendor/"
+                                    "redhat/labels.md",
                       tags=["vendor", "label"],
                       label="vendor",
                       required=True)
 
 
 class VersionLabelCheck(LabelCheck):
+    name = "version_label"
 
     def __init__(self):
         super(VersionLabelCheck, self) \
-            .__init__(name="version_label",
-                      message="Label 'version' has to be specified.",
+            .__init__(message="Label 'version' has to be specified.",
                       description="Version of the image.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["version", "label"],

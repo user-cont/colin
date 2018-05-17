@@ -19,9 +19,9 @@ from six import iteritems
 
 
 class AbstractCheck(object):
+    name = None
 
-    def __init__(self, name, message, description, reference_url, tags):
-        self.name = name
+    def __init__(self, message, description, reference_url, tags):
         self.message = message
         self.description = description
         self.reference_url = reference_url

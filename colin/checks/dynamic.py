@@ -18,11 +18,11 @@ from colin.core.checks.cmd import CmdAbstractCheck
 
 
 class ShellRunableCheck(CmdAbstractCheck):
+    name = "shell_runnable"
 
     def __init__(self):
         super(ShellRunableCheck, self) \
-            .__init__(name="shell_runnable",
-                      message="Shell has to be runnable.",
+            .__init__(message="Shell has to be runnable.",
                       description="The target has to be able to invoke shell.",
                       reference_url="https://docs.docker.com/engine/reference/run/",
                       tags=["sh", "cmd", "shell", "output"],

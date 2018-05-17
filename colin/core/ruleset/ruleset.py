@@ -68,10 +68,15 @@ class Ruleset(object):
                 continue
 
             try:
-                check_instance = self.check_loader.mapping[check_struct.name]
+                check_class = self.check_loader.mapping[check_struct.name]
             except KeyError:
                 raise ColinRulesetException(
                     "Can't find code for check {}.".format(check_struct.name))
+            try:
+                check_instance = check_class()
+            except Exception as ex:
+                raise ColinRulesetException(
+                    "Can't instantiate check {}: {}".format(check_class.__name__, ex))
 
             if check_struct.tags:
                 logger.info("Overriding check's tags %s with the one defined in ruleset: %s",
@@ -91,8 +96,9 @@ class Ruleset(object):
 
             if tags:
                 if not set(tags) < set(check_instance.tags):
-                    logger.debug("Check '{}' not passed the tag control: {}".format(check_instance.name,
-                                                                                    tags))
+                    logger.debug(
+                        "Check '{}' not passed the tag control: {}".format(check_instance.name,
+                                                                           tags))
                     continue
 
             # and finally, attach attributes from ruleset to the check instance

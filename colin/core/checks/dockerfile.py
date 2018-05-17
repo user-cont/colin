@@ -41,9 +41,10 @@ class DockerfileAbstractCheck(AbstractCheck):
 
 class InstructionAbstractCheck(DockerfileAbstractCheck):
 
-    def __init__(self, name, message, description, reference_url, tags, instruction, value_regex, required):
+    def __init__(self, message, description, reference_url, tags, instruction, value_regex,
+                 required):
         super(InstructionAbstractCheck, self) \
-            .__init__(name, message, description, reference_url, tags)
+            .__init__(message, description, reference_url, tags)
         self.instruction = instruction
         self.value_regex = value_regex
         self.required = required
@@ -72,9 +73,10 @@ class InstructionAbstractCheck(DockerfileAbstractCheck):
 
 class InstructionCountAbstractCheck(DockerfileAbstractCheck):
 
-    def __init__(self, name, message, description, reference_url, tags, instruction, min_count=None, max_count=None):
+    def __init__(self, message, description, reference_url, tags, instruction, min_count=None,
+                 max_count=None):
         super(InstructionCountAbstractCheck, self) \
-            .__init__(name, message, description, reference_url, tags)
+            .__init__(message, description, reference_url, tags)
         self.instruction = instruction
         self.min_count = min_count
         self.max_count = max_count
@@ -82,10 +84,11 @@ class InstructionCountAbstractCheck(DockerfileAbstractCheck):
     def check(self, target):
         count = len(get_instructions_from_dockerfile_parse(target.instance, self.instruction))
 
-        log = "Found {} occurrences of the {} instruction. Needed: min {} | max {}".format(count,
-                                                                                           self.instruction,
-                                                                                           self.min_count,
-                                                                                           self.max_count)
+        log = "Found {} occurrences of the {} instruction. Needed: min {} | max {}" \
+            .format(count,
+                    self.instruction,
+                    self.min_count,
+                    self.max_count)
         logger.debug(log)
         passed = True
         if self.min_count:
@@ -103,9 +106,10 @@ class InstructionCountAbstractCheck(DockerfileAbstractCheck):
 
 class DockerfileLabelAbstractCheck(DockerfileAbstractCheck):
 
-    def __init__(self, name, message, description, reference_url, tags, label, required, value_regex=None):
+    def __init__(self, message, description, reference_url, tags, label, required,
+                 value_regex=None):
         super(DockerfileLabelAbstractCheck, self) \
-            .__init__(name, message, description, reference_url, tags)
+            .__init__(message, description, reference_url, tags)
         self.label = label
         self.required = required
         self.value_regex = value_regex

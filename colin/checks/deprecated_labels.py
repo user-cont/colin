@@ -18,11 +18,11 @@ from colin.core.checks.labels import DeprecatedLabelCheck
 
 
 class ArchitectureLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
+    name = "architecture_label_capital_deprecated"
 
     def __init__(self):
         super(ArchitectureLabelCapitalDeprecatedCheck, self). \
-            __init__(name="architecture_label_capital_deprecated",
-                     message="Label 'Architecture' is deprecated.",
+            __init__(message="Label 'Architecture' is deprecated.",
                      description="Replace with 'architecture'.",
                      reference_url="?????",
                      tags=["architecture", "label", "capital", "deprecated"],
@@ -31,11 +31,11 @@ class ArchitectureLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
 
 
 class BZComponentDeprecatedCheck(DeprecatedLabelCheck):
+    name = "bzcomponent_deprecated"
 
     def __init__(self):
         super(BZComponentDeprecatedCheck, self) \
-            .__init__(name="bzcomponent_deprecated",
-                      message="Label 'BZComponent' is deprecated.",
+            .__init__(message="Label 'BZComponent' is deprecated.",
                       description="Replace with 'com.redhat.component'.",
                       reference_url="?????",
                       tags=["com.redhat.component", "bzcomponent", "label", "deprecated"],
@@ -44,11 +44,11 @@ class BZComponentDeprecatedCheck(DeprecatedLabelCheck):
 
 
 class InstallLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
+    name = "install_label_capital_deprecated"
 
     def __init__(self):
         super(InstallLabelCapitalDeprecatedCheck, self) \
-            .__init__(name="install_label_capital_deprecated",
-                      message="Label 'INSTALL' is deprecated.",
+            .__init__(message="Label 'INSTALL' is deprecated.",
                       description="Replace with 'install'.",
                       reference_url="?????",
                       tags=["install", "label", "capital", "deprecated"],
@@ -57,11 +57,11 @@ class InstallLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
 
 
 class NameLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
+    name = "name_label_capital_deprecated"
 
     def __init__(self):
         super(NameLabelCapitalDeprecatedCheck, self) \
-            .__init__(name="name_label_capital_deprecated",
-                      message="Label 'Name' is deprecated.",
+            .__init__(message="Label 'Name' is deprecated.",
                       description="Replace with 'name'.",
                       reference_url="?????",
                       tags=["name", "label", "capital", "deprecated"],
@@ -70,11 +70,11 @@ class NameLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
 
 
 class ReleaseLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
+    name = "release_label_capital_deprecated"
 
     def __init__(self):
         super(ReleaseLabelCapitalDeprecatedCheck, self) \
-            .__init__(name="release_label_capital_deprecated",
-                      message="Label 'Release' is deprecated.",
+            .__init__(message="Label 'Release' is deprecated.",
                       description="Replace with 'release'.",
                       reference_url="?????",
                       tags=["release", "label", "capital", "deprecated"],
@@ -83,11 +83,11 @@ class ReleaseLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
 
 
 class UninstallLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
+    name = "uninstall_label_capital_deprecated"
 
     def __init__(self):
         super(UninstallLabelCapitalDeprecatedCheck, self) \
-            .__init__(name="uninstall_label_capital_deprecated",
-                      message="Label 'UNINSTALL' is deprecated.",
+            .__init__(message="Label 'UNINSTALL' is deprecated.",
                       description="Replace with 'uninstall'.",
                       reference_url="?????",
                       tags=["uninstall", "label", "capital", "deprecated"],
@@ -96,11 +96,11 @@ class UninstallLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
 
 
 class VersionLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
+    name = "version_label_capital_deprecated"
 
     def __init__(self):
         super(VersionLabelCapitalDeprecatedCheck, self) \
-            .__init__(name="version_label_capital_deprecated",
-                      message="Label 'Version' is deprecated.",
+            .__init__(message="Label 'Version' is deprecated.",
                       description="Replace with 'version'.",
                       reference_url="?????",
                       tags=["version", "label", "capital", "deprecated"],
