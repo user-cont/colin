@@ -45,7 +45,7 @@ class DockerfileCheckResult(CheckResult):
 
     def __init__(self, ok, description, message, reference_url, check_name, lines=None,
                  correction_diff=None):
-        super(self.__class__, self) \
+        super(DockerfileCheckResult, self) \
             .__init__(ok, description, message, reference_url, check_name)
         self.lines = lines
         self.correction_diff = correction_diff
