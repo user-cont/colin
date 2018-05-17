@@ -1,11 +1,10 @@
+# Colin
+
 ![PyPI](https://img.shields.io/pypi/v/colin.svg)
 ![PyPI - License](https://img.shields.io/pypi/l/colin.svg)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/colin.svg)
 ![PyPI - Status](https://img.shields.io/pypi/status/colin.svg)
-
-# Colin
-
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/25a2bac999ad4ab9892ba6fe77b8e4f8)](https://app.codacy.com/app/lachmanfrantisek/colin?utm_source=github.com&utm_medium=referral&utm_content=user-cont/colin&utm_campaign=badger)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/427eb0c5dfc040cea798b23575dba025)](https://www.codacy.com/app/user-cont/colin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=user-cont/colin&amp;utm_campaign=Badge_Grade)
 
 Tool to check generic rules/best-practices for containers/images/dockerfiles.
 
