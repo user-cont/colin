@@ -11,12 +11,6 @@
       "name": "build-date_label"
     },
     {
-      "name": "com.redhat.component_label",
-      "additional_tags": [
-        "required"
-      ]
-    },
-    {
       "name": "description_label"
     },
     {
@@ -35,37 +29,7 @@
       "name": "io.openshift.tags_label"
     },
     {
-      "name": "maintainer_label",
-      "additional_tags": [
-        "required"
-      ]
-    },
-    {
-      "name": "name_label",
-      "additional_tags": [
-        "required"
-      ]
-    },
-    {
-      "name": "release_label",
-      "additional_tags": [
-        "required"
-      ]
-    },
-    {
-      "name": "summary_label",
-      "additional_tags": [
-        "required"
-      ]
-    },
-    {
       "name": "url_label"
-    },
-    {
-      "name": "usage_label",
-      "additional_tags": [
-        "required"
-      ]
     },
     {
       "name": "vcs-ref_label"
@@ -77,13 +41,24 @@
       "name": "vcs-url_label"
     },
     {
-      "name": "version_label",
+      "names": [
+        "com.redhat.component_label",
+        "maintainer_label",
+        "name_label",
+        "release_label",
+        "summary_label",
+        "usage_label",
+        "version_label"
+      ],
       "additional_tags": [
         "required"
       ]
     },
     {
-      "name": "from_tag_not_latest",
+      "names": [
+        "from_tag_not_latest",
+        "maintainer_deprecated"
+      ],
       "additional_tags": [
         "required"
       ],
@@ -92,36 +67,11 @@
       ]
     },
     {
-      "name": "maintainer_deprecated",
-      "additional_tags": [
-        "required"
+      "names": [
+        "cmd_or_entrypoint",
+        "help_file_or_readme",
+        "no_root"
       ],
-      "usable_targets": [
-        "dockerfile"
-      ]
-    },
-    {
-      "name": "cmd_or_entrypoint",
-      "additional_tags": [
-        "required"
-      ],
-      "usable_targets": [
-        "image",
-        "container"
-      ]
-    },
-    {
-      "name": "help_file_or_readme",
-      "additional_tags": [
-        "required"
-      ],
-      "usable_targets": [
-        "image",
-        "container"
-      ]
-    },
-    {
-      "name": "no_root",
       "additional_tags": [
         "required"
       ],
