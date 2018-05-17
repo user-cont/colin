@@ -1,4 +1,4 @@
-.PHONY: check build-test-image build-labels-image test-in-container exec-test check-local
+.PHONY: check build-test-image build-labels-image test-in-container exec-test check-local check-code-style check-pylint check-bandit
 
 TEST_IMAGE_NAME := colin-test
 TEST_IMAGE_LABELS_NAME := colin-labels
@@ -21,6 +21,14 @@ test-in-container: build-test-image build-labels-image
 
 exec-test:
 	PYTHONPATH=$(CURDIR) py.test-3 $(TEST_TARGET)
+
+check-code-style: check-pylint check-bandit
+
+check-pylint:
+	pylint colin || true
+
+check-bandit:
+	bandit . -r || true
 
 clean:
 	python3 setup.py clean

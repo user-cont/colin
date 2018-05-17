@@ -82,7 +82,7 @@ def load_check_classes_from_file(path, top_path):
     m = _load_module(path, top_path)
 
     check_classes = []
-    for name, obj in inspect.getmembers(m, inspect.isclass):
+    for _, obj in inspect.getmembers(m, inspect.isclass):
         if should_we_load(obj):
             check_classes.append(obj)
             logger.debug("Check class '{}' found.".format(obj.__name__))
@@ -93,6 +93,7 @@ class CheckLoader(object):
     """
     find recursively all checks on a given path
     """
+
     def __init__(self, path):
         """
         :param path: str, path to a file or a dir where check classes are present
@@ -115,7 +116,7 @@ class CheckLoader(object):
         check_classes = set()
         if os.path.isfile(self.path):
             return load_check_classes_from_file(self.path, self.top_py_path)
-        for root, dirs, files in os.walk(self.path):
+        for root, _, files in os.walk(self.path):
             for fi in files:
                 if fi.endswith(".pyc"):
                     continue

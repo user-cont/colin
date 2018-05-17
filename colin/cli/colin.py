@@ -19,7 +19,6 @@ import sys
 
 import click
 import six
-from six import iteritems
 
 from ..core.checks.abstract_check import AbstractCheck
 from ..core.colin import get_checks, run
@@ -48,7 +47,8 @@ def cli():
 @click.option('--ruleset', '-r', type=click.STRING, envvar='COLIN_RULESET',
               help="Select a predefined ruleset (e.g. fedora).")
 @click.option('--ruleset-file', '-f', type=click.File(mode='r'),
-              help="Path to a file to use for validation (by default they are placed in /usr/share/colin/rulesets).")
+              help="Path to a file to use for validation "
+                   "(by default they are placed in /usr/share/colin/rulesets).")
 @click.option('--debug', default=False, is_flag=True,
               help="Enable debugging mode (debugging logs, full tracebacks).")
 @click.option('--json', type=click.File(mode='w'),
@@ -64,7 +64,8 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose):
     Check the image/container/dockerfile (default).
     """
     if ruleset and ruleset_file:
-        raise click.BadOptionUsage("Options '--ruleset' and '--file-ruleset' cannot be used together.")
+        raise click.BadOptionUsage(
+            "Options '--ruleset' and '--file-ruleset' cannot be used together.")
 
     try:
         if not debug:
@@ -106,7 +107,8 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose):
 @click.option('--ruleset', '-r', type=click.STRING, envvar='COLIN_RULESET',
               help="Select a predefined ruleset (e.g. fedora).")
 @click.option('--ruleset-file', '-f', type=click.File(mode='r'),
-              help="Path to a file to use for validation (by default they are placed in /usr/share/colin/rulesets).")
+              help="Path to a file to use for validation "
+                   "(by default they are placed in /usr/share/colin/rulesets).")
 @click.option('--debug', default=False, is_flag=True,
               help="Enable debugging mode (debugging logs, full tracebacks).")
 @click.option('--json', type=click.File(mode='w'),
@@ -120,7 +122,8 @@ def list_checks(ruleset, ruleset_file, debug, json, tag, verbose):
     Print the checks.
     """
     if ruleset and ruleset_file:
-        raise click.BadOptionUsage("Options '--ruleset' and '--file-ruleset' cannot be used together.")
+        raise click.BadOptionUsage(
+            "Options '--ruleset' and '--file-ruleset' cannot be used together.")
 
     try:
         if not debug:

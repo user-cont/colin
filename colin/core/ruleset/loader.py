@@ -26,13 +26,13 @@ logger = logging.getLogger(__name__)
 
 
 def get_ruleset_struct_from_fileobj(fileobj):
-        try:
-            logger.debug("Loading ruleset from file '{}'.".format(fileobj.name))
-            return RulesetStruct(json.load(fileobj))
-        except Exception as ex:
-            msg = "Ruleset file '{}' cannot be loaded: {}".format(fileobj.name, ex)
-            logger.error(msg)
-            raise ColinRulesetException(msg)
+    try:
+        logger.debug("Loading ruleset from file '{}'.".format(fileobj.name))
+        return RulesetStruct(json.load(fileobj))
+    except Exception as ex:
+        msg = "Ruleset file '{}' cannot be loaded: {}".format(fileobj.name, ex)
+        logger.error(msg)
+        raise ColinRulesetException(msg)
 
 
 def get_ruleset_struct_from_file(file_path):
@@ -51,13 +51,13 @@ def get_ruleset_struct_from_file(file_path):
 def nicer_get(di, required, *path):
     """
     this is a nicer way of doing dict.get()
-    
+
     :param di: dict
     :param required: bool, raises an exc if value is not found, otherwise returns None
     :param path: list of str to navigate in the dict
     :return: your value
     """
-    
+
     r = di
     for p in path:
         try:
@@ -81,6 +81,7 @@ class CheckStruct(object):
         "usable_targets": ["image", "dockerfile"],
       }
     """
+
     def __init__(self, check_dict):
         self.c = check_dict
         # TODO: validate the dict
@@ -91,7 +92,7 @@ class CheckStruct(object):
 
     def __str__(self):
         return "%s" % self.name
-    
+
     @property
     def name(self):
         return self._get(True, "name")
@@ -120,7 +121,7 @@ class RulesetStruct(object):
     {
       "version": "1",
       "name": "Mandatory checks for Red Hat container images"
-      "description": "This set of checks is required to pass on every container image we, as Red Hat, release. For more info..."
+      "description": "This set of checks is required to pass on every container image ..."
       "contact_email": "cvp@redhat.com?"
       "checks": [{
         "name": "label_name",
@@ -128,8 +129,9 @@ class RulesetStruct(object):
         "additional_tags": ["baz"],
         "usable_targets": ["image", "dockerfile"],
       }, {}...
-  ]}
+    ]}
     """
+
     def __init__(self, ruleset_dict):
         self.d = ruleset_dict
         # TODO: validate ruleset
