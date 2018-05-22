@@ -65,6 +65,6 @@ setup(
     ],
     keywords='containers,sanity,linter',
     author='Red Hat',
-    author_email='flachman@redhat.com',
+    author_email='user-cont-team@redhat.com',
     url='https://github.com/user-cont/colin',
 )
