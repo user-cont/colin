@@ -13,8 +13,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+import pytest
 
 import colin
+
+
+@pytest.fixture()
+def empty_ruleset():
+    return {
+        "version": "1",
+        "name": "Laughing out loud ruleset",
+        "description": "This set of checks is required to pass because we said it",
+        "contact_email": "forgot-to-reply@example.nope",
+        "checks": [
+        ]
+    }
 
 
 def get_results_from_colin_labels_image():
@@ -33,7 +46,7 @@ def test_labels_in_image():
                      "com.redhat.component_label": "PASS",
                      "summary_label": "PASS",
                      "version_label": "PASS",
-                     "usage_label": "FAIL",
+                     "run_or_usage_label": "PASS",
                      "release_label": "FAIL",
                      "architecture_label": "FAIL",
                      "url_label": "FAIL",
@@ -55,3 +68,18 @@ def test_labels_in_image():
         labels_dict[res.check_name] = res.status
     for key in expected_dict.keys():
         assert labels_dict[key] == expected_dict[key]
+
+
+@pytest.mark.parametrize("check, result", [
+    ({"name": "run_or_usage_label", "labels": ["run"]}, "PASS"),
+    ({"name": "run_or_usage_label", "labels": ["usage"]}, "FAIL"),
+    ({"name": "run_or_usage_label", "labels": ["run", "usage"]}, "PASS"),
+    ({"name": "run_or_usage_label", "labels": ["something", "different"]}, "FAIL"),
+    ({"name": "run_or_usage_label", "labels": ["something", "completely", "different"]}, "FAIL"),
+])
+def test_multiple_labels_check(check, result, empty_ruleset):
+    new_ruleset = dict(empty_ruleset)
+    new_ruleset["checks"] = [check]
+    check_result = colin.run("colin-labels", ruleset=new_ruleset)
+    assert check_result
+    assert list(check_result.results)[0].status == result
