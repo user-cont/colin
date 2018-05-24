@@ -14,10 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from colin.core.checks.labels import DeprecatedLabelCheck
+from colin.core.checks.labels import DeprecatedLabelAbstractCheck
 
 
-class ArchitectureLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
+class ArchitectureLabelCapitalDeprecatedCheck(DeprecatedLabelAbstractCheck):
     name = "architecture_label_capital_deprecated"
 
     def __init__(self):
@@ -30,7 +30,7 @@ class ArchitectureLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
                      new_label="architecture")
 
 
-class BZComponentDeprecatedCheck(DeprecatedLabelCheck):
+class BZComponentDeprecatedCheck(DeprecatedLabelAbstractCheck):
     name = "bzcomponent_deprecated"
 
     def __init__(self):
@@ -43,7 +43,7 @@ class BZComponentDeprecatedCheck(DeprecatedLabelCheck):
                       new_label="com.redhat.component")
 
 
-class InstallLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
+class InstallLabelCapitalDeprecatedCheck(DeprecatedLabelAbstractCheck):
     name = "install_label_capital_deprecated"
 
     def __init__(self):
@@ -56,7 +56,7 @@ class InstallLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
                       new_label="install")
 
 
-class NameLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
+class NameLabelCapitalDeprecatedCheck(DeprecatedLabelAbstractCheck):
     name = "name_label_capital_deprecated"
 
     def __init__(self):
@@ -69,7 +69,7 @@ class NameLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
                       new_label="name")
 
 
-class ReleaseLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
+class ReleaseLabelCapitalDeprecatedCheck(DeprecatedLabelAbstractCheck):
     name = "release_label_capital_deprecated"
 
     def __init__(self):
@@ -82,7 +82,7 @@ class ReleaseLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
                       new_label="release")
 
 
-class UninstallLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
+class UninstallLabelCapitalDeprecatedCheck(DeprecatedLabelAbstractCheck):
     name = "uninstall_label_capital_deprecated"
 
     def __init__(self):
@@ -95,7 +95,7 @@ class UninstallLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
                       new_label="uninstall")
 
 
-class VersionLabelCapitalDeprecatedCheck(DeprecatedLabelCheck):
+class VersionLabelCapitalDeprecatedCheck(DeprecatedLabelAbstractCheck):
     name = "version_label_capital_deprecated"
 
     def __init__(self):

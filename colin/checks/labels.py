@@ -14,10 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from colin.core.checks.labels import LabelCheck
+from colin.core.checks.labels import LabelAbstractCheck
 
 
-class ArchitectureLabelCheck(LabelCheck):
+class ArchitectureLabelCheck(LabelAbstractCheck):
     name = "architecture_label"
 
     def __init__(self):
@@ -33,7 +33,7 @@ class ArchitectureLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class AuthoritativeSourceUrlLabelCheck(LabelCheck):
+class AuthoritativeSourceUrlLabelCheck(LabelAbstractCheck):
     name = "authoritative_source-url_label"
 
     def __init__(self):
@@ -47,7 +47,7 @@ class AuthoritativeSourceUrlLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class BuildDateLabelCheck(LabelCheck):
+class BuildDateLabelCheck(LabelAbstractCheck):
     name = "build-date_label"
 
     def __init__(self):
@@ -64,7 +64,7 @@ class BuildDateLabelCheck(LabelCheck):
         # TODO: Check the RFC 3339 date-time format
 
 
-class BuildHostLabelCheck(LabelCheck):
+class BuildHostLabelCheck(LabelAbstractCheck):
     name = "com.redhat.build-host_label"
 
     def __init__(self):
@@ -79,7 +79,7 @@ class BuildHostLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class ComRedhatComponentLabelCheck(LabelCheck):
+class ComRedhatComponentLabelCheck(LabelAbstractCheck):
     name = "com.redhat.component_label"
 
     def __init__(self):
@@ -95,7 +95,7 @@ class ComRedhatComponentLabelCheck(LabelCheck):
         # TODO: Check the format
 
 
-class DescriptionLabelCheck(LabelCheck):
+class DescriptionLabelCheck(LabelAbstractCheck):
     name = "description_label"
 
     def __init__(self):
@@ -111,7 +111,7 @@ class DescriptionLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class DistributionScopeLabelCheck(LabelCheck):
+class DistributionScopeLabelCheck(LabelAbstractCheck):
     name = "distribution-scope_label"
 
     def __init__(self):
@@ -128,7 +128,7 @@ class DistributionScopeLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class HelpLabelCheck(LabelCheck):
+class HelpLabelCheck(LabelAbstractCheck):
     name = "help_label"
 
     def __init__(self):
@@ -143,7 +143,7 @@ class HelpLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class IoK8sDescriptionLabelCheck(LabelCheck):
+class IoK8sDescriptionLabelCheck(LabelAbstractCheck):
     name = "io.k8s.description_label"
 
     def __init__(self):
@@ -162,7 +162,7 @@ class IoK8sDescriptionLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class IoK8sDisplayNameLabelCheck(LabelCheck):
+class IoK8sDisplayNameLabelCheck(LabelAbstractCheck):
     name = "io.k8s.display-name_label"
 
     def __init__(self):
@@ -177,7 +177,7 @@ class IoK8sDisplayNameLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class IoOpenshiftExposeServicesLabelCheck(LabelCheck):
+class IoOpenshiftExposeServicesLabelCheck(LabelAbstractCheck):
     name = "io.openshift.expose-services_label"
 
     def __init__(self):
@@ -197,7 +197,7 @@ class IoOpenshiftExposeServicesLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class IoOpenShiftTagsLabelCheck(LabelCheck):
+class IoOpenShiftTagsLabelCheck(LabelAbstractCheck):
     name = "io.openshift.tags_label"
 
     def __init__(self):
@@ -212,7 +212,7 @@ class IoOpenShiftTagsLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class MaintainerLabelCheck(LabelCheck):
+class MaintainerLabelCheck(LabelAbstractCheck):
     name = "maintainer_label"
 
     def __init__(self):
@@ -226,7 +226,7 @@ class MaintainerLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class NameLabelCheck(LabelCheck):
+class NameLabelCheck(LabelAbstractCheck):
     name = "name_label"
 
     def __init__(self):
@@ -240,7 +240,7 @@ class NameLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class ReleaseLabelCheck(LabelCheck):
+class ReleaseLabelCheck(LabelAbstractCheck):
     name = "release_label"
 
     def __init__(self):
@@ -254,7 +254,7 @@ class ReleaseLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class SummaryLabelCheck(LabelCheck):
+class SummaryLabelCheck(LabelAbstractCheck):
     name = "summary_label"
 
     def __init__(self):
@@ -268,7 +268,7 @@ class SummaryLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class UrlLabelCheck(LabelCheck):
+class UrlLabelCheck(LabelAbstractCheck):
     name = "url_label"
 
     def __init__(self):
@@ -282,11 +282,11 @@ class UrlLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class UsageLabelCheck(LabelCheck):
-    name = "usage_label"
+class RunOrUsageLabelCheck(LabelAbstractCheck):
+    name = "run_or_usage_label"
 
     def __init__(self):
-        super(UsageLabelCheck, self) \
+        super(RunOrUsageLabelCheck, self) \
             .__init__(message="Label 'usage' has to be specified.",
                       description="A human readable example of container execution.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
@@ -296,7 +296,7 @@ class UsageLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class VcsRefLabelCheck(LabelCheck):
+class VcsRefLabelCheck(LabelAbstractCheck):
     name = "vcs-ref_label"
 
     def __init__(self):
@@ -313,7 +313,7 @@ class VcsRefLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class VcsTypeLabelCheck(LabelCheck):
+class VcsTypeLabelCheck(LabelAbstractCheck):
     name = "vcs-type_label"
 
     def __init__(self):
@@ -330,7 +330,7 @@ class VcsTypeLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class VcsUrlLabelCheck(LabelCheck):
+class VcsUrlLabelCheck(LabelAbstractCheck):
     name = "vcs-url_label"
 
     def __init__(self):
@@ -346,7 +346,7 @@ class VcsUrlLabelCheck(LabelCheck):
                       value_regex=None)
 
 
-class VendorLabelCheck(LabelCheck):
+class VendorLabelCheck(LabelAbstractCheck):
     name = "vendor_label"
 
     def __init__(self):
@@ -361,7 +361,7 @@ class VendorLabelCheck(LabelCheck):
                       required=True)
 
 
-class VersionLabelCheck(LabelCheck):
+class VersionLabelCheck(LabelAbstractCheck):
     name = "version_label"
 
     def __init__(self):

@@ -20,11 +20,11 @@ from .dockerfile import DockerfileAbstractCheck
 from .images import ImageAbstractCheck
 
 
-class LabelCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileAbstractCheck):
+class LabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileAbstractCheck):
 
     def __init__(self, message, description, reference_url, tags, label, required,
                  value_regex=None):
-        super(LabelCheck, self) \
+        super(LabelAbstractCheck, self) \
             .__init__(message, description, reference_url, tags)
         self.label = label
         self.required = required
@@ -44,10 +44,11 @@ class LabelCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileAbstractC
                            logs=[])
 
 
-class DeprecatedLabelCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileAbstractCheck):
+class DeprecatedLabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck,
+                                   DockerfileAbstractCheck):
 
     def __init__(self, message, description, reference_url, tags, old_label, new_label):
-        super(DeprecatedLabelCheck, self) \
+        super(DeprecatedLabelAbstractCheck, self) \
             .__init__(message, description, reference_url, tags)
         self.old_label = old_label
         self.new_label = new_label
