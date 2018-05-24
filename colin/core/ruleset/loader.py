@@ -113,7 +113,7 @@ class CheckStruct(object):
     def other_attributes(self):
         """ return dict with all other data except for the described above"""
         return {k: v for k, v in self.c.items() if
-                k not in ["name", "tags", "additional_tags", "usable_targets"]}
+                k not in ["name", "names", "tags", "additional_tags", "usable_targets"]}
 
 
 class RulesetStruct(object):
@@ -162,5 +162,15 @@ class RulesetStruct(object):
     @property
     def checks(self):
         if self._checks is None:
-            self._checks = [CheckStruct(c) for c in self._get("checks")]
+            self._checks = []
+            for c in self._get("checks"):
+                if "name" in c:
+                    self._checks.append(CheckStruct(c))
+                elif "names" in c:
+                    for n in c["names"]:
+                        new_check = dict(c)
+                        del new_check["names"]
+                        new_check["name"] = n
+                        self._checks.append(CheckStruct(new_check))
+
         return self._checks
