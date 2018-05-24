@@ -46,6 +46,24 @@ def ruleset():
 
 
 @pytest.fixture()
+def ruleset_coupled():
+    return {
+        "version": "1",
+        "name": "Laughing out loud coublet ruleset",
+        "description": "This set of checks is required to pass because we said it",
+        "contact_email": "forgot-to-reply@example.nope",
+        "checks": [
+            {
+                "names": ["maintainer_label", "name_label", "com.redhat.component_label"],
+                "additional_tags": [
+                    "required"
+                ]
+            }
+        ]
+    }
+
+
+@pytest.fixture()
 def expected_dict():
     return {"maintainer_label": "PASS",
             "name_label": "PASS",
@@ -87,3 +105,11 @@ def test_specific_ruleset_directly(ruleset, expected_dict):
 def test_get_checks_directly(ruleset):
     checks = colin.get_checks(ruleset=ruleset)
     assert checks
+
+
+def test_coupled_ruleset(ruleset_coupled):
+    checks = colin.get_checks(ruleset=ruleset_coupled)
+    assert checks
+    assert len(checks) == 3
+    for c in checks:
+        assert "required" in c.tags
