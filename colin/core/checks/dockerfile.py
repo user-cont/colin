@@ -116,10 +116,10 @@ class DockerfileLabelAbstractCheck(DockerfileAbstractCheck):
 
     def check(self, target):
         labels = target.instance.labels
-        passed = check_label(label=self.label,
+        passed = check_label(labels=self.label,
                              required=self.required,
                              value_regex=self.value_regex,
-                             labels=labels)
+                             target_labels=labels)
 
         return CheckResult(ok=passed,
                            description=self.description,

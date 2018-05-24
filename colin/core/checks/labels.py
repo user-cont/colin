@@ -22,19 +22,19 @@ from .images import ImageAbstractCheck
 
 class LabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileAbstractCheck):
 
-    def __init__(self, message, description, reference_url, tags, label, required,
+    def __init__(self, message, description, reference_url, tags, labels, required,
                  value_regex=None):
         super(LabelAbstractCheck, self) \
             .__init__(message, description, reference_url, tags)
-        self.label = label
+        self.labels = labels
         self.required = required
         self.value_regex = value_regex
 
     def check(self, target):
-        passed = check_label(label=self.label,
+        passed = check_label(labels=self.labels,
                              required=self.required,
                              value_regex=self.value_regex,
-                             labels=target.labels)
+                             target_labels=target.labels)
 
         return CheckResult(ok=passed,
                            description=self.description,

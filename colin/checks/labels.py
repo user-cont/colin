@@ -28,7 +28,7 @@ class ArchitectureLabelCheck(LabelAbstractCheck):
                                   "for all supported Fedora Architectures)",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["architecture", "label"],
-                      label="architecture",
+                      labels=["architecture"],
                       required=True,
                       value_regex=None)
 
@@ -42,7 +42,7 @@ class AuthoritativeSourceUrlLabelCheck(LabelAbstractCheck):
                       description="The authoritative registry in which the image is published.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["authoritative-source-url", "label"],
-                      label="authoritative-source-url",
+                      labels=["authoritative-source-url"],
                       required=True,
                       value_regex=None)
 
@@ -58,7 +58,7 @@ class BuildDateLabelCheck(LabelAbstractCheck):
                                     "ContainerApplicationGenericLabels/blob/master/vendor/"
                                     "redhat/labels.md",
                       tags=["build-date", "label"],
-                      label="build-date",
+                      labels=["build-date"],
                       required=True,
                       value_regex=None)
         # TODO: Check the RFC 3339 date-time format
@@ -74,7 +74,7 @@ class BuildHostLabelCheck(LabelAbstractCheck):
                                   " for internal use and auditability, similar to the use in RPM.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["com.redhat.build-host", "build-host", "label"],
-                      label="com.redhat.build-host",
+                      labels=["com.redhat.build-host"],
                       required=True,
                       value_regex=None)
 
@@ -89,7 +89,7 @@ class ComRedhatComponentLabelCheck(LabelAbstractCheck):
                                   " this container should be reported by users.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["com.redhat.component", "label"],
-                      label="com.redhat.component",
+                      labels=["com.redhat.component"],
                       required=True,
                       value_regex=None)
         # TODO: Check the format
@@ -106,7 +106,23 @@ class DescriptionLabelCheck(LabelAbstractCheck):
                                     "ContainerApplicationGenericLabels/blob/master/vendor/"
                                     "redhat/labels.md",
                       tags=["description", "label"],
-                      label="description",
+                      labels=["description"],
+                      required=True,
+                      value_regex=None)
+
+
+class DescriptionOrIoK8sDescriptionLabelCheck(LabelAbstractCheck):
+    name = "description_or_io.k8s.description_label"
+
+    def __init__(self):
+        super(DescriptionOrIoK8sDescriptionLabelCheck, self) \
+            .__init__(message="Label 'description' has to be specified.",
+                      description="Detailed description of the image.",
+                      reference_url="https://github.com/projectatomic/"
+                                    "ContainerApplicationGenericLabels/blob/master/vendor/"
+                                    "redhat/labels.md",
+                      tags=["description", "label"],
+                      labels=["description", "io.k8s.description"],
                       required=True,
                       value_regex=None)
 
@@ -123,7 +139,7 @@ class DistributionScopeLabelCheck(LabelAbstractCheck):
                                     "ContainerApplicationGenericLabels/blob/master/vendor/"
                                     "redhat/labels.md",
                       tags=["distribution-scope", "label"],
-                      label="distribution-scope",
+                      labels=["distribution-scope"],
                       required=True,
                       value_regex=None)
 
@@ -138,7 +154,7 @@ class HelpLabelCheck(LabelAbstractCheck):
                                   " in display of Help information.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["help", "label"],
-                      label="help",
+                      labels=["help"],
                       required=True,
                       value_regex=None)
 
@@ -157,7 +173,7 @@ class IoK8sDescriptionLabelCheck(LabelAbstractCheck):
                           "https://github.com/projectatomic/ContainerApplicationGenericLabels/"
                           "blob/master/vendor/redhat/labels.md#other-labels"],
                       tags=["io.k8s.description", "description", "label"],
-                      label="io.k8s.description",
+                      labels=["io.k8s.description"],
                       required=True,
                       value_regex=None)
 
@@ -172,7 +188,7 @@ class IoK8sDisplayNameLabelCheck(LabelAbstractCheck):
                                   " of an image inside the Image / Repo Overview page.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["io.k8s.display-name", "label"],
-                      label="io.k8s.display-name",
+                      labels="io.k8s.display-name",
                       required=True,
                       value_regex=None)
 
@@ -192,7 +208,7 @@ class IoOpenshiftExposeServicesLabelCheck(LabelAbstractCheck):
                           "https://github.com/projectatomic/ContainerApplicationGenericLabels/"
                           "blob/master/vendor/redhat/labels.md#other-labels"],
                       tags=["io.openshift.expose-services", "label"],
-                      label="io.openshift.expose-services",
+                      labels=["io.openshift.expose-services"],
                       required=True,
                       value_regex=None)
 
@@ -207,7 +223,7 @@ class IoOpenShiftTagsLabelCheck(LabelAbstractCheck):
                                   " all relevant search terms for this image.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["io.openshift.tags", "label"],
-                      label="io.openshift.tags",
+                      labels=["io.openshift.tags"],
                       required=True,
                       value_regex=None)
 
@@ -221,7 +237,7 @@ class MaintainerLabelCheck(LabelAbstractCheck):
                       description="The name and email of the maintainer (usually the submitter).",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["maintainer", "label"],
-                      label="maintainer",
+                      labels=["maintainer"],
                       required=True,
                       value_regex=None)
 
@@ -235,7 +251,7 @@ class NameLabelCheck(LabelAbstractCheck):
                       description="Name of the Image or Container.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["name", "label"],
-                      label="name",
+                      labels=["name"],
                       required=True,
                       value_regex=None)
 
@@ -249,7 +265,7 @@ class ReleaseLabelCheck(LabelAbstractCheck):
                       description="Release Number for this version.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["release", "label"],
-                      label="release",
+                      labels=["release"],
                       required=True,
                       value_regex=None)
 
@@ -263,7 +279,7 @@ class SummaryLabelCheck(LabelAbstractCheck):
                       description="A short description of the image.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["summary", "label"],
-                      label="summary",
+                      labels=["summary"],
                       required=True,
                       value_regex=None)
 
@@ -277,7 +293,7 @@ class UrlLabelCheck(LabelAbstractCheck):
                       description="A URL where the user can find more information about the image.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["url", "label"],
-                      label="url",
+                      labels=["url"],
                       required=True,
                       value_regex=None)
 
@@ -291,7 +307,7 @@ class RunOrUsageLabelCheck(LabelAbstractCheck):
                       description="A human readable example of container execution.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["usage", "label"],
-                      label="usage",
+                      labels=["run", "usage"],
                       required=True,
                       value_regex=None)
 
@@ -308,7 +324,7 @@ class VcsRefLabelCheck(LabelAbstractCheck):
                                     "ContainerApplicationGenericLabels/blob/master/vendor/"
                                     "redhat/labels.md",
                       tags=["vcs-ref", "vcs", "label"],
-                      label="vcs-ref",
+                      labels=["vcs-ref"],
                       required=True,
                       value_regex=None)
 
@@ -325,7 +341,7 @@ class VcsTypeLabelCheck(LabelAbstractCheck):
                                     "ContainerApplicationGenericLabels/blob/master/vendor/"
                                     "redhat/labels.md",
                       tags=["vcs-type", "vcs", "label"],
-                      label="vcs-type",
+                      labels=["vcs-type"],
                       required=True,
                       value_regex=None)
 
@@ -341,7 +357,7 @@ class VcsUrlLabelCheck(LabelAbstractCheck):
                                     "ContainerApplicationGenericLabels/blob/master/vendor/"
                                     "redhat/labels.md",
                       tags=["vcs-url", "vcs", "label"],
-                      label="vcs-url",
+                      labels=["vcs-url"],
                       required=True,
                       value_regex=None)
 
@@ -357,7 +373,7 @@ class VendorLabelCheck(LabelAbstractCheck):
                                     "ContainerApplicationGenericLabels/blob/master/vendor/"
                                     "redhat/labels.md",
                       tags=["vendor", "label"],
-                      label="vendor",
+                      labels=["vendor"],
                       required=True)
 
 
@@ -370,6 +386,6 @@ class VersionLabelCheck(LabelAbstractCheck):
                       description="Version of the image.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["version", "label"],
-                      label="version",
+                      labels=["version"],
                       required=True,
                       value_regex=None)

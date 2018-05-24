@@ -47,7 +47,6 @@
         "name_label",
         "release_label",
         "summary_label",
-        "usage_label",
         "version_label"
       ],
       "additional_tags": [
@@ -57,7 +56,8 @@
     {
       "names": [
         "from_tag_not_latest",
-        "maintainer_deprecated"
+        "maintainer_deprecated",
+        "description_or_io.k8s.description_label"
       ],
       "additional_tags": [
         "required"
@@ -70,7 +70,8 @@
       "names": [
         "cmd_or_entrypoint",
         "help_file_or_readme",
-        "no_root"
+        "no_root",
+        "run_or_usage_label"
       ],
       "additional_tags": [
         "required"
