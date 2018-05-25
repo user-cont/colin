@@ -26,7 +26,6 @@ class AbstractCheck(object):
         self.description = description
         self.reference_url = reference_url
         self.tags = tags
-        self.severity = None
 
     def check(self, target):
         pass
@@ -55,7 +54,6 @@ class AbstractCheck(object):
             'description': self.description,
             'reference_url': self.reference_url,
             'tags': self.tags,
-            'severity': self.severity,
         }
 
     @staticmethod

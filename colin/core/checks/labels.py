@@ -20,21 +20,21 @@ from .dockerfile import DockerfileAbstractCheck
 from .images import ImageAbstractCheck
 
 
-class LabelCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileAbstractCheck):
+class LabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileAbstractCheck):
 
-    def __init__(self, message, description, reference_url, tags, label, required,
+    def __init__(self, message, description, reference_url, tags, labels, required,
                  value_regex=None):
-        super(LabelCheck, self) \
+        super(LabelAbstractCheck, self) \
             .__init__(message, description, reference_url, tags)
-        self.label = label
+        self.labels = labels
         self.required = required
         self.value_regex = value_regex
 
     def check(self, target):
-        passed = check_label(label=self.label,
+        passed = check_label(labels=self.labels,
                              required=self.required,
                              value_regex=self.value_regex,
-                             labels=target.labels)
+                             target_labels=target.labels)
 
         return CheckResult(ok=passed,
                            description=self.description,
@@ -44,10 +44,11 @@ class LabelCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileAbstractC
                            logs=[])
 
 
-class DeprecatedLabelCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileAbstractCheck):
+class DeprecatedLabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck,
+                                   DockerfileAbstractCheck):
 
     def __init__(self, message, description, reference_url, tags, old_label, new_label):
-        super(DeprecatedLabelCheck, self) \
+        super(DeprecatedLabelAbstractCheck, self) \
             .__init__(message, description, reference_url, tags)
         self.old_label = old_label
         self.new_label = new_label

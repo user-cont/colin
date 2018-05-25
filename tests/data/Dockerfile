@@ -9,7 +9,8 @@ LABEL name="${NAME}" \
     version="${VERSION}" \
     com.redhat.component="colin-labels" \
     description="The image contains labels which are used for testing colin functionality." \
-    io.k8s.description="The image contains labels which are used for testing colin functionality."
+    io.k8s.description="The image contains labels which are used for testing colin functionality." \
+    run="docker run <application image>"
 
 COPY ./files/usage /files/usage
 

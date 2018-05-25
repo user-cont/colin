@@ -14,10 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from colin.core.checks.labels import LabelCheck
+from colin.core.checks.labels import LabelAbstractCheck
 
 
-class ArchitectureLabelCheck(LabelCheck):
+class ArchitectureLabelCheck(LabelAbstractCheck):
     name = "architecture_label"
 
     def __init__(self):
@@ -28,12 +28,12 @@ class ArchitectureLabelCheck(LabelCheck):
                                   "for all supported Fedora Architectures)",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["architecture", "label"],
-                      label="architecture",
+                      labels=["architecture"],
                       required=True,
                       value_regex=None)
 
 
-class AuthoritativeSourceUrlLabelCheck(LabelCheck):
+class AuthoritativeSourceUrlLabelCheck(LabelAbstractCheck):
     name = "authoritative_source-url_label"
 
     def __init__(self):
@@ -42,12 +42,12 @@ class AuthoritativeSourceUrlLabelCheck(LabelCheck):
                       description="The authoritative registry in which the image is published.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["authoritative-source-url", "label"],
-                      label="authoritative-source-url",
+                      labels=["authoritative-source-url"],
                       required=True,
                       value_regex=None)
 
 
-class BuildDateLabelCheck(LabelCheck):
+class BuildDateLabelCheck(LabelAbstractCheck):
     name = "build-date_label"
 
     def __init__(self):
@@ -58,13 +58,13 @@ class BuildDateLabelCheck(LabelCheck):
                                     "ContainerApplicationGenericLabels/blob/master/vendor/"
                                     "redhat/labels.md",
                       tags=["build-date", "label"],
-                      label="build-date",
+                      labels=["build-date"],
                       required=True,
                       value_regex=None)
         # TODO: Check the RFC 3339 date-time format
 
 
-class BuildHostLabelCheck(LabelCheck):
+class BuildHostLabelCheck(LabelAbstractCheck):
     name = "com.redhat.build-host_label"
 
     def __init__(self):
@@ -74,12 +74,12 @@ class BuildHostLabelCheck(LabelCheck):
                                   " for internal use and auditability, similar to the use in RPM.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["com.redhat.build-host", "build-host", "label"],
-                      label="com.redhat.build-host",
+                      labels=["com.redhat.build-host"],
                       required=True,
                       value_regex=None)
 
 
-class ComRedhatComponentLabelCheck(LabelCheck):
+class ComRedhatComponentLabelCheck(LabelAbstractCheck):
     name = "com.redhat.component_label"
 
     def __init__(self):
@@ -89,13 +89,13 @@ class ComRedhatComponentLabelCheck(LabelCheck):
                                   " this container should be reported by users.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["com.redhat.component", "label"],
-                      label="com.redhat.component",
+                      labels=["com.redhat.component"],
                       required=True,
                       value_regex=None)
         # TODO: Check the format
 
 
-class DescriptionLabelCheck(LabelCheck):
+class DescriptionLabelCheck(LabelAbstractCheck):
     name = "description_label"
 
     def __init__(self):
@@ -106,12 +106,28 @@ class DescriptionLabelCheck(LabelCheck):
                                     "ContainerApplicationGenericLabels/blob/master/vendor/"
                                     "redhat/labels.md",
                       tags=["description", "label"],
-                      label="description",
+                      labels=["description"],
                       required=True,
                       value_regex=None)
 
 
-class DistributionScopeLabelCheck(LabelCheck):
+class DescriptionOrIoK8sDescriptionLabelCheck(LabelAbstractCheck):
+    name = "description_or_io.k8s.description_label"
+
+    def __init__(self):
+        super(DescriptionOrIoK8sDescriptionLabelCheck, self) \
+            .__init__(message="Label 'description' has to be specified.",
+                      description="Detailed description of the image.",
+                      reference_url="https://github.com/projectatomic/"
+                                    "ContainerApplicationGenericLabels/blob/master/vendor/"
+                                    "redhat/labels.md",
+                      tags=["description", "label"],
+                      labels=["description", "io.k8s.description"],
+                      required=True,
+                      value_regex=None)
+
+
+class DistributionScopeLabelCheck(LabelAbstractCheck):
     name = "distribution-scope_label"
 
     def __init__(self):
@@ -123,12 +139,12 @@ class DistributionScopeLabelCheck(LabelCheck):
                                     "ContainerApplicationGenericLabels/blob/master/vendor/"
                                     "redhat/labels.md",
                       tags=["distribution-scope", "label"],
-                      label="distribution-scope",
+                      labels=["distribution-scope"],
                       required=True,
                       value_regex=None)
 
 
-class HelpLabelCheck(LabelCheck):
+class HelpLabelCheck(LabelAbstractCheck):
     name = "help_label"
 
     def __init__(self):
@@ -138,12 +154,12 @@ class HelpLabelCheck(LabelCheck):
                                   " in display of Help information.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["help", "label"],
-                      label="help",
+                      labels=["help"],
                       required=True,
                       value_regex=None)
 
 
-class IoK8sDescriptionLabelCheck(LabelCheck):
+class IoK8sDescriptionLabelCheck(LabelAbstractCheck):
     name = "io.k8s.description_label"
 
     def __init__(self):
@@ -157,12 +173,12 @@ class IoK8sDescriptionLabelCheck(LabelCheck):
                           "https://github.com/projectatomic/ContainerApplicationGenericLabels/"
                           "blob/master/vendor/redhat/labels.md#other-labels"],
                       tags=["io.k8s.description", "description", "label"],
-                      label="io.k8s.description",
+                      labels=["io.k8s.description"],
                       required=True,
                       value_regex=None)
 
 
-class IoK8sDisplayNameLabelCheck(LabelCheck):
+class IoK8sDisplayNameLabelCheck(LabelAbstractCheck):
     name = "io.k8s.display-name_label"
 
     def __init__(self):
@@ -172,12 +188,12 @@ class IoK8sDisplayNameLabelCheck(LabelCheck):
                                   " of an image inside the Image / Repo Overview page.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["io.k8s.display-name", "label"],
-                      label="io.k8s.display-name",
+                      labels="io.k8s.display-name",
                       required=True,
                       value_regex=None)
 
 
-class IoOpenshiftExposeServicesLabelCheck(LabelCheck):
+class IoOpenshiftExposeServicesLabelCheck(LabelAbstractCheck):
     name = "io.openshift.expose-services_label"
 
     def __init__(self):
@@ -192,12 +208,12 @@ class IoOpenshiftExposeServicesLabelCheck(LabelCheck):
                           "https://github.com/projectatomic/ContainerApplicationGenericLabels/"
                           "blob/master/vendor/redhat/labels.md#other-labels"],
                       tags=["io.openshift.expose-services", "label"],
-                      label="io.openshift.expose-services",
+                      labels=["io.openshift.expose-services"],
                       required=True,
                       value_regex=None)
 
 
-class IoOpenShiftTagsLabelCheck(LabelCheck):
+class IoOpenShiftTagsLabelCheck(LabelAbstractCheck):
     name = "io.openshift.tags_label"
 
     def __init__(self):
@@ -207,12 +223,12 @@ class IoOpenShiftTagsLabelCheck(LabelCheck):
                                   " all relevant search terms for this image.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["io.openshift.tags", "label"],
-                      label="io.openshift.tags",
+                      labels=["io.openshift.tags"],
                       required=True,
                       value_regex=None)
 
 
-class MaintainerLabelCheck(LabelCheck):
+class MaintainerLabelCheck(LabelAbstractCheck):
     name = "maintainer_label"
 
     def __init__(self):
@@ -221,12 +237,12 @@ class MaintainerLabelCheck(LabelCheck):
                       description="The name and email of the maintainer (usually the submitter).",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["maintainer", "label"],
-                      label="maintainer",
+                      labels=["maintainer"],
                       required=True,
                       value_regex=None)
 
 
-class NameLabelCheck(LabelCheck):
+class NameLabelCheck(LabelAbstractCheck):
     name = "name_label"
 
     def __init__(self):
@@ -235,12 +251,12 @@ class NameLabelCheck(LabelCheck):
                       description="Name of the Image or Container.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["name", "label"],
-                      label="name",
+                      labels=["name"],
                       required=True,
                       value_regex=None)
 
 
-class ReleaseLabelCheck(LabelCheck):
+class ReleaseLabelCheck(LabelAbstractCheck):
     name = "release_label"
 
     def __init__(self):
@@ -249,12 +265,12 @@ class ReleaseLabelCheck(LabelCheck):
                       description="Release Number for this version.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["release", "label"],
-                      label="release",
+                      labels=["release"],
                       required=True,
                       value_regex=None)
 
 
-class SummaryLabelCheck(LabelCheck):
+class SummaryLabelCheck(LabelAbstractCheck):
     name = "summary_label"
 
     def __init__(self):
@@ -263,12 +279,12 @@ class SummaryLabelCheck(LabelCheck):
                       description="A short description of the image.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["summary", "label"],
-                      label="summary",
+                      labels=["summary"],
                       required=True,
                       value_regex=None)
 
 
-class UrlLabelCheck(LabelCheck):
+class UrlLabelCheck(LabelAbstractCheck):
     name = "url_label"
 
     def __init__(self):
@@ -277,26 +293,26 @@ class UrlLabelCheck(LabelCheck):
                       description="A URL where the user can find more information about the image.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["url", "label"],
-                      label="url",
+                      labels=["url"],
                       required=True,
                       value_regex=None)
 
 
-class UsageLabelCheck(LabelCheck):
-    name = "usage_label"
+class RunOrUsageLabelCheck(LabelAbstractCheck):
+    name = "run_or_usage_label"
 
     def __init__(self):
-        super(UsageLabelCheck, self) \
+        super(RunOrUsageLabelCheck, self) \
             .__init__(message="Label 'usage' has to be specified.",
                       description="A human readable example of container execution.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["usage", "label"],
-                      label="usage",
+                      labels=["run", "usage"],
                       required=True,
                       value_regex=None)
 
 
-class VcsRefLabelCheck(LabelCheck):
+class VcsRefLabelCheck(LabelAbstractCheck):
     name = "vcs-ref_label"
 
     def __init__(self):
@@ -308,12 +324,12 @@ class VcsRefLabelCheck(LabelCheck):
                                     "ContainerApplicationGenericLabels/blob/master/vendor/"
                                     "redhat/labels.md",
                       tags=["vcs-ref", "vcs", "label"],
-                      label="vcs-ref",
+                      labels=["vcs-ref"],
                       required=True,
                       value_regex=None)
 
 
-class VcsTypeLabelCheck(LabelCheck):
+class VcsTypeLabelCheck(LabelAbstractCheck):
     name = "vcs-type_label"
 
     def __init__(self):
@@ -325,12 +341,12 @@ class VcsTypeLabelCheck(LabelCheck):
                                     "ContainerApplicationGenericLabels/blob/master/vendor/"
                                     "redhat/labels.md",
                       tags=["vcs-type", "vcs", "label"],
-                      label="vcs-type",
+                      labels=["vcs-type"],
                       required=True,
                       value_regex=None)
 
 
-class VcsUrlLabelCheck(LabelCheck):
+class VcsUrlLabelCheck(LabelAbstractCheck):
     name = "vcs-url_label"
 
     def __init__(self):
@@ -341,12 +357,12 @@ class VcsUrlLabelCheck(LabelCheck):
                                     "ContainerApplicationGenericLabels/blob/master/vendor/"
                                     "redhat/labels.md",
                       tags=["vcs-url", "vcs", "label"],
-                      label="vcs-url",
+                      labels=["vcs-url"],
                       required=True,
                       value_regex=None)
 
 
-class VendorLabelCheck(LabelCheck):
+class VendorLabelCheck(LabelAbstractCheck):
     name = "vendor_label"
 
     def __init__(self):
@@ -357,11 +373,11 @@ class VendorLabelCheck(LabelCheck):
                                     "ContainerApplicationGenericLabels/blob/master/vendor/"
                                     "redhat/labels.md",
                       tags=["vendor", "label"],
-                      label="vendor",
+                      labels=["vendor"],
                       required=True)
 
 
-class VersionLabelCheck(LabelCheck):
+class VersionLabelCheck(LabelAbstractCheck):
     name = "version_label"
 
     def __init__(self):
@@ -370,6 +386,6 @@ class VersionLabelCheck(LabelCheck):
                       description="Version of the image.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["version", "label"],
-                      label="version",
+                      labels=["version"],
                       required=True,
                       value_regex=None)
