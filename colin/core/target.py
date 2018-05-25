@@ -44,9 +44,32 @@ def is_compatible(target_type, check_instance):
     """
     if not target_type:
         return True
-    return (target_type == TargetType.DOCKERFILE and isinstance(check_instance, DockerfileAbstractCheck)) \
-           or (target_type == TargetType.CONTAINER and isinstance(check_instance, ContainerAbstractCheck)) \
-           or (target_type == TargetType.IMAGE and isinstance(check_instance, ImageAbstractCheck))
+    return \
+        (
+            target_type == TargetType.DOCKERFILE and
+            isinstance(check_instance, DockerfileAbstractCheck)
+        ) \
+        or (
+            target_type == TargetType.CONTAINER and
+            isinstance(check_instance, ContainerAbstractCheck)
+        ) \
+        or (target_type == TargetType.IMAGE and isinstance(check_instance, ImageAbstractCheck))
+
+
+# we've introduced an API-breaking change in conu, we need to solve this at conu level:
+# https://github.com/user-cont/conu/issues/220
+# in the meantime, let's workaround here
+def inspect_object(obj, refresh=True):
+    """
+    inspect provided object (container, image) and return raw dict with the metadata
+
+    :param obj: instance of Container or an Image
+    :param refresh: bool, refresh the metadata or return cached?
+    :return: dict
+    """
+    if hasattr(obj, "inspect"):
+        return obj.inspect(refresh=refresh)
+    return obj.get_metadata(refresh=refresh)
 
 
 class Target(object):
@@ -129,29 +152,32 @@ class Target(object):
         """
         if self.target_type == TargetType.DOCKERFILE:
             return self.instance.labels
-        return self.instance.get_metadata()["Config"]["Labels"]
+        # labels won't change, hence refresh=false
+        return inspect_object(self.instance, refresh=False)["Config"]["Labels"]
 
     def get_output(self, cmd):
         if isinstance(cmd, six.string_types):
             cmd = [cmd]
         if self.target_type == TargetType.CONTAINER:
             if not self.instance.is_running():
-                raise ColinException("Cannot get output for stopped container.")
+                raise ColinException("Cannot get output for a stopped container.")
             output = "".join([o.decode() for o in self.instance.execute(command=cmd)])
-            exit_code = self.instance.get_metadata()["State"]["ExitCode"]
+            exit_code = inspect_object(self.instance, refresh=True)["State"]["ExitCode"]
 
             if exit_code != 0:
-                raise ColinException("Container exited with the code {}. Output:\n{}".format(exit_code, output))
+                raise ColinException(
+                    "Container exited with the code {}. Output:\n{}".format(exit_code, output))
 
         elif self.target_type == TargetType.IMAGE:
             container = self.instance.run_via_binary(command=cmd)
             container.wait()
             output = "".join([o.decode() for o in container.logs()])
-            exit_code = container.get_metadata()["State"]["ExitCode"]
+            exit_code = inspect_object(container, refresh=True)["State"]["ExitCode"]
             container.delete(force=True)
 
             if exit_code != 0:
-                raise ColinException("Container exited with the code {}. Output:\n{}".format(exit_code, output))
+                raise ColinException(
+                    "Container exited with the code {}. Output:\n{}".format(exit_code, output))
             return output
         else:
             raise ColinException("Cannot get command output for given target type.")

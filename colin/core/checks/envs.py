@@ -17,6 +17,7 @@
 import re
 
 from ..result import CheckResult
+from ..target import inspect_object
 from .containers import ContainerAbstractCheck
 from .images import ImageAbstractCheck
 
@@ -32,7 +33,7 @@ class EnvCheck(ContainerAbstractCheck, ImageAbstractCheck):
         self.value_regex = value_regex
 
     def check(self, target):
-        env_vars = target.instance.get_metadata()["Config"]["Env"]
+        env_vars = inspect_object(target.instance)["Config"]["Env"]
 
         env_vars_dict = {}
         if env_vars:
