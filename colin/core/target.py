@@ -44,9 +44,16 @@ def is_compatible(target_type, check_instance):
     """
     if not target_type:
         return True
-    return (target_type == TargetType.DOCKERFILE and isinstance(check_instance, DockerfileAbstractCheck)) \
-           or (target_type == TargetType.CONTAINER and isinstance(check_instance, ContainerAbstractCheck)) \
-           or (target_type == TargetType.IMAGE and isinstance(check_instance, ImageAbstractCheck))
+    return \
+        (
+            target_type == TargetType.DOCKERFILE and
+            isinstance(check_instance, DockerfileAbstractCheck)
+        ) \
+        or (
+            target_type == TargetType.CONTAINER and
+            isinstance(check_instance, ContainerAbstractCheck)
+        ) \
+        or (target_type == TargetType.IMAGE and isinstance(check_instance, ImageAbstractCheck))
 
 
 class Target(object):
@@ -136,12 +143,13 @@ class Target(object):
             cmd = [cmd]
         if self.target_type == TargetType.CONTAINER:
             if not self.instance.is_running():
-                raise ColinException("Cannot get output for stopped container.")
+                raise ColinException("Cannot get output for a stopped container.")
             output = "".join([o.decode() for o in self.instance.execute(command=cmd)])
             exit_code = self.instance.get_metadata()["State"]["ExitCode"]
 
             if exit_code != 0:
-                raise ColinException("Container exited with the code {}. Output:\n{}".format(exit_code, output))
+                raise ColinException(
+                    "Container exited with the code {}. Output:\n{}".format(exit_code, output))
 
         elif self.target_type == TargetType.IMAGE:
             container = self.instance.run_via_binary(command=cmd)
@@ -151,7 +159,8 @@ class Target(object):
             container.delete(force=True)
 
             if exit_code != 0:
-                raise ColinException("Container exited with the code {}. Output:\n{}".format(exit_code, output))
+                raise ColinException(
+                    "Container exited with the code {}. Output:\n{}".format(exit_code, output))
             return output
         else:
             raise ColinException("Cannot get command output for given target type.")
