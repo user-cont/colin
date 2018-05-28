@@ -9,8 +9,8 @@
 %endif
 
 Name:           %{pypi_name}
-Version:        0.0.4
-Release:        3%{?dist}
+Version:        0.1.0
+Release:        1%{?dist}
 Summary:        Tool to check generic rules/best-practices for containers/images/dockerfiles
 
 License:        GPLv3+
@@ -76,6 +76,9 @@ rm -rf html/.{doctrees,buildinfo}
 %doc html
 
 %changelog
+* Mon May 28 2018 Tomas Tomecek <ttomecek@redhat.com> - 0.1.0-1
+- new upstream release: 0.1.0
+
 * Wed May 02 2018 Petr Hracek <phracek@redhat.com> - 0.0.4-3
 - Polishing texts and remove leftovers (#1572084)
 
