@@ -3,9 +3,6 @@
 TEST_IMAGE_NAME := colin-test
 TEST_IMAGE_LABELS_NAME := colin-labels
 TEST_TARGET = ./tests/integration/
-RESULTS := colin.json
-RULESET := fedora
-ARTIFACTS_DIR := ./artifacts
 
 check: build-test-image build-labels-image test-in-container
 
@@ -52,9 +49,6 @@ rpm-in-mock-f27: srpm
 
 rpm-in-mock-el7: srpm
 	mock --rebuild -r epel-7-x86_64 ./*.src.rpm
-
-check-local:
-	ansible-playbook $(ANSIBLE_EXTRA_ARGS) -e ruleset=$(RULESET) -e subject=$(TEST_IMAGE_NAME) -e results=$(RESULTS) -e artifacts_dir=$(ARTIFACTS_DIR) ./local.yml -e setup=true
 
 install: clean
 	pip install --user .
