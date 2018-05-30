@@ -9,8 +9,8 @@
 %endif
 
 Name:           %{pypi_name}
-Version:        0.0.4
-Release:        3%{?dist}
+Version:        0.1.0
+Release:        1%{?dist}
 Summary:        Tool to check generic rules/best-practices for containers/images/dockerfiles
 
 License:        GPLv3+
@@ -28,8 +28,10 @@ Summary:        %{summary}
 %{?python_provide:%python_provide python3-%{pypi_name}}
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
-Requires:       docker
-Recommends:     atomic
+Requires:       python3-conu
+Requires:       python3-click
+Requires:       python3-six
+Requires:       python3-dockerfile-parse
 
 %description -n python3-%{pypi_name}
 `colin` as a tool to check generic rules/best-practices
@@ -76,6 +78,9 @@ rm -rf html/.{doctrees,buildinfo}
 %doc html
 
 %changelog
+* Mon May 28 2018 Tomas Tomecek <ttomecek@redhat.com> - 0.1.0-1
+- new upstream release: 0.1.0
+
 * Wed May 02 2018 Petr Hracek <phracek@redhat.com> - 0.0.4-3
 - Polishing texts and remove leftovers (#1572084)
 
