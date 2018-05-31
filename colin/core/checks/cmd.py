@@ -24,15 +24,11 @@ from .images import ImageAbstractCheck
 
 
 class CmdAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck):
-
-    def __init__(self, message, description, reference_url, tags, cmd, expected_output=None,
-                 expected_regex=None,
-                 substring=None):
-        super(CmdAbstractCheck, self).__init__(message, description, reference_url, tags)
-        self.cmd = cmd
-        self.expected_output = expected_output
-        self.expected_regex = expected_regex
-        self.substring = substring
+    expected_output = None
+    expected_regex = None
+    substring = None
+    init_list = ["cmd"]
+    cmd = None
 
     def check(self, target):
 

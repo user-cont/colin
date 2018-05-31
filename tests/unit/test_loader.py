@@ -17,13 +17,13 @@
 import os
 import shutil
 
-import colin.checks
+from colin import checks
 from colin.core.loader import CheckLoader
 
 
 def test_upstream_checks_can_be_loaded():
     """ check whether all upstream checks can be loaded """
-    colin_checks_path = colin.checks.__file__
+    colin_checks_path = checks.__file__
     colin_checks_dir = os.path.dirname(colin_checks_path)
     l = CheckLoader(colin_checks_dir)
     assert l.check_classes

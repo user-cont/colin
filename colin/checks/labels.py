@@ -231,16 +231,6 @@ class IoOpenShiftTagsLabelCheck(LabelAbstractCheck):
 class MaintainerLabelCheck(LabelAbstractCheck):
     name = "maintainer_label"
 
-    def __init__(self):
-        super(MaintainerLabelCheck, self) \
-            .__init__(message="Label 'maintainer' has to be specified.",
-                      description="The name and email of the maintainer (usually the submitter).",
-                      reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
-                      tags=["maintainer", "label"],
-                      labels=["maintainer"],
-                      required=True,
-                      value_regex=None)
-
 
 class NameLabelCheck(LabelAbstractCheck):
     name = "name_label"

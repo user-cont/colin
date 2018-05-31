@@ -21,14 +21,10 @@ from .images import ImageAbstractCheck
 
 
 class LabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileAbstractCheck):
-
-    def __init__(self, message, description, reference_url, tags, labels, required,
-                 value_regex=None):
-        super(LabelAbstractCheck, self) \
-            .__init__(message, description, reference_url, tags)
-        self.labels = labels
-        self.required = required
-        self.value_regex = value_regex
+    value_regex = None
+    init_list = ["labels", "required"]
+    labels = None
+    required = None
 
     def check(self, target):
         passed = check_label(labels=self.labels,
@@ -47,11 +43,9 @@ class LabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileA
 class DeprecatedLabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck,
                                    DockerfileAbstractCheck):
 
-    def __init__(self, message, description, reference_url, tags, old_label, new_label):
-        super(DeprecatedLabelAbstractCheck, self) \
-            .__init__(message, description, reference_url, tags)
-        self.old_label = old_label
-        self.new_label = new_label
+    old_label = None
+    new_label = None
+    init_list = ["old_label", "new_label"]
 
     def check(self, target):
         labels = target.labels

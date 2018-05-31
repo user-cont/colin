@@ -23,14 +23,10 @@ from .images import ImageAbstractCheck
 
 
 class EnvCheck(ContainerAbstractCheck, ImageAbstractCheck):
-
-    def __init__(self, message, description, reference_url, tags, env_var, required,
-                 value_regex=None):
-        super(EnvCheck, self) \
-            .__init__(message, description, reference_url, tags)
-        self.env_var = env_var
-        self.required = required
-        self.value_regex = value_regex
+    env_var = None
+    required = None
+    value_regex = None
+    init_list = ["env_var", "required"]
 
     def check(self, target):
         env_vars = inspect_object(target.instance)["Config"]["Env"]

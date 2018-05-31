@@ -1,0 +1,19 @@
+description: "Generic desription for dockerfile test if not specific description given"
+
+/from_tag_not_latest:
+  test: "dockerfile.py"
+  class: "FromTagNotLatestCheck"
+  message: "In FROM, tag has to be specified and not 'latest'."
+  description: "Using the 'latest' tag may cause unpredictable builds. It is recommended that a specific tag is used in the FROM."
+  reference_url: "https://fedoraproject.org/wiki/Container:Guidelines#FROM"
+  tags: ["from", "dockerfile", "baseimage", "latest"]
+
+/maintainer_deprecated:
+  test: "dockerfile.py"
+  class: "MaintainerDeprecatedCheck"
+  message: "Dockerfile instruction `MAINTAINER` is deprecated."
+  description: "Replace with label 'maintainer'."
+  reference_url: "https://docs.docker.com/engine/reference/builder/#maintainer-deprecated"
+  tags: ["maintainer", "dockerfile", "deprecated"]
+  instruction: "MAINTAINER"
+  max_count: 0

@@ -16,16 +16,49 @@
 import json
 
 from six import iteritems
+from colin.core.fmf_metadata_loader import get_fmf_from_class, set_fmf_metadata
 
 
 class AbstractCheck(object):
     name = None
+    message = ""
+    description = ""
+    reference_url = ""
+    tags = []
+    base_init_list = ["message", "description", "reference_url", "tags"]
+    init_list = []
 
-    def __init__(self, message, description, reference_url, tags):
-        self.message = message
-        self.description = description
-        self.reference_url = reference_url
-        self.tags = tags
+    def _meta_init(self, *args, **kwargs):
+        """
+        This method allows to use normal way via init parameters or alternative way of init via FMF format
+        Default is to use args kwargs values, in case not given it tries to search for FMF metadata
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        required_value_list = list(set(self.base_init_list + self.init_list))
+        if len(args) > 0 or len(kwargs) > 0:
+            for cntr in range(len(args)):
+                setattr(self, required_value_list[cntr], args[cntr])
+            for v in kwargs:
+                setattr(self, v, kwargs[v])
+            for v in required_value_list:
+                if not getattr(self, v):
+                    raise ValueError("Missing option: %s" % v)
+        else:
+            fmfdata = get_fmf_from_class(self)
+            if fmfdata:
+                for v in required_value_list:
+                    if v not in fmfdata:
+                        raise ValueError("Missing option (FMF): %s" % v)
+                set_fmf_metadata(self, fmfdata)
+
+            else:
+                raise Exception("no FMF metadata found for item", self, required_value_list, args, kwargs, fmfdata)
+
+
+    def __init__(self, *args, **kwargs):
+        self._meta_init(*args, **kwargs)
 
     def check(self, target):
         pass
