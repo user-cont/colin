@@ -50,9 +50,9 @@ rpm-in-mock-f27: srpm
 rpm-in-mock-el7: srpm
 	mock --rebuild -r epel-7-x86_64 ./*.src.rpm
 
-install: clean
-	pip install --user .
+install: uninstall clean
+	pip3 install --user .
 
 uninstall:
-	pip uninstall .
+	pip3 show colin && pip3 uninstall -y colin || true
 	rm /usr/lib/python*/site-packages/colin\* -rf
