@@ -17,7 +17,7 @@
 import logging
 
 from colin.core.checks.containers import ContainerAbstractCheck
-from colin.core.checks.filesystem import FileSystemCheck
+from colin.core.checks.filesystem import FileCheck
 from colin.core.checks.images import ImageAbstractCheck
 from colin.core.result import CheckResult
 from colin.core.target import inspect_object
@@ -59,7 +59,7 @@ class CmdOrEntrypointCheck(ContainerAbstractCheck, ImageAbstractCheck):
                            logs=[msg_cmd_present, msg_entrypoint_present])
 
 
-class HelpFileOrReadmeCheck(FileSystemCheck):
+class HelpFileOrReadmeCheck(FileCheck):
     name = "help_file_or_readme"
 
     def __init__(self):
