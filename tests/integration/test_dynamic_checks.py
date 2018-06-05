@@ -13,11 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-import os
-
 import colin
 import pytest
-from conu import DockerBackend
+
+from tests.conftest import LS_IMAGE, BASH_IMAGE
 
 
 @pytest.fixture()
@@ -36,21 +35,10 @@ def ruleset():
 
 
 def test_dynamic_check_ls(ruleset):
-    image = build_image(dockerfile="Dockerfile-ls")
-    results = colin.run(target=image, ruleset=ruleset, logging_level=10)
+    results = colin.run(target=LS_IMAGE, ruleset=ruleset, logging_level=10)
     assert not results.ok
 
 
 def test_dynamic_check_bash(ruleset):
-    image = build_image(dockerfile="Dockerfile-bash")
-    results = colin.run(target=image, ruleset=ruleset, logging_level=10)
+    results = colin.run(target=BASH_IMAGE, ruleset=ruleset, logging_level=10)
     assert results.ok
-
-
-def build_image(dockerfile):
-    with DockerBackend() as backend:
-        name = 'colin-test-dynamic-check-image'
-        integration_tests_dir = os.path.abspath(os.path.dirname(__file__))
-        image_dir = os.path.join(integration_tests_dir, "dynamic_check_data")
-
-        return backend.ImageClass.build(os.path.join(image_dir), tag=name, dockerfile=dockerfile)
