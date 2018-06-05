@@ -120,5 +120,5 @@ class FileSystemCheck(ContainerAbstractCheck, ImageAbstractCheck):
                                    check_name=self.name,
                                    logs=logs)
         except Exception as ex:
-            raise ColinException("Problem with mounting filesystem with atomic. ({})"
-                                 .format(str(ex)))
+            raise ColinException("There was an error while operating on filesystem of {}: {}"
+                                 .format(target.instance, str(ex)))
