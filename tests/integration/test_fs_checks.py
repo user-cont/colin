@@ -21,6 +21,7 @@ from tests.conftest import BASH_IMAGE, LS_IMAGE
 
 @pytest.fixture()
 def ruleset():
+    """ simple ruleset as a pytest fixture """
     return {
         "version": "1",
         "name": "Laughing out loud ruleset",
@@ -39,6 +40,7 @@ def ruleset():
     (BASH_IMAGE, True),
 ])
 def test_help_file_or_readme(ruleset, image_name, should_pass):
+    """ verify that help_file_or_readme check works well """
     results = colin.run(target=image_name, ruleset=ruleset, logging_level=10)
     assert results.ok
     assert results.fail is not should_pass

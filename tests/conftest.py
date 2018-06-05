@@ -24,6 +24,7 @@ IMAGES = {
 
 
 def build_images():
+    """ build container images we need for testing """
     this_dir = os.path.abspath(os.path.dirname(__file__))
     data_dir = os.path.join(this_dir, "data")
     with DockerBackend() as backend:
@@ -34,9 +35,11 @@ def build_images():
 
 @pytest.fixture(autouse=True, scope='session')
 def setup_test_session():
-    for x in IMAGES.keys():
+    """ set up environment before testing """
+    for image_name in IMAGES:
         try:
-            subprocess.check_call(["docker", "image", "inspect", x], stdout=subprocess.PIPE)
+            subprocess.check_call(["docker", "image", "inspect", image_name],
+                                  stdout=subprocess.PIPE)
         except subprocess.CalledProcessError:
             break
     # executed if break was not reached
