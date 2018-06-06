@@ -37,5 +37,5 @@ def _result_generator(target, checks):
         except Exception as ex:
             tb = traceback.format_exc()
             logger.warning(
-                "There occurred an error when executing the check: {}".format(tb))
+                "There was an error while performing check: {}".format(tb))
             yield FailedCheckResult(check, logs=[str(ex)])

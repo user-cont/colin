@@ -16,11 +16,12 @@
 import colin
 import pytest
 
-from tests.conftest import LS_IMAGE, BASH_IMAGE
+from tests.conftest import BASH_IMAGE, LS_IMAGE
 
 
 @pytest.fixture()
 def ruleset():
+    """ simple ruleset as a pytest fixture """
     return {
         "version": "1",
         "name": "Laughing out loud ruleset",
@@ -28,17 +29,19 @@ def ruleset():
         "contact_email": "forgot-to-reply@example.nope",
         "checks": [
             {
-                "name": "shell_runnable"
+                "name": "help_file_or_readme"
             }
         ]
     }
 
 
-def test_dynamic_check_ls(ruleset):
-    results = colin.run(target=LS_IMAGE, ruleset=ruleset, logging_level=10)
-    assert not results.ok
-
-
-def test_dynamic_check_bash(ruleset):
-    results = colin.run(target=BASH_IMAGE, ruleset=ruleset, logging_level=10)
+@pytest.mark.parametrize("image_name,should_pass", [
+    (LS_IMAGE, False),
+    (BASH_IMAGE, True),
+])
+def test_help_file_or_readme(ruleset, image_name, should_pass):
+    """ verify that help_file_or_readme check works well """
+    results = colin.run(target=image_name, ruleset=ruleset, logging_level=10)
     assert results.ok
+    assert results.fail is not should_pass
+

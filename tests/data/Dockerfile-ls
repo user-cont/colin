@@ -1,3 +1,4 @@
 FROM fedora:28
+COPY files/usage usage
 ENTRYPOINT ["/bin/ls"]
 CMD ["/"]
