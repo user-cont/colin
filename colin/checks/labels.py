@@ -188,7 +188,7 @@ class IoK8sDisplayNameLabelCheck(LabelAbstractCheck):
                                   " of an image inside the Image / Repo Overview page.",
                       reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
                       tags=["io.k8s.display-name", "label"],
-                      labels="io.k8s.display-name",
+                      labels=["io.k8s.display-name"],
                       required=True,
                       value_regex=None)
 
