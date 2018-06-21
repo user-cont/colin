@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from colin.core.checks.labels import LabelAbstractCheck
+from colin.core.checks.labels import LabelAbstractCheck, OverriddenLabelAbstractCheck
 
 
 class ArchitectureLabelCheck(LabelAbstractCheck):
@@ -389,3 +389,103 @@ class VersionLabelCheck(LabelAbstractCheck):
                       labels=["version"],
                       required=True,
                       value_regex=None)
+
+
+class SummaryOverriddenLabelCheck(OverriddenLabelAbstractCheck):
+    name = "summary_overridden"
+
+    def __init__(self):
+        super(SummaryOverriddenLabelCheck, self) \
+            .__init__(message="Label 'summary' has to be overridden.",
+                      description="A short description of the image.",
+                      reference_url="",
+                      tags=['summary', 'overridden', 'label'],
+                      label='summary')
+
+
+class DescriptionOverriddenLabelCheck(OverriddenLabelAbstractCheck):
+    name = "description_overridden"
+
+    def __init__(self):
+        super(DescriptionOverriddenLabelCheck, self) \
+            .__init__(message="Label 'description' has to be overridden.",
+                      description="Detailed description of the image.",
+                      reference_url="",
+                      tags=['description', 'overridden', 'label'],
+                      label='description')
+
+
+class IoK8sDescriptionOverriddenLabelCheck(OverriddenLabelAbstractCheck):
+    name = "io.k8s.description_overridden"
+
+    def __init__(self):
+        super(IoK8sDescriptionOverriddenLabelCheck, self) \
+            .__init__(message="Label 'io.k8s.description' has to be overridden.",
+                      description="Description of the container displayed in Kubernetes",
+                      reference_url="",
+                      tags=['description', 'io.k8s.description', 'overridden', 'label'],
+                      label='io.k8s.description')
+
+
+class IoK8sDisplayNameOverriddenLabelCheck(OverriddenLabelAbstractCheck):
+    name = "io.k8s.display-name_overridden"
+
+    def __init__(self):
+        super(IoK8sDisplayNameOverriddenLabelCheck, self) \
+            .__init__(message="Label 'io.k8s.display-name' has to be overridden.",
+                      description="This label is used to display a human readable name"
+                                  " of an image inside the Image / Repo Overview page.",
+                      reference_url="",
+                      tags=['io.k8s.display-name', 'overridden', 'label'],
+                      label='io.k8s.display-name')
+
+
+class IoOpenShiftTagsOverriddenLabelCheck(OverriddenLabelAbstractCheck):
+    name = "io.openshift.tags_overridden"
+
+    def __init__(self):
+        super(IoOpenShiftTagsOverriddenLabelCheck, self) \
+            .__init__(message="Label 'io.openshift.tags' has to be overridden.",
+                      description="The primary purpose of this label is to include"
+                                  " all relevant search terms for this image.",
+                      reference_url="",
+                      tags=['io.openshift.tags', 'overridden', 'label'],
+                      label='io.openshift.tags')
+
+
+class ComRedhatComponentOverriddenLabelCheck(OverriddenLabelAbstractCheck):
+    name = "com.redhat.component_overridden"
+
+    def __init__(self):
+        super(ComRedhatComponentOverriddenLabelCheck, self) \
+            .__init__(message="Label 'com.redhat.component' has to be overridden.",
+                      description="The Bugzilla component name where bugs against"
+                                  " this container should be reported by users.",
+                      reference_url="",
+                      tags=['com.redhat.component', 'overridden', 'label'],
+                      label='com.redhat.component')
+
+
+class NameOverriddenLabelCheck(OverriddenLabelAbstractCheck):
+    name = "name_overridden"
+
+    def __init__(self):
+        super(NameOverriddenLabelCheck, self) \
+            .__init__(message="Label 'name' has to be overridden.",
+                      description="This label is used to display a human readable name"
+                                  " of an image inside the Image / Repo Overview page.",
+                      reference_url="",
+                      tags=['name', 'overridden', 'label'],
+                      label='name')
+
+
+class VersionOverriddenLabelCheck(OverriddenLabelAbstractCheck):
+    name = "version_overridden"
+
+    def __init__(self):
+        super(VersionOverriddenLabelCheck, self) \
+            .__init__(message="Label 'version' has to be overridden.",
+                      description="Version of the image.",
+                      reference_url="",
+                      tags=['version', 'overridden', 'label'],
+                      label='version')
