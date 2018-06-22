@@ -116,7 +116,7 @@ class DescriptionOrIoK8sDescriptionLabelCheck(LabelAbstractCheck):
 
     def __init__(self):
         super(DescriptionOrIoK8sDescriptionLabelCheck, self) \
-            .__init__(message="Label 'description' has to be specified.",
+            .__init__(message="Label 'description' or 'io.k8s.description' has to be specified.",
                       description="Detailed description of the image.",
                       reference_url="https://github.com/projectatomic/"
                                     "ContainerApplicationGenericLabels/blob/master/vendor/"
