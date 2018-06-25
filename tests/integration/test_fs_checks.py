@@ -41,7 +41,7 @@ def ruleset():
 ])
 def test_help_file_or_readme(ruleset, image_name, should_pass):
     """ verify that help_file_or_readme check works well """
-    results = colin.run(target=image_name, ruleset=ruleset, logging_level=10)
+    results = colin.run(target=image_name, ruleset=ruleset, logging_level=10, pull=False)
     assert results.ok
     assert results.fail is not should_pass
 

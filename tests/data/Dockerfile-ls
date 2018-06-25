@@ -1,4 +1,4 @@
-FROM fedora:28
+FROM scratch
 COPY files/usage usage
 ENTRYPOINT ["/bin/ls"]
 CMD ["/"]

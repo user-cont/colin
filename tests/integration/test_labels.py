@@ -18,6 +18,17 @@ import logging
 import pytest
 
 import colin
+from colin.checks.labels import RunOrUsageLabelCheck
+from colin.core.target import Target
+from colin.utils.cont import Image
+from tests.conftest import LABELS_IMAGE
+
+
+@pytest.fixture("session")
+def labels_target():
+    target = Target(LABELS_IMAGE, 10, pull=False)
+    yield target
+    target.clean_up()
 
 
 @pytest.fixture()
@@ -33,7 +44,7 @@ def empty_ruleset():
 
 
 def get_results_from_colin_labels_image():
-    return colin.run("colin-labels", ruleset_name="fedora", logging_level=logging.DEBUG)
+    return colin.run(LABELS_IMAGE, ruleset_name="fedora", logging_level=logging.DEBUG, pull=False)
 
 
 def test_colin_image():
@@ -71,16 +82,25 @@ def test_labels_in_image():
         assert labels_dict[key] == expected_dict[key]
 
 
-@pytest.mark.parametrize("check, result", [
-    ({"name": "run_or_usage_label", "labels": ["run"]}, "PASS"),
-    ({"name": "run_or_usage_label", "labels": ["usage"]}, "FAIL"),
-    ({"name": "run_or_usage_label", "labels": ["run", "usage"]}, "PASS"),
-    ({"name": "run_or_usage_label", "labels": ["something", "different"]}, "FAIL"),
-    ({"name": "run_or_usage_label", "labels": ["something", "completely", "different"]}, "FAIL"),
+@pytest.mark.parametrize("labels, should_pass", [
+    (["run"], True),
+    (["usage"], False),
+    (["run", "usage"], True),
+    (["something", "different"], False),
+    (["something", "completely", "different"], False),
 ])
-def test_multiple_labels_check(check, result, empty_ruleset):
-    new_ruleset = dict(empty_ruleset)
-    new_ruleset["checks"] = [check]
-    check_result = colin.run("colin-labels", ruleset=new_ruleset)
-    assert check_result
-    assert list(check_result.results)[0].status == result
+def test_multiple_labels_check(labels, should_pass, labels_target):
+    check = RunOrUsageLabelCheck()
+    check.labels = labels
+
+    result = check.check(labels_target)
+
+    assert result.ok == should_pass
+
+
+def test_get_image_labels_easily():
+    image_name = "registry.access.redhat.com/rhscl/mariadb-101-rhel7:latest"
+    im = Image(image_name, pull=True)
+    labels = im.labels
+    assert "com.redhat.component" in labels
+    assert "name" in labels

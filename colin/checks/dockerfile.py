@@ -16,8 +16,8 @@
 
 from colin.core.checks.dockerfile import DockerfileAbstractCheck, InstructionCountAbstractCheck
 from colin.core.result import CheckResult
-from colin.core.target import ImageName
 from colin.core.checks.fmf_check import FMFAbstractCheck
+from colin.utils.cont import ImageName
 
 
 class FromTagNotLatestCheck(FMFAbstractCheck, DockerfileAbstractCheck):

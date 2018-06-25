@@ -1,6 +1,7 @@
 FROM registry.fedoraproject.org/fedora:28
 
 RUN dnf install -y make python3-pytest python3-pyxattr docker \
+    skopeo atomic \
     && dnf clean all
 
 WORKDIR /src

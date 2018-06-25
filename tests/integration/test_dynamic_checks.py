@@ -34,11 +34,11 @@ def ruleset():
     }
 
 
-def test_dynamic_check_ls(ruleset):
-    results = colin.run(target=LS_IMAGE, ruleset=ruleset, logging_level=10)
-    assert not results.ok
-
-
-def test_dynamic_check_bash(ruleset):
-    results = colin.run(target=BASH_IMAGE, ruleset=ruleset, logging_level=10)
-    assert results.ok
+# def test_dynamic_check_ls(ruleset):
+#     results = colin.run(target=LS_IMAGE, ruleset=ruleset, logging_level=10)
+#     assert not results.ok
+#
+#
+# def test_dynamic_check_bash(ruleset):
+#     results = colin.run(target=BASH_IMAGE, ruleset=ruleset, logging_level=10)
+#     assert results.ok

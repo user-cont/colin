@@ -30,12 +30,15 @@ def go_through_checks(target, checks):
 
 
 def _result_generator(target, checks):
-    for check in checks:
-        logger.debug("Checking {}".format(check.name))
-        try:
-            yield check.check(target)
-        except Exception as ex:
-            tb = traceback.format_exc()
-            logger.warning(
-                "There was an error while performing check: {}".format(tb))
-            yield FailedCheckResult(check, logs=[str(ex)])
+    try:
+        for check in checks:
+            logger.debug("Checking {}".format(check.name))
+            try:
+                yield check.check(target)
+            except Exception as ex:
+                tb = traceback.format_exc()
+                logger.warning(
+                    "There was an error while performing check: {}".format(tb))
+                yield FailedCheckResult(check, logs=[str(ex)])
+    finally:
+        target.clean_up()
