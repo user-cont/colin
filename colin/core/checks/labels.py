@@ -79,7 +79,7 @@ class OverriddenLabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck,
     def check(self, target):
 
         if target.target_type == TargetType.IMAGE:
-            _layer_count = len(inspect_object(target, refresh=False)["RootFS"]["Layers"])
+            _layer_count = len(inspect_object(target.instance, refresh=False)["RootFS"]["Layers"])
             if _layer_count <= self.layers_for_base:
                 return CheckResult(ok=True,
                                    description=self.description,

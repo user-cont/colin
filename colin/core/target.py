@@ -186,9 +186,20 @@ class Target(object):
         else:
             base_image = inspect_object(self.instance, refresh=False)["Parent"]
             if not base_image:
-                # Search through all images
-                # Look into the  /root/buildinfo
-                pass
+                with DockerBackend(logging_level=self.logging_level) as backend:
+
+                    layers = self.instance.layers()
+                    if len(layers) >= 2 and layers[1].get_id() != '<missing>':
+                        self._base_image = layers[1]
+                        return layers[1]
+
+                    instance_layers \
+                        = inspect_object(self.instance, refresh=False)["RootFS"]["Layers"]
+                    for i in backend.list_images():
+                        i_layers = inspect_object(i, refresh=False)["RootFS"]["Layers"]
+                        if set(i_layers) < set(instance_layers):
+                            self._base_image = i
+                            return i
 
         if not base_image:
             return None
