@@ -102,9 +102,14 @@ class OverriddenLabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck,
                                logs=["Label '{}' not present.".format(self.label)])
 
         if not target.base_image:
-            return FailedCheckResult(check=self, logs=["Cannot find parent image."])
+            parent_labels = try_get_parent_labels_from_image(target)
 
-        parent_labels = inspect_object(target.base_image, refresh=False)["Config"]["Labels"]
+            if parent_labels is None:
+                return FailedCheckResult(check=self,
+                                         logs=["Cannot find parent image or parent Dockerfile."])
+        else:
+            parent_labels = inspect_object(target.base_image, refresh=False)["Config"]["Labels"]
+
         passed = self.label not in parent_labels or target.labels[self.label] != parent_labels[
             self.label]
 
@@ -114,3 +119,8 @@ class OverriddenLabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck,
                            reference_url=self.reference_url,
                            check_name=self.name,
                            logs=[])
+
+
+def try_get_parent_labels_from_image(image):
+    # TODO: Get labels from the Dockerfile in /root/buildinfo directory.
+    return []
