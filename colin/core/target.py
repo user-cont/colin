@@ -26,10 +26,10 @@ from conu.apidefs.image import Image
 from docker.errors import NotFound
 from dockerfile_parse import DockerfileParser
 
-from ..core.exceptions import ColinException
 from .checks.containers import ContainerAbstractCheck
 from .checks.dockerfile import DockerfileAbstractCheck
 from .checks.images import ImageAbstractCheck
+from ..core.exceptions import ColinException
 
 logger = logging.getLogger(__name__)
 
@@ -46,12 +46,12 @@ def is_compatible(target_type, check_instance):
         return True
     return \
         (
-            target_type == TargetType.DOCKERFILE and
-            isinstance(check_instance, DockerfileAbstractCheck)
+                target_type == TargetType.DOCKERFILE and
+                isinstance(check_instance, DockerfileAbstractCheck)
         ) \
         or (
-            target_type == TargetType.CONTAINER and
-            isinstance(check_instance, ContainerAbstractCheck)
+                target_type == TargetType.CONTAINER and
+                isinstance(check_instance, ContainerAbstractCheck)
         ) \
         or (target_type == TargetType.IMAGE and isinstance(check_instance, ImageAbstractCheck))
 
@@ -76,6 +76,8 @@ class Target(object):
 
     def __init__(self, target, logging_level):
         self.instance = Target._get_target_instance(target, logging_level=logging_level)
+        self.logging_level = logging_level
+        self._base_image = None
 
     @staticmethod
     def _get_target_instance(target, logging_level):
@@ -110,22 +112,31 @@ class Target(object):
                 return cont
             except NotFound:
 
-                image_name = ImageName.parse(target)
-                logger.debug("Finding image '{}' with tag '{}'.".format(image_name.name, image_name.tag))
-
-                if image_name.tag:
-                    image = backend.ImageClass(repository=image_name.name,
-                                               tag=image_name.tag,
-                                               pull_policy=DockerImagePullPolicy.NEVER)
-                else:
-                    image = backend.ImageClass(repository=image_name.name,
-                                               pull_policy=DockerImagePullPolicy.NEVER)
-
-                if image.is_present():
-                    logger.debug("Target is an image.")
+                image = Target._create_image_instance(backend=backend, name=target)
+                if image:
                     return image
         logger.error("Target is neither image nor container.")
         raise ColinException("Target not found.")
+
+    @staticmethod
+    def _create_image_instance(backend, name):
+        image_name = ImageName.parse(name)
+        logger.debug(
+            "Finding image '{}' with tag '{}'.".format(image_name.name, image_name.tag))
+
+        if image_name.tag:
+            image = backend.ImageClass(repository=image_name.name,
+                                       tag=image_name.tag,
+                                       pull_policy=DockerImagePullPolicy.NEVER)
+        else:
+            image = backend.ImageClass(repository=image_name.name,
+                                       pull_policy=DockerImagePullPolicy.NEVER)
+
+        if image.is_present():
+            logger.debug("Target is an image.")
+            return image
+
+        return None
 
     @property
     def target_type(self):
@@ -154,6 +165,49 @@ class Target(object):
             return self.instance.labels
         # labels won't change, hence refresh=false
         return inspect_object(self.instance, refresh=False)["Config"]["Labels"]
+
+    @property
+    def base_image(self):
+        """
+        Get a following image:
+        Dockerfile -> FROM
+        Image -> Parent
+        Container -> Image
+
+        :return: Image
+        """
+        if self._base_image:
+            return self._base_image
+
+        if self.target_type == TargetType.DOCKERFILE:
+            base_image = self.instance.parent_images
+        elif self.target_type == TargetType.CONTAINER:
+            base_image = inspect_object(self.instance, refresh=False)["Image"]
+        else:
+            base_image = inspect_object(self.instance, refresh=False)["Parent"]
+            if not base_image:
+                with DockerBackend(logging_level=self.logging_level) as backend:
+
+                    layers = self.instance.layers()
+                    if len(layers) >= 2 and layers[1].get_id() != '<missing>':
+                        self._base_image = layers[1]
+                        return layers[1]
+
+                    instance_layers \
+                        = inspect_object(self.instance, refresh=False)["RootFS"]["Layers"]
+                    for i in backend.list_images():
+                        i_layers = inspect_object(i, refresh=False)["RootFS"]["Layers"]
+                        if set(i_layers) < set(instance_layers):
+                            self._base_image = i
+                            return i
+
+        if not base_image:
+            return None
+
+        with DockerBackend(logging_level=self.logging_level) as backend:
+            self._base_image = self._create_image_instance(backend=backend, name=base_image)
+
+        return self._base_image
 
     def get_output(self, cmd):
         if isinstance(cmd, six.string_types):

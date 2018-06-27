@@ -13,11 +13,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from ..result import CheckResult
+from colin.core.target import inspect_object, TargetType
 from .check_utils import check_label
 from .containers import ContainerAbstractCheck
 from .dockerfile import DockerfileAbstractCheck
 from .images import ImageAbstractCheck
+from ..result import CheckResult, FailedCheckResult
 
 
 class LabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileAbstractCheck):
@@ -65,3 +66,61 @@ class DeprecatedLabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck,
                            reference_url=self.reference_url,
                            check_name=self.name,
                            logs=[])
+
+
+class OverriddenLabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck,
+                                   DockerfileAbstractCheck):
+    def __init__(self, message, description, reference_url, tags, label, layers_for_base=1):
+        super(OverriddenLabelAbstractCheck, self) \
+            .__init__(message, description, reference_url, tags)
+        self.label = label
+        self.layers_for_base = layers_for_base
+
+    def check(self, target):
+
+        if target.target_type == TargetType.IMAGE:
+            _layer_count = len(inspect_object(target.instance, refresh=False)["RootFS"]["Layers"])
+            if _layer_count <= self.layers_for_base:
+                return CheckResult(ok=True,
+                                   description=self.description,
+                                   message=self.message,
+                                   reference_url=self.reference_url,
+                                   check_name=self.name,
+                                   logs=["Target is a base image."])
+
+        present = check_label(labels=[self.label],
+                              required=True,
+                              target_labels=target.labels,
+                              value_regex=None)
+
+        if not present:
+            return CheckResult(ok=True,
+                               description=self.description,
+                               message=self.message,
+                               reference_url=self.reference_url,
+                               check_name=self.name,
+                               logs=["Label '{}' not present.".format(self.label)])
+
+        if not target.base_image:
+            parent_labels = try_get_parent_labels_from_image(target)
+
+            if parent_labels is None:
+                return FailedCheckResult(check=self,
+                                         logs=["Cannot find parent image or parent Dockerfile."])
+        else:
+            parent_labels = inspect_object(target.base_image, refresh=False)["Config"]["Labels"]
+
+        passed = self.label not in parent_labels or target.labels[self.label] != parent_labels[
+            self.label]
+
+        return CheckResult(ok=passed,
+                           description=self.description,
+                           message=self.message,
+                           reference_url=self.reference_url,
+                           check_name=self.name,
+                           logs=[])
+
+
+def try_get_parent_labels_from_image(image):
+    # TODO: Get labels from the Dockerfile in /root/buildinfo directory.
+    return []
