@@ -29,6 +29,16 @@ logger = logging.getLogger(__name__)
 class CmdOrEntrypointCheck(ContainerAbstractCheck, ImageAbstractCheck):
     name = "cmd_or_entrypoint"
 
+    def __init__(self):
+        super(CmdOrEntrypointCheck, self) \
+            .__init__(message="Cmd or Entrypoint has to be specified",
+                      description="An ENTRYPOINT allows you to configure a container"
+                                  " that will run as an executable. The main purpose"
+                                  " of a CMD is to provide defaults for an executing container.",
+                      reference_url="https://fedoraproject.org/wiki/Container:Guidelines"
+                                    "#CMD.2FENTRYPOINT_2",
+                      tags=["cmd", "entrypoint"])
+
     def check(self, target):
         metadata = inspect_object(target.instance)["Config"]
         cmd_present = "Cmd" in metadata and metadata["Cmd"]
@@ -52,9 +62,27 @@ class CmdOrEntrypointCheck(ContainerAbstractCheck, ImageAbstractCheck):
 class HelpFileOrReadmeCheck(FileCheck):
     name = "help_file_or_readme"
 
+    def __init__(self):
+        super(HelpFileOrReadmeCheck, self) \
+            .__init__(message="The 'helpfile' has to be provided.",
+                      description="Just like traditional packages, containers need "
+                                  "some 'man page' information about how they are to be used,"
+                                  " configured, and integrated into a larger stack.",
+                      reference_url="https://fedoraproject.org/wiki/Container:Guidelines#Help_File",
+                      files=['/help.1', '/README.md'],
+                      tags=['filesystem', 'helpfile', 'man'],
+                      all_must_be_present=False)
+
 
 class NoRootCheck(ContainerAbstractCheck, ImageAbstractCheck):
     name = "no_root"
+
+    def __init__(self):
+        super(NoRootCheck, self) \
+            .__init__(message="Service should not run as root by default.",
+                      description="It can be insecure to run service as root.",
+                      reference_url="?????",
+                      tags=["root", "user"])
 
     def check(self, target):
         metadata = inspect_object(target.instance)["Config"]

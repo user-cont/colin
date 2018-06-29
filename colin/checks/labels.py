@@ -15,6 +15,7 @@
 #
 
 from colin.core.checks.labels import LabelAbstractCheck
+from colin.core.checks.fmf_check import FMFAbstractCheck
 
 
 class ArchitectureLabelCheck(LabelAbstractCheck):
@@ -228,8 +229,8 @@ class IoOpenShiftTagsLabelCheck(LabelAbstractCheck):
                       value_regex=None)
 
 
-class MaintainerLabelCheck(LabelAbstractCheck):
-    name = "maintainer_label"
+class MaintainerLabelCheck(FMFAbstractCheck, LabelAbstractCheck):
+    name, metadata = FMFAbstractCheck.get_metadata("maintainer_label")
 
 
 class NameLabelCheck(LabelAbstractCheck):

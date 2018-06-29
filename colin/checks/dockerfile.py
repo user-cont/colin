@@ -17,10 +17,11 @@
 from colin.core.checks.dockerfile import DockerfileAbstractCheck, InstructionCountAbstractCheck
 from colin.core.result import CheckResult
 from colin.core.target import ImageName
+from colin.core.checks.fmf_check import FMFAbstractCheck
 
 
-class FromTagNotLatestCheck(DockerfileAbstractCheck):
-    name = "from_tag_not_latest"
+class FromTagNotLatestCheck(FMFAbstractCheck, DockerfileAbstractCheck):
+    name, metadata = FMFAbstractCheck.get_metadata("from_tag_not_latest")
 
     def check(self, target):
         im = ImageName.parse(target.instance.baseimage)
@@ -33,5 +34,5 @@ class FromTagNotLatestCheck(DockerfileAbstractCheck):
                            logs=[])
 
 
-class MaintainerDeprecatedCheck(InstructionCountAbstractCheck):
-    name = "maintainer_deprecated"
+class MaintainerDeprecatedCheck(FMFAbstractCheck, InstructionCountAbstractCheck):
+    name, metadata = FMFAbstractCheck.get_metadata("maintainer_deprecated")

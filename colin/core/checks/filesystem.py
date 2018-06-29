@@ -30,7 +30,12 @@ logger = logging.getLogger(__name__)
 
 class FileCheck(ContainerAbstractCheck, ImageAbstractCheck):
     """ Check presence of files; w/o mounting the whole FS """
-    init_list = ["files", "all_must_be_present"]
+
+    def __init__(self, message, description, reference_url, tags, files, all_must_be_present):
+        super(FileCheck, self) \
+            .__init__(message, description, reference_url, tags)
+        self.files = files
+        self.all_must_be_present = all_must_be_present
 
     def check(self, target):
         passed = self.all_must_be_present
@@ -81,7 +86,12 @@ class FileCheck(ContainerAbstractCheck, ImageAbstractCheck):
 
 
 class FileSystemCheck(ContainerAbstractCheck, ImageAbstractCheck):
-    init_list = ["files", "all_must_be_present"]
+
+    def __init__(self, message, description, reference_url, tags, files, all_must_be_present):
+        super(FileSystemCheck, self) \
+            .__init__(message, description, reference_url, tags)
+        self.files = files
+        self.all_must_be_present = all_must_be_present
 
     def check(self, target):
         try:
