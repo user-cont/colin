@@ -19,7 +19,9 @@ logger = logging.getLogger(__name__)
 def extract_file_from_tarball(tarball_path, file_path, wd):
     tar_cmd = ["tar", "-xf", tarball_path, file_path]
     out = subprocess.check_output(tar_cmd, cwd=wd)
-    logger.debug(out)
+    if out:
+        logger.debug("output of tar command:")
+        logger.debug(out)
 
 
 class Image(object):
@@ -83,8 +85,10 @@ class Image(object):
         e = os.environ.copy()
         e["ATOMIC_OSTREE_REPO"] = self.ostree_path
         # must not exist, ostree will create it
-        out = subprocess.check_output(["atomic", "pull", "--storage", "ostree", atomic_source],
-                                      env=e)
+        out = subprocess.check_output(
+                ["atomic", "--debug", "pull", "--storage", "ostree", atomic_source],
+                env=e)
+        logger.debug("output of atomic command:")
         logger.debug(out)
 
         archive_file_name = "archive.tar"
@@ -92,6 +96,7 @@ class Image(object):
         skopeo_target = "docker-archive:" + archive_path
         skopeo_cmd = ["skopeo", "copy", skopeo_source, skopeo_target]
         out = subprocess.check_output(skopeo_cmd)
+        logger.debug("output of skopeo command:")
         logger.debug(out)
 
         manifest_file_name = "manifest.json"
@@ -116,8 +121,10 @@ class Image(object):
         e = os.environ.copy()
         e["ATOMIC_OSTREE_REPO"] = self.ostree_path
         # self.mount_point has to be created by us
-        out = subprocess.check_output(["atomic", "mount", "--storage", "ostree", self.image_name,
-                                       self.mount_point], env=e)
+        out = subprocess.check_output(
+                ["atomic", "--debug", "mount", "--storage", "ostree", self.image_name, self.mount_point],
+                env=e)
+        logger.debug("output of atomic command:")
         logger.debug(out)
 
     def clean_up(self):
