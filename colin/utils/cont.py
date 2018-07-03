@@ -17,6 +17,10 @@ logger = logging.getLogger(__name__)
 
 
 def extract_file_from_tarball(tarball_path, file_path, wd):
+    """
+    Extract selected file (file_path) from tarball (tarball_path) within a selected
+    directory (wd).
+    """
     tar_cmd = ["tar", "-xf", tarball_path, file_path]
     out = subprocess.check_output(tar_cmd, cwd=wd)
     if out:
@@ -47,18 +51,21 @@ class Image(object):
 
     @property
     def tmpdir(self):
+        """ Temporary directory holding all the runtime data. """
         if self._tmpdir is None:
             self._tmpdir = mkdtemp(prefix="colin-", dir="/var/tmp")
         return self._tmpdir
 
     @property
     def ostree_path(self):
+        """ ostree repository -- content """
         if self._ostree_path is None:
             self._ostree_path = os.path.join(self.tmpdir, "ostree-repo")
         return self._ostree_path
 
     @property
     def mount_point(self):
+        """ ostree checkout -- real filesystem """
         if self._mount_point is None:
             self._mount_point = os.path.join(self.tmpdir, "checkout")
             os.makedirs(self._mount_point)
@@ -67,6 +74,7 @@ class Image(object):
 
     @property
     def layers_path(self):
+        """ Directory with all the layers (docker save). """
         if self._layers_path is None:
             self._layers_path = os.path.join(self.tmpdir, "layers")
         return self._layers_path
@@ -86,8 +94,8 @@ class Image(object):
         e["ATOMIC_OSTREE_REPO"] = self.ostree_path
         # must not exist, ostree will create it
         out = subprocess.check_output(
-                ["atomic", "--debug", "pull", "--storage", "ostree", atomic_source],
-                env=e)
+            ["atomic", "--debug", "pull", "--storage", "ostree", atomic_source],
+            env=e)
         logger.debug("output of atomic command:")
         logger.debug(out)
 
@@ -122,8 +130,8 @@ class Image(object):
         e["ATOMIC_OSTREE_REPO"] = self.ostree_path
         # self.mount_point has to be created by us
         out = subprocess.check_output(
-                ["atomic", "--debug", "mount", "--storage", "ostree", self.image_name, self.mount_point],
-                env=e)
+            ["atomic", "--debug", "mount", "--storage", "ostree", self.image_name, self.mount_point],
+            env=e)
         logger.debug("output of atomic command:")
         logger.debug(out)
 
@@ -154,7 +162,7 @@ class Image(object):
                 return fd.read()
         except IOError as ex:
             logger.error("error while accessing file %s: %r", file_path, ex)
-            raise ColinException("There was an error while accessing file %s: %r", file_path, ex)
+            raise ColinException("There was an error while accessing file %s: %r" % (file_path, ex))
 
     def get_file(self, file_path, mode="r"):
         """

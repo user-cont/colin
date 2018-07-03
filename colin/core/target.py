@@ -90,6 +90,10 @@ class Target(object):
         self._labels = None
 
     def clean_up(self):
+        """
+        Perform clean up on the low level objects: atm atomic and skopeo mountpoints
+        and data are being cleaned up.
+        """
         if self.instance == TargetType.IMAGE:
             self.instance.clean_up()
 
@@ -150,6 +154,7 @@ class Target(object):
         """ metadata from "Config" key """
         if self.target_type == TargetType.IMAGE:
             return self.instance.metadata["config"]
+        return {}
 
     @property
     def labels(self):
