@@ -12,10 +12,9 @@ import logging
 import unittest
 
 from colin.core.target import Target, is_compatible
-from colin.core.checks.fmf_check import ExtendedTree
+from colin.core.checks.fmf_check import ExtendedTree, CHECK_DIRECTORY
 
 LOG_LEVEL = 3
-CHECKS = ["colin/checks"]
 logger = logging.getLogger(__name__)
 
 
@@ -35,61 +34,62 @@ def make_check_function(target):
     """
 
     def test(self):
-        """
-        Generic test function wrapper, it calls self.check(target)
-
-        :param self: it is function what will be incorporated to class
-        :return:
-        """
         self.backendclass().check(target)
     return test
 
 
-def class_fmf_generator(fmfpaths, target_name, log_level=LOG_LEVEL):
+def class_fmf_generator(fmfpath, target_name, log_level=LOG_LEVEL, ruleset_tree_path=None):
     """
     generates dynamic test classes for nosetest or unittest scheduler based on FMF metadata.
-    :param fmfpaths:
+
+    :param fmfpath: path to checks
+    :param target_name: what is the target object
+    :param log_level:
+    :param ruleset_tree_path:
     :return:
     """
     target = Target(target_name, log_level)
     test_classes = {}
-    for fmfpath in fmfpaths:
-        metadatatree = ExtendedTree(fmfpath)
-        metadatatree.references(metadatatree)
-        for node in metadatatree.climb():
-            logger.debug("look at node: %s ", node)
-            if node.data.get("class") or node.data.get("test"):
-                logger.debug("node (%s) contains test and class item", node)
-                first_class_name = node.name.rsplit("/", 1)[-1]
-                second_class_name = node.data.get("class")
-                logger.debug("searching for %s", first_class_name)
+    if not ruleset_tree_path:
+        ruleset_tree_path = fmfpath
+    ruleset_metadatatree = ExtendedTree(ruleset_tree_path)
+    metadatatree = ExtendedTree(fmfpath)
+    #metadatatree.references(metadatatree)
+    ruleset_metadatatree.references(metadatatree)
+    for node in ruleset_metadatatree.climb():
+        logger.debug("look at node: %s ", node)
+        if node.data.get("class") or node.data.get("test"):
+            logger.debug("node (%s) contains test and class item", node)
+            first_class_name = node.name.rsplit("/", 1)[-1]
+            second_class_name = node.data.get("class")
+            logger.debug("searching for %s", first_class_name)
+            modulepath = os.path.join(os.path.dirname(
+                node.sources[-1]), node.data["test"])
+            modulename = os.path.basename(
+                node.sources[-1]).split(".", 1)[0]
+            # in case of referencing  use original data tree for info
+            if "@" in node.name and not os.path.exists(modulepath):
                 modulepath = os.path.join(os.path.dirname(
-                    node.sources[-1]), node.data["test"])
+                    node.sources[-2]), node.data["test"])
                 modulename = os.path.basename(
-                    node.sources[-1]).split(".", 1)[0]
-                # in case of referencing  use original data tree for info
-                if "@" in node.name and not os.path.exists(modulepath):
-                    modulepath = os.path.join(os.path.dirname(
-                        node.sources[-2]), node.data["test"])
-                    modulename = os.path.basename(
-                        node.sources[-2]).split(".", 1)[0]
-                test_func = make_check_function(target=target)
-                logger.info("Try to import: %s from path %s", modulename, modulepath)
-                moduleimp = imp.load_source(modulename, modulepath)
-                inernalclass = getattr(moduleimp, second_class_name)
-                if is_compatible(target_type=target.target_type, check_instance=inernalclass()):
-                    # more verbose output
-                    #full_class_name = '{0}_{1}'.format(first_class_name, second_class_name)
-                    full_class_name = '{0}'.format(first_class_name)
-                    oneclass = type(full_class_name, (DynamicClassBase,), {'test': test_func})
-                    oneclass.backendclass = inernalclass
-                    test_classes[full_class_name] = oneclass
-                    logger.info("Test added: %s", node.name)
-                else:
-                    logger.info("Test (not target): %s", node.name)
+                    node.sources[-2]).split(".", 1)[0]
+            test_func = make_check_function(target=target)
+            logger.info("Try to import: %s from path %s", modulename, modulepath)
+            moduleimp = imp.load_source(modulename, modulepath)
+            inernalclass = getattr(moduleimp, second_class_name)
+            if is_compatible(target_type=target.target_type, check_instance=inernalclass()):
+                # more verbose output
+                #full_class_name = '{0}_{1}'.format(first_class_name, second_class_name)
+                full_class_name = '{0}'.format(first_class_name)
+                oneclass = type(full_class_name, (DynamicClassBase,), {'test': test_func})
+                oneclass.backendclass = inernalclass
+                test_classes[full_class_name] = oneclass
+                logger.info("Test added: %s", node.name)
+            else:
+                logger.info("Test (not target): %s", node.name)
     return test_classes
 
-def scheduler_opts(target_name=None, checks=None):
+def scheduler_opts(target_name=None, checks=None, ruleset_path=None):
     """
     gather all options what have to be set for function class_fmf_generator
     now it is able set via ENVVARS
@@ -103,11 +103,10 @@ def scheduler_opts(target_name=None, checks=None):
         if not target_name:
             raise EnvironmentError("TARGET envvar is not set.")
     if not checks:
-        if os.environ.get("CHECKS"):
-            checks = os.environ.get("CHECKS").split(":")
-        else:
-            checks = CHECKS
-    output = class_fmf_generator(checks, target_name)
+        checks = CHECK_DIRECTORY
+    if not ruleset_path:
+        ruleset_path = os.environ.get("RULESETPATH")
+    output = class_fmf_generator(checks, target_name, ruleset_tree_path=ruleset_path)
     return output
 
 
