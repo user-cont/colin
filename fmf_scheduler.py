@@ -15,9 +15,10 @@ from colin.core.target import Target, is_compatible
 from colin.core.checks.fmf_check import ExtendedTree, CHECK_DIRECTORY
 from colin.core.constant import PASSED
 
-LOG_LEVEL = 3
 logger = logging.getLogger(__name__)
 
+def get_log_level():
+    return int(os.environ.get(("DEBUG")) or logging.INFO)
 
 # COPYied from:
 # https://eli.thegreenplace.net/2014/04/02/dynamically-generating-python-test-cases
@@ -44,7 +45,7 @@ def make_check_function(target):
     return test
 
 
-def class_fmf_generator(fmfpath, target_name, log_level=LOG_LEVEL, ruleset_tree_path=None, filter_names=None, filters=None):
+def class_fmf_generator(fmfpath, target_name, log_level, ruleset_tree_path=None, filter_names=None, filters=None):
     """
     generates dynamic test classes for nosetest or unittest scheduler based on FMF metadata.
 
@@ -62,9 +63,8 @@ def class_fmf_generator(fmfpath, target_name, log_level=LOG_LEVEL, ruleset_tree_
     metadatatree = ExtendedTree(fmfpath)
     ruleset_metadatatree.references(metadatatree)
     for node in ruleset_metadatatree.prune(names=filter_names, filters=filters):
-        logger.debug("look at node: %s ", node)
         if node.data.get("class") or node.data.get("test"):
-            logger.debug("node (%s) contains test and class item", node)
+            logger.debug("node (%s) contains test and class item", node.name)
             first_class_name = node.name.rsplit("/", 1)[-1]
             second_class_name = node.data.get("class")
             logger.debug("searching for %s", first_class_name)
@@ -79,7 +79,7 @@ def class_fmf_generator(fmfpath, target_name, log_level=LOG_LEVEL, ruleset_tree_
                 modulename = os.path.basename(
                     node.sources[-2]).split(".", 1)[0]
             test_func = make_check_function(target=target)
-            logger.info("Try to import: %s from path %s", modulename, modulepath)
+            logger.debug("Try to import: %s from path %s", modulename, modulepath)
             moduleimp = imp.load_source(modulename, modulepath)
             inernalclass = getattr(moduleimp, second_class_name)
             if is_compatible(target_type=target.target_type, check_instance=inernalclass()):
@@ -89,12 +89,16 @@ def class_fmf_generator(fmfpath, target_name, log_level=LOG_LEVEL, ruleset_tree_
                 oneclass = type(full_class_name, (DynamicClassBase,), {'test': test_func})
                 oneclass.backendclass = inernalclass
                 test_classes[full_class_name] = oneclass
-                logger.info("Test added: %s", node.name)
+                logger.debug("Test added: %s", node.name)
             else:
-                logger.info("Test (not target): %s", node.name)
+                logger.debug("Test (not target): %s", node.name)
+        else:
+            if "__pycache__" not in node.name:
+                logger.warning("error in fmf config for node (missing test and class items): %s (data: %s) ", node.name, node.data)
     return test_classes
 
-def scheduler_opts(target_name=None, checks=None, ruleset_path=None, filter_names=None, filters=None):
+def scheduler_opts(target_name=None, checks=None, ruleset_path=None,
+                   filter_names=None, filters=None, log_level=None):
     """
     gather all options what have to be set for function class_fmf_generator
     now it is able set via ENVVARS
@@ -119,12 +123,18 @@ def scheduler_opts(target_name=None, checks=None, ruleset_path=None, filter_name
         filters = os.environ.get("FILTERS", "").split(";")
     if not filter_names:
         filter_names = os.environ.get("NAMES", "").split(";")
-    output = class_fmf_generator(checks, target_name, ruleset_tree_path=ruleset_path, filter_names=filter_names, filters=filters)
+    if not log_level:
+        log_level = get_log_level()
+    output = class_fmf_generator(checks, target_name,
+                                 ruleset_tree_path=ruleset_path,
+                                 filter_names=filter_names,
+                                 filters=filters,
+                                 log_level=log_level)
     return output
 
 
 if __name__ == "__main__":
-    logging.basicConfig(stream=sys.stdout, level=LOG_LEVEL)
+    logging.basicConfig(stream=sys.stdout, level=get_log_level())
     classes = scheduler_opts()
     for item in classes:
         globals()[item] = classes[item]
