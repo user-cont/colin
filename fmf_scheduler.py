@@ -13,6 +13,7 @@ import unittest
 
 from colin.core.target import Target, is_compatible
 from colin.core.checks.fmf_check import ExtendedTree, CHECK_DIRECTORY
+from colin.core.constant import PASSED
 
 LOG_LEVEL = 3
 logger = logging.getLogger(__name__)
@@ -34,7 +35,12 @@ def make_check_function(target):
     """
 
     def test(self):
-        self.backendclass().check(target)
+        out = self.backendclass().check(target)
+        if out.status is not PASSED:
+            raise AssertionError("test:{} -> {}".format(
+                self.backendclass.name,
+                str(out))
+            )
     return test
 
 
