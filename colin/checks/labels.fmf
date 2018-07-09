@@ -8,4 +8,4 @@ test: labels.py
   tags: ["maintainer", "label"]
   labels: ["maintainer"]
   required: True
-  value_regex: None
+  value_regex: Null
