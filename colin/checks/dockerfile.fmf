@@ -4,7 +4,7 @@ description: "Generic desription for dockerfile test if not specific description
   test: "dockerfile.py"
   class: "FromTagNotLatestCheck"
   message: "In FROM, tag has to be specified and not 'latest'."
-  description: "Using the 'latest' tag may cause unpredictable builds. It is recommended that a specific tag is used in the FROM."
+  description: "Using the 'latest' tag may cause unpredictable builds.It is recommended that a specific tag is used in the FROM."
   reference_url: "https://fedoraproject.org/wiki/Container:Guidelines#FROM"
   tags: ["from", "dockerfile", "baseimage", "latest"]
 
