@@ -38,7 +38,7 @@ def make_check_function(target):
     return test
 
 
-def class_fmf_generator(fmfpath, target_name, log_level=LOG_LEVEL, ruleset_tree_path=None):
+def class_fmf_generator(fmfpath, target_name, log_level=LOG_LEVEL, ruleset_tree_path=None, filter_names=None, filters=None):
     """
     generates dynamic test classes for nosetest or unittest scheduler based on FMF metadata.
 
@@ -54,9 +54,8 @@ def class_fmf_generator(fmfpath, target_name, log_level=LOG_LEVEL, ruleset_tree_
         ruleset_tree_path = fmfpath
     ruleset_metadatatree = ExtendedTree(ruleset_tree_path)
     metadatatree = ExtendedTree(fmfpath)
-    #metadatatree.references(metadatatree)
     ruleset_metadatatree.references(metadatatree)
-    for node in ruleset_metadatatree.climb():
+    for node in ruleset_metadatatree.prune(names=filter_names, filters=filters):
         logger.debug("look at node: %s ", node)
         if node.data.get("class") or node.data.get("test"):
             logger.debug("node (%s) contains test and class item", node)
@@ -89,13 +88,17 @@ def class_fmf_generator(fmfpath, target_name, log_level=LOG_LEVEL, ruleset_tree_
                 logger.info("Test (not target): %s", node.name)
     return test_classes
 
-def scheduler_opts(target_name=None, checks=None, ruleset_path=None):
+def scheduler_opts(target_name=None, checks=None, ruleset_path=None, filter_names=None, filters=None):
     """
     gather all options what have to be set for function class_fmf_generator
     now it is able set via ENVVARS
 
     :param target_name: override envvar TARGET
     :param checks: override envvar CHECKS
+    :param ruleset_path: path to directory, where are fmf rulesets
+    :param filters: dict of filters, filter out just selected cases, use FMF filter format,
+           via FILTER envvar use ";" as filter separator
+    :param filter_names: dict of item names for filtering user ";" as separator for NAMES envvar
     :return: dict of test classes
     """
     if not target_name:
@@ -106,9 +109,12 @@ def scheduler_opts(target_name=None, checks=None, ruleset_path=None):
         checks = CHECK_DIRECTORY
     if not ruleset_path:
         ruleset_path = os.environ.get("RULESETPATH")
-    output = class_fmf_generator(checks, target_name, ruleset_tree_path=ruleset_path)
+    if not filters:
+        filters = os.environ.get("FILTERS", "").split(";")
+    if not filter_names:
+        filter_names = os.environ.get("NAMES", "").split(";")
+    output = class_fmf_generator(checks, target_name, ruleset_tree_path=ruleset_path, filter_names=filter_names, filters=filters)
     return output
-
 
 
 if __name__ == "__main__":
