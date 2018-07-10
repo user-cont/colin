@@ -11,7 +11,6 @@ from fmf import Tree
 from .abstract_check import AbstractCheck
 from ..ruleset.ruleset import get_checks_path
 
-CHECK_DIRECTORY = os.environ.get("CHECK") or get_checks_path()
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +76,7 @@ class FMFCaseLoader(object):
         :param path:
         """
         self.metadata = self.__receive_fmf_metadata(
-            path or CHECK_DIRECTORY, name=name_id)
+            path or get_checks_path(), name=name_id)
         self.name = self.get_name()
 
     def __receive_fmf_metadata(self, fmfpath, name=None, object_list=False):

@@ -118,7 +118,7 @@ def get_checks_path():
 
     :return: str (absolute path of directory with checks)
     """
-    rel_path = os.path.join(os.pardir, os.pardir, os.pardir, "checks")
+    rel_path = os.environ.get("CHECK") or os.path.join(os.pardir, os.pardir, os.pardir, "checks")
     return os.path.abspath(os.path.join(__file__, rel_path))
 
 

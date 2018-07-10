@@ -12,8 +12,9 @@ import logging
 import unittest
 
 from colin.core.target import Target, is_compatible
-from colin.core.checks.fmf_check import ExtendedTree, CHECK_DIRECTORY, FMFAbstractCheck
+from colin.core.checks.fmf_check import ExtendedTree, FMFAbstractCheck
 from colin.core.constant import PASSED
+from colin.core.ruleset.ruleset import get_checks_path
 
 from colin.core.checks.dockerfile import DockerfileAbstractCheck, DockerfileLabelAbstractCheck,\
     InstructionCountAbstractCheck, InstructionAbstractCheck
@@ -151,7 +152,7 @@ def scheduler_opts(target_name=None, checks=None, ruleset_path=None,
         if not target_name:
             raise EnvironmentError("TARGET envvar is not set.")
     if not checks:
-        checks = CHECK_DIRECTORY
+        checks = get_checks_path()
     if not ruleset_path:
         ruleset_path = os.environ.get("RULESETPATH")
     if not filters:
