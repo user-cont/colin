@@ -12,13 +12,23 @@ import logging
 import unittest
 
 from colin.core.target import Target, is_compatible
-from colin.core.checks.fmf_check import ExtendedTree, CHECK_DIRECTORY
+from colin.core.checks.fmf_check import ExtendedTree, CHECK_DIRECTORY, FMFAbstractCheck
 from colin.core.constant import PASSED
 
+from colin.core.checks.dockerfile import DockerfileAbstractCheck, DockerfileLabelAbstractCheck,\
+    InstructionCountAbstractCheck, InstructionAbstractCheck
+
+CLASS_MAPPING = {"DockerfileAbstractCheck": DockerfileAbstractCheck,
+                 "DockerfileLabelAbstractCheck": DockerfileLabelAbstractCheck,
+                 "InstructionCountAbstractCheck": InstructionCountAbstractCheck,
+                 "InstructionAbstractCheck": InstructionAbstractCheck
+                 }
 logger = logging.getLogger(__name__)
+
 
 def get_log_level():
     return int(os.environ.get(("DEBUG")) or logging.INFO)
+
 
 # COPYied from:
 # https://eli.thegreenplace.net/2014/04/02/dynamically-generating-python-test-cases
@@ -26,6 +36,7 @@ class DynamicClassBase(unittest.TestCase):
     """
     Basic Derived test Class
     """
+    backendclass = None
     longMessage = True
 
 
@@ -45,7 +56,45 @@ def make_check_function(target):
     return test
 
 
-def class_fmf_generator(fmfpath, target_name, log_level, ruleset_tree_path=None, filter_names=None, filters=None):
+def make_base_fmf_class_abstract(node, target, base_class=DynamicClassBase, fmf_class=FMFAbstractCheck):
+    class_name = node.data["class"]
+    out_class_name = node.name.rsplit("/", 1)[-1]
+    outclass = type(out_class_name, (base_class,), {
+        'test': make_check_function(target=target),
+        'backendclass': type(class_name, (fmf_class, CLASS_MAPPING[class_name],), {
+            '__doc__': node.data.get("description"),
+            'name': out_class_name,
+            'metadata': node,
+        })
+    })
+    return outclass
+
+
+def make_wrapped_fmf_class(node, target):
+    first_class_name = node.name.rsplit("/", 1)[-1]
+    second_class_name = node.data.get("class")
+    modulepath = os.path.join(os.path.dirname(
+        node.sources[-1]), node.data["test"])
+    modulename = os.path.basename(
+        node.sources[-1]).split(".", 1)[0]
+    # in case of referencing  use original data tree for info
+    if "@" in node.name and not os.path.exists(modulepath):
+        modulepath = os.path.join(os.path.dirname(
+            node.sources[-2]), node.data["test"])
+        modulename = os.path.basename(
+            node.sources[-2]).split(".", 1)[0]
+    test_func = make_check_function(target=target)
+    logger.debug("Try to import: %s from path %s", modulename, modulepath)
+    moduleimp = imp.load_source(modulename, modulepath)
+    inernalclass = getattr(moduleimp, second_class_name)
+    # more verbose output
+    # full_class_name = '{0}_{1}'.format(first_class_name, second_class_name)
+    full_class_name = '{0}'.format(first_class_name)
+    return type(full_class_name, (DynamicClassBase,), {'test': test_func,
+                                                       'backendclass': inernalclass
+                                                       })
+
+def nosetests_class_fmf_generator(fmfpath, target_name, log_level, ruleset_tree_path=None, filter_names=None, filters=None):
     """
     generates dynamic test classes for nosetest or unittest scheduler based on FMF metadata.
 
@@ -65,30 +114,15 @@ def class_fmf_generator(fmfpath, target_name, log_level, ruleset_tree_path=None,
     for node in ruleset_metadatatree.prune(names=filter_names, filters=filters):
         if node.data.get("class") or node.data.get("test"):
             logger.debug("node (%s) contains test and class item", node.name)
-            first_class_name = node.name.rsplit("/", 1)[-1]
-            second_class_name = node.data.get("class")
-            logger.debug("searching for %s", first_class_name)
-            modulepath = os.path.join(os.path.dirname(
-                node.sources[-1]), node.data["test"])
-            modulename = os.path.basename(
-                node.sources[-1]).split(".", 1)[0]
-            # in case of referencing  use original data tree for info
-            if "@" in node.name and not os.path.exists(modulepath):
-                modulepath = os.path.join(os.path.dirname(
-                    node.sources[-2]), node.data["test"])
-                modulename = os.path.basename(
-                    node.sources[-2]).split(".", 1)[0]
-            test_func = make_check_function(target=target)
-            logger.debug("Try to import: %s from path %s", modulename, modulepath)
-            moduleimp = imp.load_source(modulename, modulepath)
-            inernalclass = getattr(moduleimp, second_class_name)
-            if is_compatible(target_type=target.target_type, check_instance=inernalclass()):
-                # more verbose output
-                #full_class_name = '{0}_{1}'.format(first_class_name, second_class_name)
-                full_class_name = '{0}'.format(first_class_name)
-                oneclass = type(full_class_name, (DynamicClassBase,), {'test': test_func})
-                oneclass.backendclass = inernalclass
-                test_classes[full_class_name] = oneclass
+
+            if node.data.get("class") in CLASS_MAPPING:
+                logger.debug("Using pure FMF metadata for %s (class %s)", node.name, node.data.get("class"))
+                test_class = make_base_fmf_class_abstract(node=node, target=target)
+            else:
+                logger.debug("searching for %s", node.name)
+                test_class = make_wrapped_fmf_class(node=node, target=target)
+            if is_compatible(target_type=target.target_type, check_instance=test_class.backendclass()):
+                test_classes[test_class.__name__] = test_class
                 logger.debug("Test added: %s", node.name)
             else:
                 logger.debug("Test (not target): %s", node.name)
@@ -96,6 +130,7 @@ def class_fmf_generator(fmfpath, target_name, log_level, ruleset_tree_path=None,
             if "__pycache__" not in node.name:
                 logger.warning("error in fmf config for node (missing test and class items): %s (data: %s) ", node.name, node.data)
     return test_classes
+
 
 def scheduler_opts(target_name=None, checks=None, ruleset_path=None,
                    filter_names=None, filters=None, log_level=None):
@@ -125,11 +160,11 @@ def scheduler_opts(target_name=None, checks=None, ruleset_path=None,
         filter_names = os.environ.get("NAMES", "").split(";")
     if not log_level:
         log_level = get_log_level()
-    output = class_fmf_generator(checks, target_name,
-                                 ruleset_tree_path=ruleset_path,
-                                 filter_names=filter_names,
-                                 filters=filters,
-                                 log_level=log_level)
+    output = nosetests_class_fmf_generator(checks, target_name,
+                                           ruleset_tree_path=ruleset_path,
+                                           filter_names=filter_names,
+                                           filters=filters,
+                                           log_level=log_level)
     return output
 
 
