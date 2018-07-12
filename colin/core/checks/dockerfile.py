@@ -91,9 +91,9 @@ class InstructionCountAbstractCheck(DockerfileAbstractCheck):
                     self.max_count)
         logger.debug(log)
         passed = True
-        if self.min_count:
+        if self.min_count is not None:
             passed = passed and self.min_count <= count
-        if self.max_count:
+        if self.max_count is not None:
             passed = passed and count <= self.max_count
 
         return CheckResult(ok=passed,
