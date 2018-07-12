@@ -2,7 +2,7 @@
 
 TEST_IMAGE_NAME := colin-test
 TEST_IMAGE_LABELS_NAME := colin-labels
-TEST_TARGET = ./tests/integration/
+TEST_TARGET = ./tests
 
 check: build-test-image build-labels-image test-in-container
 
