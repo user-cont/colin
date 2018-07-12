@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+import logging
+
 import pytest
 
 import colin
@@ -31,7 +33,7 @@ def empty_ruleset():
 
 
 def get_results_from_colin_labels_image():
-    return colin.run("colin-labels", ruleset_name="fedora")
+    return colin.run("colin-labels", ruleset_name="fedora", logging_level=logging.DEBUG)
 
 
 def test_colin_image():
