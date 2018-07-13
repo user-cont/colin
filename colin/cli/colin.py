@@ -67,7 +67,10 @@ def cli():
               help="Path to directory containing checks (default {}).".format(get_checks_paths()))
 @click.option('--pull', is_flag=True,
               help="Pull the image from registry.")
-def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose, checks_paths, pull):
+@click.option('--target-type', type=click.STRING, default="image",
+              help="Type of selected target (one of container, image, dockerfile).")
+def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose,
+        checks_paths, target_type, pull):
     """
     Check the image/container/dockerfile (default).
     """
@@ -93,6 +96,7 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose, checks
             tags=tag,
             pull=pull,
             checks_paths=checks_paths
+            target_type=target_type
         )
         _print_results(results=results, stat=stat, verbose=verbose)
 

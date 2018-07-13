@@ -78,23 +78,25 @@ class Target(object):
     Target is the thing we are going to check; it can be an image, container or a dockerfile
     """
 
-    def __init__(self, target, logging_level, pull=None):
+    def __init__(self, target, logging_level, target_type, pull=None):
         """
         :param target: str, identifier of the target (specified via CLI)
         :param logging_level: int, log level passed to conu
+        :param target_type: string, either image, container or dockerfile
         :param pull: bool, if the target is an image, pull it if set to true
         """
         # this is the thing which user passed
         self.target_identifier = target
-        self.instance = self._get_target_instance(target, logging_level, pull)
+        self._target_type_str = target_type
         self._labels = None
+        self.instance = self._get_target_instance(target, logging_level, pull)
 
     def clean_up(self):
         """
         Perform clean up on the low level objects: atm atomic and skopeo mountpoints
         and data are being cleaned up.
         """
-        if self.instance == TargetType.IMAGE:
+        if self.target_type == TargetType.IMAGE:
             self.instance.clean_up()
 
     def _get_target_instance(self, target, logging_level, pull):
@@ -121,17 +123,16 @@ class Target(object):
         if os.path.isfile(target):
             logger.debug("Target is a dockerfile.")
             return DockerfileParser(fileobj=open(target))
-
-        with DockerBackend(logging_level=logging_level) as backend:
-
-            try:
-                cont = backend.ContainerClass(image=None,
-                                              container_id=target)
-                logger.debug("Target is a container.")
-                return cont
-            except NotFound:
+        if isinstance(target, six.string_types):
+            if self.target_type == TargetType.IMAGE:
                 logger.debug("Target is an image.")
                 return Image(target, pull=pull)
+            elif self.target_type == TargetType.IMAGE:
+                with DockerBackend(logging_level=logging_level) as backend:
+                    cont = backend.ContainerClass(image=None,
+                                                  container_id=target)
+                    logger.debug("Target is a container.")
+                    return cont
 
     @property
     def target_type(self):
@@ -140,14 +141,15 @@ class Target(object):
 
         :return: TargetType enum
         """
-        if isinstance(self.instance, Image):
+        if self._target_type_str == "image":
             return TargetType.IMAGE
-        elif isinstance(self.instance, Container):
+        elif self._target_type_str == "container":
             return TargetType.CONTAINER
-        elif isinstance(self.instance, DockerfileParser):
+        elif self._target_type_str == "dockerfile":
             return TargetType.DOCKERFILE
-        logger.debug("Target type not found.")
-        raise ColinException("Target type not found.")
+        logger.debug("Unknown target type; should be one of: container, image or dockerfile.")
+        raise ColinException(
+            "Unknown target type; should be one of: container, image or dockerfile.")
 
     @property
     def config_metadata(self):

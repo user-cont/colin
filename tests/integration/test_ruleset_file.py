@@ -73,7 +73,7 @@ def expected_dict():
 
 
 def get_results_from_colin_labels_image(ruleset_name=None, ruleset_file=None, ruleset=None):
-    return colin.run("colin-labels", ruleset_name=ruleset_name,
+    return colin.run("colin-labels", "image", ruleset_name=ruleset_name,
                      ruleset_file=ruleset_file, ruleset=ruleset)
 
 

@@ -26,7 +26,7 @@ from tests.conftest import LABELS_IMAGE
 
 @pytest.fixture("session")
 def labels_target():
-    target = Target(LABELS_IMAGE, 10, pull=False)
+    target = Target(LABELS_IMAGE, 10, "image", pull=False)
     yield target
     target.clean_up()
 
@@ -44,7 +44,8 @@ def empty_ruleset():
 
 
 def get_results_from_colin_labels_image():
-    return colin.run(LABELS_IMAGE, ruleset_name="fedora", logging_level=logging.DEBUG, pull=False)
+    return colin.run(LABELS_IMAGE, "image", ruleset_name="fedora",
+                     logging_level=logging.DEBUG, pull=False)
 
 
 def test_colin_image():
@@ -96,11 +97,3 @@ def test_multiple_labels_check(labels, should_pass, labels_target):
     result = check.check(labels_target)
 
     assert result.ok == should_pass
-
-
-def test_get_image_labels_easily():
-    image_name = "registry.access.redhat.com/rhscl/mariadb-101-rhel7:latest"
-    im = Image(image_name, pull=True)
-    labels = im.labels
-    assert "com.redhat.component" in labels
-    assert "name" in labels
