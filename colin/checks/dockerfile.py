@@ -17,18 +17,11 @@
 from colin.core.checks.dockerfile import DockerfileAbstractCheck, InstructionCountAbstractCheck
 from colin.core.result import CheckResult
 from colin.core.target import ImageName
+from colin.core.checks.fmf_check import FMFAbstractCheck
 
 
-class FromTagNotLatestCheck(DockerfileAbstractCheck):
-    name = "from_tag_not_latest"
-
-    def __init__(self):
-        super(FromTagNotLatestCheck, self) \
-            .__init__(message="In FROM, tag has to be specified and not 'latest'.",
-                      description="Using the 'latest' tag may cause unpredictable builds."
-                                  "It is recommended that a specific tag is used in the FROM.",
-                      reference_url="https://fedoraproject.org/wiki/Container:Guidelines#FROM",
-                      tags=["from", "dockerfile", "baseimage", "latest"])
+class FromTagNotLatestCheck(FMFAbstractCheck, DockerfileAbstractCheck):
+    name, metadata = FMFAbstractCheck.get_metadata("from_tag_not_latest")
 
     def check(self, target):
         im = ImageName.parse(target.instance.baseimage)
@@ -41,14 +34,5 @@ class FromTagNotLatestCheck(DockerfileAbstractCheck):
                            logs=[])
 
 
-class MaintainerDeprecatedCheck(InstructionCountAbstractCheck):
-    name = "maintainer_deprecated"
-
-    def __init__(self):
-        super(MaintainerDeprecatedCheck, self) \
-            .__init__(message="Dockerfile instruction `MAINTAINER` is deprecated.",
-                      description="Replace with label 'maintainer'.",
-                      reference_url="https://docs.docker.com/engine/reference/builder/#maintainer-deprecated",
-                      tags=["maintainer", "dockerfile", "deprecated"],
-                      instruction="MAINTAINER",
-                      max_count=0)
+class MaintainerDeprecatedCheck(FMFAbstractCheck, InstructionCountAbstractCheck):
+    name, metadata = FMFAbstractCheck.get_metadata("maintainer_deprecated")

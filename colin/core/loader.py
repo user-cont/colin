@@ -118,7 +118,7 @@ class CheckLoader(object):
             return load_check_classes_from_file(self.path, self.top_py_path)
         for root, _, files in os.walk(self.path):
             for fi in files:
-                if fi.endswith(".pyc"):
+                if not fi.endswith(".py"):
                     continue
                 path = os.path.join(root, fi)
                 check_classes = check_classes.union(set(
