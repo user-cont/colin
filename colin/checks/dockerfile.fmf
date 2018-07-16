@@ -17,7 +17,7 @@ test: "dockerfile.py"
   instruction: "MAINTAINER"
   max_count: 0
 
-/test_maintainer_pure_deprecated:
+/test_maintainer_pure:
   class: "InstructionCountAbstractCheck"
   message: "Dockerfile instruction `MAINTAINER` is deprecated."
   description: "TEST: Replace with label 'maintainer'."
