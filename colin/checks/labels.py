@@ -15,6 +15,7 @@
 #
 
 from colin.core.checks.labels import LabelAbstractCheck
+from colin.core.checks.fmf_check import FMFAbstractCheck
 
 
 class ArchitectureLabelCheck(LabelAbstractCheck):
@@ -228,18 +229,8 @@ class IoOpenShiftTagsLabelCheck(LabelAbstractCheck):
                       value_regex=None)
 
 
-class MaintainerLabelCheck(LabelAbstractCheck):
-    name = "maintainer_label"
-
-    def __init__(self):
-        super(MaintainerLabelCheck, self) \
-            .__init__(message="Label 'maintainer' has to be specified.",
-                      description="The name and email of the maintainer (usually the submitter).",
-                      reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
-                      tags=["maintainer", "label"],
-                      labels=["maintainer"],
-                      required=True,
-                      value_regex=None)
+class MaintainerLabelCheck(FMFAbstractCheck, LabelAbstractCheck):
+    name, metadata = FMFAbstractCheck.get_metadata("maintainer_label")
 
 
 class NameLabelCheck(LabelAbstractCheck):

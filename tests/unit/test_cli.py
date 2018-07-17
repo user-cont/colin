@@ -65,13 +65,13 @@ from_tag_not_latest
    -> In FROM, tag has to be specified and not 'latest'.
    -> Using the 'latest' tag may cause unpredictable builds.It is recommended that a specific tag is used in the FROM.
    -> https://fedoraproject.org/wiki/Container:Guidelines#FROM
-   -> from, dockerfile, baseimage, latest, required
+   -> dockerfile, from, baseimage, latest, required
 
 maintainer_deprecated
    -> Dockerfile instruction `MAINTAINER` is deprecated.
    -> Replace with label 'maintainer'.
    -> https://docs.docker.com/engine/reference/builder/#maintainer-deprecated
-   -> maintainer, dockerfile, deprecated, required
+   -> dockerfile, maintainer, deprecated, required
 
 """
     assert result.exit_code == 0
