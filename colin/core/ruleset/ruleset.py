@@ -17,7 +17,7 @@
 import logging
 import os
 
-from ..constant import JSON, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME, CHECKPATH_VAR_NAME
+from ..constant import JSON, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME, COLIN_CHECKS_PATH
 from ..exceptions import ColinRulesetException
 from ..loader import CheckLoader
 from ..target import is_compatible
@@ -120,9 +120,9 @@ def get_checks_path(checkpath=None):
     """
     if checkpath is not None:
         out_path = checkpath
-    elif os.environ.get(CHECKPATH_VAR_NAME):
+    elif os.environ.get(COLIN_CHECKS_PATH):
         # this could be used when invoked without CLI
-        out_path = os.environ.get(CHECKPATH_VAR_NAME)
+        out_path = os.environ.get(COLIN_CHECKS_PATH)
     else:
         out_path = os.path.join(__file__, os.pardir, os.pardir, os.pardir, "checks")
     return os.path.abspath(out_path)

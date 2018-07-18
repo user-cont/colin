@@ -25,7 +25,7 @@ from ..core.colin import get_checks, run
 from ..core.exceptions import ColinException
 from ..core.ruleset.ruleset import get_rulesets, get_checks_path
 from ..version import __version__
-from ..core.constant import CHECKPATH_VAR_NAME
+from ..core.constant import COLIN_CHECKS_PATH
 from .default_group import DefaultGroup
 
 logger = logging.getLogger("colin.cli")
@@ -60,7 +60,7 @@ def cli():
               help="Filter checks with the tag.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-@click.option('--checkpath', type=click.Path(exists=True), envvar=CHECKPATH_VAR_NAME,
+@click.option('checkpath', '--checks-path', type=click.Path(exists=True), envvar=COLIN_CHECKS_PATH,
               help="Path to directory containing checks (default {}).".format(get_checks_path()))
 def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose, checkpath):
     """
@@ -121,7 +121,7 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose, checkp
               help="Filter checks with the tag.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-@click.option('--checkpath', type=click.Path(exists=True), envvar=CHECKPATH_VAR_NAME,
+@click.option('checkpath', '--checks-path', type=click.Path(exists=True), envvar=COLIN_CHECKS_PATH,
               help="Path to directory containing checks (default {}).".format(get_checks_path()))
 def list_checks(ruleset, ruleset_file, debug, json, tag, verbose, checkpath):
     """
