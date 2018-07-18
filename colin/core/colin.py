@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 def run(target, tags=None, ruleset_name=None, ruleset_file=None,
-        ruleset=None, logging_level=logging.WARNING):
+        ruleset=None, logging_level=logging.WARNING, checkpath=None):
     """
     Runs the sanity checks for the target.
 
@@ -47,14 +47,15 @@ def run(target, tags=None, ruleset_name=None, ruleset_file=None,
                                 tags=tags,
                                 ruleset_name=ruleset_name,
                                 ruleset_file=ruleset_file,
-                                ruleset=ruleset)
+                                ruleset=ruleset,
+                                checkpath=checkpath)
     result = go_through_checks(target=target,
                                checks=checks_to_run)
     return result
 
 
 def get_checks(target_type=None, tags=None, ruleset_name=None,
-               ruleset_file=None, ruleset=None, logging_level=logging.WARNING):
+               ruleset_file=None, ruleset=None, logging_level=logging.WARNING, checkpath=None):
     """
     Get the sanity checks for the target.
 
@@ -73,15 +74,17 @@ def get_checks(target_type=None, tags=None, ruleset_name=None,
         tags=tags,
         ruleset_name=ruleset_name,
         ruleset_file=ruleset_file,
-        ruleset=ruleset
+        ruleset=ruleset,
+        checkpath=checkpath
     )
 
 
 def _get_checks(target_type, tags=None,
-                ruleset_name=None, ruleset_file=None, ruleset=None):
+                ruleset_name=None, ruleset_file=None, ruleset=None, checkpath=None):
     ruleset = Ruleset(ruleset_name=ruleset_name,
                       ruleset_file=ruleset_file,
-                      ruleset=ruleset)
+                      ruleset=ruleset,
+                      checkpath=checkpath)
     return ruleset.get_checks(tags=tags, target_type=target_type)
 
 

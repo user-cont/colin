@@ -33,3 +33,5 @@ OUTPUT_CHARS = {
     FAILED: "x",
     ERROR: "#"
 }
+
+CHECKPATH_VAR_NAME = "CHECKPATH"

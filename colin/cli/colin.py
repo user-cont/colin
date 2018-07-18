@@ -23,8 +23,9 @@ import six
 from ..core.checks.abstract_check import AbstractCheck
 from ..core.colin import get_checks, run
 from ..core.exceptions import ColinException
-from ..core.ruleset.ruleset import get_rulesets
+from ..core.ruleset.ruleset import get_rulesets, get_checks_path
 from ..version import __version__
+from ..core.constant import CHECKPATH_VAR_NAME
 from .default_group import DefaultGroup
 
 logger = logging.getLogger("colin.cli")
@@ -59,7 +60,9 @@ def cli():
               help="Filter checks with the tag.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose):
+@click.option('--checkpath', type=click.Path(exists=True), envvar=CHECKPATH_VAR_NAME,
+              help="Path to directory containing checks (default {}).".format(get_checks_path()))
+def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose, checkpath):
     """
     Check the image/container/dockerfile (default).
     """
@@ -77,7 +80,8 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose):
                       ruleset_name=ruleset,
                       ruleset_file=ruleset_file,
                       logging_level=log_level,
-                      tags=tag)
+                      tags=tag,
+                      checkpath=checkpath)
         _print_results(results=results, stat=stat, verbose=verbose)
 
         if json:
@@ -117,7 +121,9 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose):
               help="Filter checks with the tag.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-def list_checks(ruleset, ruleset_file, debug, json, tag, verbose):
+@click.option('--checkpath', type=click.Path(exists=True), envvar=CHECKPATH_VAR_NAME,
+              help="Path to directory containing checks (default {}).".format(get_checks_path()))
+def list_checks(ruleset, ruleset_file, debug, json, tag, verbose, checkpath):
     """
     Print the checks.
     """
@@ -135,7 +141,8 @@ def list_checks(ruleset, ruleset_file, debug, json, tag, verbose):
         checks = get_checks(ruleset_name=ruleset,
                             ruleset_file=ruleset_file,
                             logging_level=log_level,
-                            tags=tag)
+                            tags=tag,
+                            checkpath=checkpath)
         _print_checks(checks=checks)
 
         if json:

@@ -17,7 +17,7 @@
 import logging
 import os
 
-from ..constant import JSON, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME
+from ..constant import JSON, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME, CHECKPATH_VAR_NAME
 from ..exceptions import ColinRulesetException
 from ..loader import CheckLoader
 from ..target import is_compatible
@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 class Ruleset(object):
 
-    def __init__(self, ruleset_name=None, ruleset_file=None, ruleset=None):
+    def __init__(self, ruleset_name=None, ruleset_file=None, ruleset=None, checkpath=None):
         """
         Load ruleset for colin.
 
@@ -37,7 +37,7 @@ class Ruleset(object):
         :param ruleset_file: fileobj instance holding ruleset configuration
         :param ruleset: dict, content of a ruleset file
         """
-        self.check_loader = CheckLoader(get_checks_path())
+        self.check_loader = CheckLoader(get_checks_path(checkpath))
         if ruleset:
             self.ruleset_struct = RulesetStruct(ruleset)
         elif ruleset_file:
@@ -112,17 +112,19 @@ class Ruleset(object):
         return result
 
 
-def get_checks_path():
+def get_checks_path(checkpath=None):
     """
     Get path to checks.
 
     :return: str (absolute path of directory with checks)
     """
-    out_path = os.environ.get("CHECKS") or os.path.join(__file__,
-                                                        os.pardir,
-                                                        os.pardir,
-                                                        os.pardir,
-                                                        "checks")
+    if checkpath is not None:
+        out_path = checkpath
+    elif os.environ.get(CHECKPATH_VAR_NAME):
+        # this could be used when invoked without CLI
+        out_path = os.environ.get(CHECKPATH_VAR_NAME)
+    else:
+        out_path = os.path.join(__file__, os.pardir, os.pardir, os.pardir, "checks")
     return os.path.abspath(out_path)
 
 
