@@ -33,3 +33,5 @@ OUTPUT_CHARS = {
     FAILED: "x",
     ERROR: "#"
 }
+
+COLIN_CHECKS_PATH = "CHECKS_PATH"
