@@ -91,13 +91,17 @@ class Image(object):
             atomic_source = "docker:" + image_name.name
 
         e = os.environ.copy()
-        e["ATOMIC_OSTREE_REPO"] = self.ostree_path
         # must not exist, ostree will create it
-        out = subprocess.check_output(
-            ["atomic", "--debug", "pull", "--storage", "ostree", atomic_source],
-            env=e)
-        logger.debug("output of atomic command:")
-        logger.debug(out)
+        e["ATOMIC_OSTREE_REPO"] = self.ostree_path
+        cmd = ["atomic", "pull", "--storage", "ostree", atomic_source]
+        try:
+            out = subprocess.check_output(cmd, env=e, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError:
+            logger.error("Failed to pull selected container image. Does it exist?")
+            raise
+        else:
+            logger.debug("output of atomic command:")
+            logger.debug(out)
 
         archive_file_name = "archive.tar"
         archive_path = os.path.join(self.tmpdir, archive_file_name)
