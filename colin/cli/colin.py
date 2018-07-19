@@ -227,7 +227,12 @@ def _print_checks(checks):
 
 
 def _get_log_level(debug, verbose):
-    return logging.DEBUG if debug else logging.NOTSET
+    if debug:
+        return logging.DEBUG
+    elif verbose:
+        return logging.INFO
+    else:
+        return logging.WARNING
 
 
 if __name__ == '__main__':
