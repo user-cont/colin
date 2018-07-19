@@ -138,9 +138,10 @@ class Image(object):
     def clean_up(self):
         shutil.rmtree(self.tmpdir)
 
-    def p(self, path):
+    def cont_path(self, path):
         """
         provide absolute path within the container
+
         :param path: path with container
         :return: str
         """
@@ -158,7 +159,7 @@ class Image(object):
         :return: str (not bytes), content of the file
         """
         try:
-            with open(self.p(file_path)) as fd:
+            with open(self.cont_path(file_path)) as fd:
                 return fd.read()
         except IOError as ex:
             logger.error("error while accessing file %s: %r", file_path, ex)
@@ -171,7 +172,7 @@ class Image(object):
         :param mode: str, mode used when opening the file
         :return: File instance
         """
-        return open(self.p(file_path), mode=mode)
+        return open(self.cont_path(file_path), mode=mode)
 
     def file_is_present(self, file_path):
         """
@@ -180,7 +181,7 @@ class Image(object):
         :param file_path: str, path to the file
         :return: True if file exists, False if file does not exist
         """
-        p = self.p(file_path)
+        p = self.cont_path(file_path)
         if not os.path.exists(p):
             return False
         if not os.path.isfile(p):

@@ -22,7 +22,6 @@ import os
 import six
 from conu import DockerBackend
 from conu.apidefs.container import Container
-from docker.errors import NotFound
 from dockerfile_parse import DockerfileParser
 
 from colin.utils.cont import Image
@@ -96,7 +95,7 @@ class Target(object):
         Perform clean up on the low level objects: atm atomic and skopeo mountpoints
         and data are being cleaned up.
         """
-        if self.target_type == TargetType.IMAGE:
+        if hasattr(self.instance, "clean_up"):
             self.instance.clean_up()
 
     def _get_target_instance(self, target, logging_level, pull):
@@ -112,7 +111,9 @@ class Target(object):
         :param pull: bool, should the image be pulled?
         :return: Target object
         """
-        logger.debug("Finding target '{}'.".format(target))
+        logger.debug("Identifying target '{}'.".format(target))
+
+        # FIXME: simplify this, only support images and dockerfiles
 
         if isinstance(target, Container):
             logger.debug("Target is a conu container.")
@@ -120,14 +121,14 @@ class Target(object):
         if isinstance(target, io.IOBase):
             logger.debug("Target is a dockerfile loaded from the file-like object.")
             return DockerfileParser(fileobj=target)
-        if os.path.isfile(target):
-            logger.debug("Target is a dockerfile.")
-            return DockerfileParser(fileobj=open(target))
         if isinstance(target, six.string_types):
             if self.target_type == TargetType.IMAGE:
                 logger.debug("Target is an image.")
                 return Image(target, pull=pull)
-            elif self.target_type == TargetType.IMAGE:
+            elif self.target_type == TargetType.DOCKERFILE:
+                logger.debug("Target is a dockerfile.")
+                return DockerfileParser(fileobj=open(target))
+            elif self.target_type == TargetType.CONTAINER:
                 with DockerBackend(logging_level=logging_level) as backend:
                     cont = backend.ContainerClass(image=None,
                                                   container_id=target)
