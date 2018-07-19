@@ -134,12 +134,17 @@ class Image(object):
         e["ATOMIC_OSTREE_REPO"] = self.ostree_path
         # self.mount_point has to be created by us
         out = subprocess.check_output(
-            ["atomic", "--debug", "mount", "--storage", "ostree", self.image_name, self.mount_point],
+            ["atomic", "mount", "--storage", "ostree", self.image_name, self.mount_point],
             env=e)
         logger.debug("output of atomic command:")
         logger.debug(out)
 
     def clean_up(self):
+        e = os.environ.copy()
+        e["ATOMIC_OSTREE_REPO"] = self.ostree_path
+        out = subprocess.check_output(["atomic", "unmount", self.mount_point], env=e)
+        logger.debug("output of atomic command:")
+        logger.debug(out)
         shutil.rmtree(self.tmpdir)
 
     def cont_path(self, path):
