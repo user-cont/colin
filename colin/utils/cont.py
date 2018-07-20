@@ -16,16 +16,36 @@ from colin.core.exceptions import ColinException
 logger = logging.getLogger(__name__)
 
 
+def run_and_log(cmd, ostree_repo_path, error_msg, wd=None):
+    """ run provided command and log all of its output; set path to ostree repo """
+    logger.debug("running command %s", cmd)
+    kwargs = {
+        "stderr": subprocess.STDOUT,
+        "env": os.environ.copy(),
+    }
+    if ostree_repo_path:
+        # must not exist, ostree will create it
+        kwargs["env"]["ATOMIC_OSTREE_REPO"] = ostree_repo_path
+    if wd:
+        kwargs["cwd"] = wd
+    try:
+        out = subprocess.check_output(cmd, **kwargs)
+    except subprocess.CalledProcessError:
+        logger.error(error_msg)
+        raise
+    else:
+        if out:
+            logger.debug("output of the command:")
+            logger.debug(out)
+
+
 def extract_file_from_tarball(tarball_path, file_path, wd):
     """
     Extract selected file (file_path) from tarball (tarball_path) within a selected
     directory (wd).
     """
     tar_cmd = ["tar", "-xf", tarball_path, file_path]
-    out = subprocess.check_output(tar_cmd, cwd=wd)
-    if out:
-        logger.debug("output of tar command:")
-        logger.debug(out)
+    run_and_log(tar_cmd, None, "Failed to extract selected tarball.", wd)
 
 
 class Image(object):
@@ -90,26 +110,16 @@ class Image(object):
             skopeo_source = "docker-daemon:" + image_name.name
             atomic_source = "docker:" + image_name.name
 
-        e = os.environ.copy()
-        # must not exist, ostree will create it
-        e["ATOMIC_OSTREE_REPO"] = self.ostree_path
         cmd = ["atomic", "pull", "--storage", "ostree", atomic_source]
-        try:
-            out = subprocess.check_output(cmd, env=e, stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError:
-            logger.error("Failed to pull selected container image. Does it exist?")
-            raise
-        else:
-            logger.debug("output of atomic command:")
-            logger.debug(out)
+        run_and_log(cmd, self.ostree_path,
+                    "Failed to pull selected container image. Does it exist?")
 
         archive_file_name = "archive.tar"
         archive_path = os.path.join(self.tmpdir, archive_file_name)
         skopeo_target = "docker-archive:" + archive_path
         skopeo_cmd = ["skopeo", "copy", skopeo_source, skopeo_target]
-        out = subprocess.check_output(skopeo_cmd)
-        logger.debug("output of skopeo command:")
-        logger.debug(out)
+        run_and_log(skopeo_cmd, None,
+                    "Failed to create tarball with layers from the selected image")
 
         manifest_file_name = "manifest.json"
 
@@ -130,21 +140,13 @@ class Image(object):
 
     def _checkout(self):
         """ check out the image filesystem on self.mount_point """
-        e = os.environ.copy()
-        e["ATOMIC_OSTREE_REPO"] = self.ostree_path
+        cmd = ["atomic", "mount", "--storage", "ostree", self.image_name, self.mount_point]
         # self.mount_point has to be created by us
-        out = subprocess.check_output(
-            ["atomic", "mount", "--storage", "ostree", self.image_name, self.mount_point],
-            env=e)
-        logger.debug("output of atomic command:")
-        logger.debug(out)
+        run_and_log(cmd, self.ostree_path, "Failed to mount selected image as an ostree repo.")
 
     def clean_up(self):
-        e = os.environ.copy()
-        e["ATOMIC_OSTREE_REPO"] = self.ostree_path
-        out = subprocess.check_output(["atomic", "unmount", self.mount_point], env=e)
-        logger.debug("output of atomic command:")
-        logger.debug(out)
+        cmd = ["atomic", "unmount", self.mount_point]
+        run_and_log(cmd, self.ostree_path, "Failed to unmount ostree checkout.")
         shutil.rmtree(self.tmpdir)
 
     def cont_path(self, path):
