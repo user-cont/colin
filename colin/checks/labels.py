@@ -230,7 +230,7 @@ class IoOpenShiftTagsLabelCheck(LabelAbstractCheck):
 
 
 class MaintainerLabelCheck(FMFAbstractCheck, LabelAbstractCheck):
-    name, metadata = FMFAbstractCheck.get_metadata("maintainer_label")
+    name = "maintainer_label"
 
 
 class NameLabelCheck(LabelAbstractCheck):
