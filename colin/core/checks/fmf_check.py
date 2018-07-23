@@ -7,12 +7,11 @@ import logging
 
 from .abstract_check import AbstractCheck
 from ..fmf_extension import ExtendedTree
-from ..ruleset.ruleset import get_checks_path
 
 logger = logging.getLogger(__name__)
 
 
-def receive_fmf_metadata(name, path=None, object_list=False):
+def receive_fmf_metadata(name, path, object_list=False):
     """
     search node identified by name fmfpath
 
@@ -22,7 +21,7 @@ def receive_fmf_metadata(name, path=None, object_list=False):
     :return: Tree Object or list
     """
     output = {}
-    fmf_tree = ExtendedTree(get_checks_path(path))
+    fmf_tree = ExtendedTree(path)
     logger.debug("get FMF metadata for test (path:%s name=%s)", path, name)
     # ignore items with @ in names, to avoid using unreferenced items
     items = [x for x in fmf_tree.climb() if name in x.name and "@" not in x.name]
@@ -44,13 +43,14 @@ class FMFAbstractCheck(AbstractCheck):
     """
     metadata = None
     name = None
+    fmf_metadata_path = None
 
     def __init__(self):
         """
         wraps parameters to COLIN __init__ method format
         """
         if not self.metadata:
-            self.metadata = receive_fmf_metadata(name=self.name)
+            self.metadata = receive_fmf_metadata(name=self.name, path=self.fmf_metadata_path)
         kwargs = copy.deepcopy(self.metadata.data)
         if "class" in kwargs:
             del kwargs["class"]

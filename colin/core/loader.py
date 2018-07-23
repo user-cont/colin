@@ -26,6 +26,8 @@ import warnings
 
 import six
 
+from ..core.checks.fmf_check import receive_fmf_metadata, FMFAbstractCheck
+
 logger = logging.getLogger(__name__)
 
 
@@ -84,6 +86,9 @@ def load_check_classes_from_file(path, top_path):
     check_classes = []
     for _, obj in inspect.getmembers(m, inspect.isclass):
         if should_we_load(obj):
+            if issubclass(obj, FMFAbstractCheck):
+                node_metadata = receive_fmf_metadata(name=obj.name, path=os.path.dirname(path))
+                obj.metadata = node_metadata
             check_classes.append(obj)
             logger.debug("Check class '{}' found.".format(obj.__name__))
     return check_classes
