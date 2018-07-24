@@ -122,18 +122,24 @@ class Target(object):
             logger.debug("Target is a dockerfile loaded from the file-like object.")
             return DockerfileParser(fileobj=target)
         if isinstance(target, six.string_types):
-            if self.target_type == TargetType.IMAGE:
-                logger.debug("Target is an image.")
-                return Image(target, pull=pull)
-            elif self.target_type == TargetType.DOCKERFILE:
-                logger.debug("Target is a dockerfile.")
-                return DockerfileParser(fileobj=open(target))
-            elif self.target_type == TargetType.CONTAINER:
-                with DockerBackend(logging_level=logging_level) as backend:
-                    cont = backend.ContainerClass(image=None,
-                                                  container_id=target)
-                    logger.debug("Target is a container.")
-                    return cont
+            # user passed a string
+            try:
+                if self.target_type == TargetType.IMAGE:
+                    logger.debug("Target is an image.")
+                    return Image(target, pull=pull)
+                elif self.target_type == TargetType.DOCKERFILE:
+                    logger.debug("Target is a dockerfile.")
+                    return DockerfileParser(fileobj=open(target))
+                elif self.target_type == TargetType.CONTAINER:
+                    with DockerBackend(logging_level=logging_level) as backend:
+                        cont = backend.ContainerClass(image=None,
+                                                      container_id=target)
+                        logger.debug("Target is a container.")
+                        return cont
+            except Exception:
+                logger.error("Please make sure that you picked the correct target type: "
+                             "--target-type CLI option.")
+                raise
 
     @property
     def target_type(self):
