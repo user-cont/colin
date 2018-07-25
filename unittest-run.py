@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """
-FMF scheduler for nosetests
+FMF scheduler via unittest testcases.
+Can be used as cli or as an argument to external scheduler like nosetest.
 Found test via fmf files and creates dynamic testclassed based on that.
 """
 
@@ -10,11 +11,12 @@ import sys
 import imp
 import logging
 import unittest
+import click
 
 from colin.core.target import Target, is_compatible
 from colin.core.checks.fmf_check import ExtendedTree, FMFAbstractCheck
-from colin.core.constant import PASSED
-from colin.core.ruleset.ruleset import get_checks_path
+from colin.core.constant import PASSED, COLIN_CHECKS_PATH
+from colin.core.ruleset.ruleset import get_checks_paths
 
 from colin.core.checks.dockerfile import DockerfileAbstractCheck, DockerfileLabelAbstractCheck,\
     InstructionCountAbstractCheck, InstructionAbstractCheck
@@ -58,6 +60,22 @@ def make_check_function(target):
 
 
 def make_base_fmf_class_abstract(node, target, base_class=DynamicClassBase, fmf_class=FMFAbstractCheck):
+    """
+    Generate test classes without python dedicated classes (new)
+    it creates class like:
+
+    class SomeClassName(DynamicClassBase):
+        backend = FMFAbstractCheck_inherited_class
+        def test():
+            backend.check(TARGET)
+
+
+    :param node: fmf metadata item
+    :param target: test subject class
+    :param base_class: optional parameter, to override base class for inheritance
+    :param fmf_class: base fmf class, have to be set via CLASS_MAPPING
+    :return: unittest inherited class
+    """
     class_name = node.data["class"]
     out_class_name = node.name.rsplit("/", 1)[-1]
     outclass = type(out_class_name, (base_class,), {
@@ -72,6 +90,18 @@ def make_base_fmf_class_abstract(node, target, base_class=DynamicClassBase, fmf_
 
 
 def make_wrapped_fmf_class(node, target):
+    """
+    It creates class like:
+
+    class SomeClassName(DynamicClassBase):
+        backend = FMFAbstractCheck_inherited_class
+        def test():
+            backend.check(TARGET)
+
+    :param node: fmf metadata item
+    :param target: test subject class
+    :return: unittest inherited class
+    """
     first_class_name = node.name.rsplit("/", 1)[-1]
     second_class_name = node.data.get("class")
     modulepath = os.path.join(os.path.dirname(
@@ -88,6 +118,8 @@ def make_wrapped_fmf_class(node, target):
     logger.debug("Try to import: %s from path %s", modulename, modulepath)
     moduleimp = imp.load_source(modulename, modulepath)
     inernalclass = getattr(moduleimp, second_class_name)
+    inernalclass.name = node.name
+    inernalclass.metadata = node
     # more verbose output
     # full_class_name = '{0}_{1}'.format(first_class_name, second_class_name)
     full_class_name = '{0}'.format(first_class_name)
@@ -95,11 +127,12 @@ def make_wrapped_fmf_class(node, target):
                                                        'backendclass': inernalclass
                                                        })
 
-def nosetests_class_fmf_generator(fmfpath, target_name, log_level, ruleset_tree_path=None, filter_names=None, filters=None):
-    """
-    generates dynamic test classes for nosetest or unittest scheduler based on FMF metadata.
 
-    :param fmfpath: path to checks
+def unittests_class_fmf_generator(fmfpathes, target_name, log_level, ruleset_tree_path=None, filter_names=None, filters=None):
+    """
+    generates dynamic test unittest classes based on FMF metadata.
+
+    :param fmfpathes: path to checks
     :param target_name: what is the target object
     :param log_level:
     :param ruleset_tree_path:
@@ -107,29 +140,33 @@ def nosetests_class_fmf_generator(fmfpath, target_name, log_level, ruleset_tree_
     """
     target = Target(target_name, log_level)
     test_classes = {}
-    if not ruleset_tree_path:
-        ruleset_tree_path = fmfpath
-    ruleset_metadatatree = ExtendedTree(ruleset_tree_path)
-    metadatatree = ExtendedTree(fmfpath)
-    ruleset_metadatatree.references(metadatatree)
-    for node in ruleset_metadatatree.prune(names=filter_names, filters=filters):
-        if node.data.get("class") or node.data.get("test"):
-            logger.debug("node (%s) contains test and class item", node.name)
+    metadata_forest = []
+    if ruleset_tree_path:
+        ruleset_mtd = ExtendedTree(ruleset_tree_path)
+        source_metadata_trees = [ExtendedTree(fmfpath) for fmfpath in fmfpathes]
+        ruleset_mtd.references(datatrees=source_metadata_trees)
+        metadata_forest = [ruleset_mtd]
+    else:
+        metadata_forest = [ExtendedTree(fmfpath) for fmfpath in fmfpathes]
+    for metadata_item in metadata_forest:
+        for node in metadata_item.prune(names=filter_names, filters=filters):
+            if node.data.get("class") or node.data.get("test"):
+                logger.debug("node (%s) contains test and class item", node.name)
 
-            if node.data.get("class") in CLASS_MAPPING:
-                logger.debug("Using pure FMF metadata for %s (class %s)", node.name, node.data.get("class"))
-                test_class = make_base_fmf_class_abstract(node=node, target=target)
+                if node.data.get("class") in CLASS_MAPPING:
+                    logger.debug("Using pure FMF metadata for %s (class %s)", node.name, node.data.get("class"))
+                    test_class = make_base_fmf_class_abstract(node=node, target=target)
+                else:
+                    logger.debug("searching for %s", node.name)
+                    test_class = make_wrapped_fmf_class(node=node, target=target)
+                if is_compatible(target_type=target.target_type, check_instance=test_class.backendclass()):
+                    test_classes[test_class.__name__] = test_class
+                    logger.debug("Test added: %s", node.name)
+                else:
+                    logger.debug("Test (not target): %s", node.name)
             else:
-                logger.debug("searching for %s", node.name)
-                test_class = make_wrapped_fmf_class(node=node, target=target)
-            if is_compatible(target_type=target.target_type, check_instance=test_class.backendclass()):
-                test_classes[test_class.__name__] = test_class
-                logger.debug("Test added: %s", node.name)
-            else:
-                logger.debug("Test (not target): %s", node.name)
-        else:
-            if "__pycache__" not in node.name:
-                logger.warning("error in fmf config for node (missing test and class items): %s (data: %s) ", node.name, node.data)
+                if "__pycache__" not in node.name:
+                    logger.warning("error in fmf config for node (missing test and class items): %s (data: %s) ", node.name, node.data)
     return test_classes
 
 
@@ -152,7 +189,7 @@ def scheduler_opts(target_name=None, checks=None, ruleset_path=None,
         if not target_name:
             raise EnvironmentError("TARGET envvar is not set.")
     if not checks:
-        checks = get_checks_path()
+        checks = get_checks_paths()
     if not ruleset_path:
         ruleset_path = os.environ.get("RULESETPATH")
     if not filters:
@@ -161,28 +198,49 @@ def scheduler_opts(target_name=None, checks=None, ruleset_path=None,
         filter_names = os.environ.get("NAMES", "").split(";")
     if not log_level:
         log_level = get_log_level()
-    output = nosetests_class_fmf_generator(checks, target_name,
+    output = unittests_class_fmf_generator(checks, target_name,
                                            ruleset_tree_path=ruleset_path,
                                            filter_names=filter_names,
                                            filters=filters,
                                            log_level=log_level)
     return output
 
+@click.command()
+@click.argument('target', type=click.STRING)
+@click.option('checks_paths', '-c', '--checks-paths',
+              type=click.Path(exists=True, dir_okay=True, file_okay=False),
+              multiple=True, envvar=COLIN_CHECKS_PATH, default=get_checks_paths(),
+              help="Path to directory containing checks (default {}).".format(get_checks_paths()))
+@click.option('ruleset_dir', '--ruleset-dir', '-r', type=click.Path(),
+              help="Path to a directory with rulesets")
+@click.option('--name', '-n', multiple=True, type=click.STRING,
+              help="Select cases by key names")
+@click.option('filter_opts','--filter', '-f', multiple=True, type=click.STRING,
+              help="Filter cases based on FMF filter rules")
+@click.option('-v', '--verbose', type=click.INT, default=0,
+              help="change verbosity of unittest scheduler")
+@click.option('--debug', default=False, is_flag=True,
+              help="Enable debugging mode (debugging logs, full tracebacks).")
+def cmdline(target, checks_paths, ruleset_dir, name, filter_opts, verbose, debug):
+    log_level = logging.INFO
+    if debug:
+        log_level = logging.DEBUG
+    logging.basicConfig(stream=sys.stdout, level=log_level)
+    test_classes = scheduler_opts(target_name=target, checks=checks_paths, ruleset_path=ruleset_dir,
+                   filter_names=name, filters=filter_opts, log_level=log_level)
+    loader = unittest.TestLoader()
+    tests = [loader.loadTestsFromTestCase(test) for test in test_classes.values()]
+    suite = unittest.TestSuite(tests)
+
+    runner = unittest.TextTestRunner(verbosity=verbose)
+    runner.run(suite)
+
 
 if __name__ == "__main__":
-    logging.basicConfig(stream=sys.stdout, level=get_log_level())
-    classes = scheduler_opts()
-    for item in classes:
-        globals()[item] = classes[item]
-
-    # try to schedule it via nosetests in case of direct schedule
-    import nose
-    logger.info("number of test classes: %s", len(classes))
-    module_name = sys.modules[__name__].__file__
-    logging.debug("running nose for package: %s", module_name)
-    result = nose.run(argv=[sys.argv[0], module_name, '-v'])
-    logging.info("all tests ok: %s", result)
+    cmdline()
 else:
+    # when used as an testsuite set all classes globals, you can then invoke it eg:
+    # TARGET=tests/data/Dockerfile nosetests fmf_scheduler.py
     classes = scheduler_opts()
     for item in classes:
         globals()[item] = classes[item]
