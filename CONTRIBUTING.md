@@ -17,7 +17,7 @@ Be sure to include a **descriptive title and a clear description**. Ideally, ple
  * version of [dockerfile-parse](https://github.com/DBuildService/dockerfile-parse) library (`rpm -q python2-dockerfile-parse python3-dockerfile-parse` or `pip freeze | grep dockerfile-parse`)
  * version of container runtime you are using (`rpm -qa | grep docker`)
  * the command you executed, output and ideally please describe the image, container or dockerfile you are validating
-   * ideally, invoke colin in debug mode (`--debug`)
+   * invoke colin in debug mode (`--debug`)
 
 If possible, add a **code sample** or an **executable test case** demonstrating the expected behavior that is not occurring.
 
@@ -94,7 +94,7 @@ class FooBarFileCheck(FileSystemCheck):
                       reference_url="Reference to foobar file",
                       files=['/help.1'],
                       tags=['filesystem', 'helpfile', 'man'],
-all_must_be_present=False)
+                      all_must_be_present=False)
 ```
 
 We only need to describe one argument here:
@@ -103,13 +103,15 @@ We only need to describe one argument here:
 ## Add the new check into a ruleset
 Once code for your check is complete, here's how you can run it.
 
-First create a new ruleset file to test your check:
+Create a new ruleset file with your locally created check(s):
 ```bash
 $ cat foobar.json
 {
     "version": "1",
     "checks": [{
         "name": "foobar_label"
+    }, {
+        "name": "foobar_file_required"
     }]
 }
 ```
