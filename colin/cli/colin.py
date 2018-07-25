@@ -137,7 +137,6 @@ def list_checks(ruleset, ruleset_file, debug, json, tag, verbose, checkpath):
 
         log_level = _get_log_level(debug=debug,
                                    verbose=verbose)
-
         checks = get_checks(ruleset_name=ruleset,
                             ruleset_file=ruleset_file,
                             logging_level=log_level,

@@ -39,7 +39,8 @@ setup(
         'Click',
         'six',
         'conu>=0.3.0',
-        'dockerfile_parse'
+        'dockerfile_parse',
+        'fmf'
     ],
     entry_points='''
         [console_scripts]
@@ -67,4 +68,6 @@ setup(
     author='Red Hat',
     author_email='user-cont-team@redhat.com',
     url='https://github.com/user-cont/colin',
+    package_data={'': ['*.fmf']},
+    include_package_data=True,
 )
