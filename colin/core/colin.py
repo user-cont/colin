@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 def run(target, tags=None, ruleset_name=None, ruleset_file=None,
-        ruleset=None, logging_level=logging.WARNING, checkpath=None):
+        ruleset=None, logging_level=logging.WARNING, checks_paths=None):
     """
     Runs the sanity checks for the target.
 
@@ -37,6 +37,7 @@ def run(target, tags=None, ruleset_name=None, ruleset_file=None,
     :param ruleset_file: fileobj instance holding ruleset configuration
     :param ruleset: dict, content of a ruleset file
     :param logging_level: logging level (default logging.WARNING)
+    :param checks_paths: list of str, directories where the checks are present
     :return: Results instance
     """
     _set_logging(level=logging_level)
@@ -48,14 +49,15 @@ def run(target, tags=None, ruleset_name=None, ruleset_file=None,
                                 ruleset_name=ruleset_name,
                                 ruleset_file=ruleset_file,
                                 ruleset=ruleset,
-                                checkpath=checkpath)
+                                checks_paths=checks_paths
+    )
     result = go_through_checks(target=target,
                                checks=checks_to_run)
     return result
 
 
 def get_checks(target_type=None, tags=None, ruleset_name=None,
-               ruleset_file=None, ruleset=None, logging_level=logging.WARNING, checkpath=None):
+               ruleset_file=None, ruleset=None, logging_level=logging.WARNING, checks_paths=None):
     """
     Get the sanity checks for the target.
 
@@ -65,6 +67,7 @@ def get_checks(target_type=None, tags=None, ruleset_name=None,
     :param ruleset_file: fileobj instance holding ruleset configuration
     :param ruleset: dict, content of a ruleset file
     :param logging_level: logging level (default logging.WARNING)
+    :param checks_paths: list of str, directories where the checks are present
     :return: list of check instances
     """
     _set_logging(level=logging_level)
@@ -75,16 +78,16 @@ def get_checks(target_type=None, tags=None, ruleset_name=None,
         ruleset_name=ruleset_name,
         ruleset_file=ruleset_file,
         ruleset=ruleset,
-        checkpath=checkpath
+        checks_paths=checks_paths
     )
 
 
 def _get_checks(target_type, tags=None,
-                ruleset_name=None, ruleset_file=None, ruleset=None, checkpath=None):
+                ruleset_name=None, ruleset_file=None, ruleset=None, checks_paths=None):
     ruleset = Ruleset(ruleset_name=ruleset_name,
                       ruleset_file=ruleset_file,
                       ruleset=ruleset,
-                      checkpath=checkpath)
+                      checks_paths=checks_paths)
     return ruleset.get_checks(tags=tags, target_type=target_type)
 
 

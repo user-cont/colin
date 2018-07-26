@@ -36,6 +36,7 @@ def path_to_module(path, top_path):
         raise RuntimeError("path {} is not placed in a dir {}".format(path, top_path))
     mo = path[len(top_path):]
     import_name = mo.replace("/", ".")
+    # FIXME: this tbacks when path == top_path
     if import_name[0] == ".":
         import_name = import_name[1:]
     if import_name.endswith(".py"):
@@ -90,7 +91,8 @@ def load_check_classes_from_file(path, top_path):
                 node_metadata = receive_fmf_metadata(name=obj.name, path=os.path.dirname(path))
                 obj.metadata = node_metadata
             check_classes.append(obj)
-            logger.debug("Check class '{}' found.".format(obj.__name__))
+            # Uncomment when debugging this code.
+            # logger.debug("Check class '{}' found.".format(obj.__name__))
     return check_classes
 
 
@@ -99,35 +101,40 @@ class CheckLoader(object):
     find recursively all checks on a given path
     """
 
-    def __init__(self, path):
+    def __init__(self, checks_paths):
         """
-        :param path: str, path to a file or a dir where check classes are present
+        :param checks_paths: list of str, directories where the checks are present
         """
-        logger.debug("Will load checks from path '{}'.".format(path))
+        logger.debug("Will load checks from paths '%s'.", checks_paths)
+        for p in checks_paths:
+            if os.path.isfile(p):
+                raise RuntimeError("Provided path %s is not a directory." % p)
         self._check_classes = None
         self._mapping = None
-        self.path = path
-        for p in sys.path:
-            if p in self.path:
-                self.top_py_path = p
-                break
-        else:
-            self.top_py_path = path
-            sys.path.insert(0, path)
-            logger.debug("%s is not on pythonpath, added it", path)
+        self.paths = checks_paths
 
     def obtain_check_classes(self):
         """ find children of AbstractCheck class and return them as a list """
         check_classes = set()
-        if os.path.isfile(self.path):
-            return load_check_classes_from_file(self.path, self.top_py_path)
-        for root, _, files in os.walk(self.path):
-            for fi in files:
-                if not fi.endswith(".py"):
-                    continue
-                path = os.path.join(root, fi)
-                check_classes = check_classes.union(set(
-                    load_check_classes_from_file(path, self.top_py_path)))
+        for path in self.paths:
+            for sys_path in sys.path:
+                if sys_path and sys_path in path:
+                    # this is a directory which:
+                    #   1. has to be on sys.path
+                    #   2. is root of the import sequence
+                    top_py_path = sys_path
+                    break
+            else:
+                top_py_path = path
+                sys.path.insert(0, path)
+                logger.debug("%s is not on pythonpath, added it", path)
+            for root, _, files in os.walk(path):
+                for fi in files:
+                    if not fi.endswith(".py"):
+                        continue
+                    path = os.path.join(root, fi)
+                    check_classes = check_classes.union(set(
+                        load_check_classes_from_file(path, top_py_path)))
         return list(check_classes)
 
     @property
