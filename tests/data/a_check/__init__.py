@@ -18,9 +18,10 @@ from colin.core.checks.abstract_check import AbstractCheck
 
 
 class FunkyCheck(AbstractCheck):
+    name = "this-is-a-funky-check"
+
     def __init__(self):
         super(FunkyCheck, self).__init__(
-            name="this-is-funky-check",
             message="yes!",
             description="no",
             reference_url="https://nope.example.com/",
@@ -29,9 +30,10 @@ class FunkyCheck(AbstractCheck):
 
 
 class ThisIsNotAChekk(AbstractCheck):
+    name = "this-is-not-a-check"
+
     def __init__(self):
         super(ThisIsNotAChekk, self).__init__(
-            name="this-is-not-a-check",
             message="yes!",
             description="no",
             reference_url="https://nope.example.com/",
@@ -40,9 +42,10 @@ class ThisIsNotAChekk(AbstractCheck):
 
 
 class ThisIsAlsoNotAChekk(object):
+    name = "this-is-also-not-a-check"
+
     def __init__(self):
         super(ThisIsAlsoNotAChekk, self).__init__(
-            name="this-is-also-not-a-check",
             message="yes!",
             description="no",
             reference_url="https://nope.example.com/",

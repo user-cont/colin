@@ -31,21 +31,19 @@ from ..core.checks.fmf_check import receive_fmf_metadata, FMFAbstractCheck
 logger = logging.getLogger(__name__)
 
 
-def path_to_module(path, top_path):
-    if top_path not in path:
-        raise RuntimeError("path {} is not placed in a dir {}".format(path, top_path))
-    mo = path[len(top_path):]
-    import_name = mo.replace("/", ".")
-    # FIXME: this tbacks when path == top_path
+def path_to_module(path):
+    if path.endswith(".py"):
+        path = path[:-3]
+    cleaned_path = path.replace(".", "").replace("-", "_")
+    path_comps = cleaned_path.split(os.sep)[-2:]
+    import_name = ".".join(path_comps)
     if import_name[0] == ".":
         import_name = import_name[1:]
-    if import_name.endswith(".py"):
-        import_name = import_name[:-3]
     return import_name
 
 
-def _load_module(path, top_path):
-    module_name = path_to_module(path, top_path)
+def _load_module(path):
+    module_name = path_to_module(path)
     logger.debug("Will try to load selected file as module '%s'.", module_name)
     if six.PY3:
         from importlib.util import module_from_spec
@@ -74,15 +72,16 @@ def should_we_load(kls):
     if not kls.__name__.endswith("Check"):
         return False
     mro = kls.__mro__
+    # and the class needs to be a child of AbstractCheck
     for m in mro:
         if m.__name__ == "AbstractCheck":
             return True
     return False
 
 
-def load_check_classes_from_file(path, top_path):
+def load_check_classes_from_file(path):
     logger.debug("Getting check(s) from the file '{}'.".format(path))
-    m = _load_module(path, top_path)
+    m = _load_module(path)
 
     check_classes = []
     for _, obj in inspect.getmembers(m, inspect.isclass):
@@ -92,7 +91,7 @@ def load_check_classes_from_file(path, top_path):
                 obj.metadata = node_metadata
             check_classes.append(obj)
             # Uncomment when debugging this code.
-            # logger.debug("Check class '{}' found.".format(obj.__name__))
+            logger.debug("Check class '%s' loaded, module: '%s'", obj.__name__, obj.__module__)
     return check_classes
 
 
@@ -117,24 +116,13 @@ class CheckLoader(object):
         """ find children of AbstractCheck class and return them as a list """
         check_classes = set()
         for path in self.paths:
-            for sys_path in sys.path:
-                if sys_path and sys_path in path:
-                    # this is a directory which:
-                    #   1. has to be on sys.path
-                    #   2. is root of the import sequence
-                    top_py_path = sys_path
-                    break
-            else:
-                top_py_path = path
-                sys.path.insert(0, path)
-                logger.debug("%s is not on pythonpath, added it", path)
             for root, _, files in os.walk(path):
                 for fi in files:
                     if not fi.endswith(".py"):
                         continue
                     path = os.path.join(root, fi)
                     check_classes = check_classes.union(set(
-                        load_check_classes_from_file(path, top_py_path)))
+                        load_check_classes_from_file(path)))
         return list(check_classes)
 
     @property
