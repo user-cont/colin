@@ -110,6 +110,10 @@ class Image(object):
             skopeo_source = "docker-daemon:" + image_name.name
             atomic_source = "docker:" + image_name.name
 
+        # we are using atomic pull --storage ostree, b/c atomic is able to
+        # put all the layers in an ostree repo and then provide checkout
+        # of the complete container filesystem; unfortunately skopeo can't
+        # do that; other alternatives are rootless podman or umoci
         cmd = ["atomic", "pull", "--storage", "ostree", atomic_source]
         run_and_log(cmd, self.ostree_path,
                     "Failed to pull selected container image. Does it exist?")
