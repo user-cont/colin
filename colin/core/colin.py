@@ -24,7 +24,8 @@ logger = logging.getLogger(__name__)
 
 
 def run(target, target_type, tags=None, ruleset_name=None, ruleset_file=None,
-        ruleset=None, logging_level=logging.WARNING, checks_paths=None, pull=None):
+        ruleset=None, logging_level=logging.WARNING, checks_paths=None, pull=None,
+        insecure=False):
     """
     Runs the sanity checks for the target.
 
@@ -40,6 +41,7 @@ def run(target, target_type, tags=None, ruleset_name=None, ruleset_file=None,
     :param logging_level: logging level (default logging.WARNING)
     :param checks_paths: list of str, directories where the checks are present
     :param pull: bool, pull the image from registry
+    :param insecure: bool, pull from an insecure registry (HTTP/invalid TLS)
     :return: Results instance
     """
     _set_logging(level=logging_level)
@@ -47,7 +49,8 @@ def run(target, target_type, tags=None, ruleset_name=None, ruleset_file=None,
     target = Target(target=target,
                     logging_level=logging_level,
                     pull=pull,
-                    target_type=target_type)
+                    target_type=target_type,
+                    insecure=insecure)
     checks_to_run = _get_checks(target_type=target.target_type,
                                 tags=tags,
                                 ruleset_name=ruleset_name,

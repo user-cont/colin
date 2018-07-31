@@ -77,18 +77,19 @@ class Target(object):
     Target is the thing we are going to check; it can be an image, container or a dockerfile
     """
 
-    def __init__(self, target, logging_level, target_type, pull=None):
+    def __init__(self, target, logging_level, target_type, pull=None, insecure=False):
         """
         :param target: str, identifier of the target (specified via CLI)
         :param logging_level: int, log level passed to conu
         :param target_type: string, either image, container or dockerfile
         :param pull: bool, if the target is an image, pull it if set to true
+        :param insecure: bool, pull from an insecure registry (HTTP/invalid TLS)
         """
         # this is the thing which user passed
         self.target_identifier = target
         self._target_type_str = target_type
         self._labels = None
-        self.instance = self._get_target_instance(target, logging_level, pull)
+        self.instance = self._get_target_instance(target, logging_level, pull, insecure)
 
     def clean_up(self):
         """
@@ -98,7 +99,7 @@ class Target(object):
         if hasattr(self.instance, "clean_up"):
             self.instance.clean_up()
 
-    def _get_target_instance(self, target, logging_level, pull):
+    def _get_target_instance(self, target, logging_level, pull, insecure):
         """
         Get the Container/Image instance for the given name.
         (Container is the first choice.)
@@ -109,6 +110,7 @@ class Target(object):
                         or file-like object as Dockerfile
         :param logging_level: int, logging level passed to conu
         :param pull: bool, should the image be pulled?
+        :param insecure: bool, pull from an insecure registry (HTTP/invalid TLS)
         :return: Target object
         """
         logger.debug("Identifying target '{}'.".format(target))
@@ -126,7 +128,7 @@ class Target(object):
             try:
                 if self.target_type == TargetType.IMAGE:
                     logger.debug("Target is an image.")
-                    return Image(target, pull=pull)
+                    return Image(target, pull=pull, insecure=insecure)
                 elif self.target_type == TargetType.DOCKERFILE:
                     logger.debug("Target is a dockerfile.")
                     return DockerfileParser(fileobj=open(target))

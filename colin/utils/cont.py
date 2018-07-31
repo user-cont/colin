@@ -51,10 +51,11 @@ def extract_file_from_tarball(tarball_path, file_path, wd):
 class Image(object):
     """ Image representation using skopeo, ostree and atomic tool """
 
-    def __init__(self, image_name, pull):
+    def __init__(self, image_name, pull, insecure=False):
         """
         :param image_name: str, name of the image to access
         :param pull: bool, pull the image from registry or from local dockerd
+        :param insecure: bool, pull from an insecure registry (HTTP/invalid TLS)
         """
         self.image_name = image_name
         self.pull = pull
@@ -62,6 +63,7 @@ class Image(object):
         self._mount_point = None
         self._ostree_path = None
         self._layers_path = None
+        self.insecure = insecure
 
         self.metadata = None
         self._labels = None
@@ -105,7 +107,10 @@ class Image(object):
 
         if self.pull:
             skopeo_source = "docker://" + image_name.name
-            atomic_source = image_name.name
+            if self.insecure:
+                atomic_source = 'http:' + image_name.name
+            else:
+                atomic_source = image_name.name
         else:
             skopeo_source = "docker-daemon:" + image_name.name
             atomic_source = "docker:" + image_name.name
@@ -121,7 +126,14 @@ class Image(object):
         archive_file_name = "archive.tar"
         archive_path = os.path.join(self.tmpdir, archive_file_name)
         skopeo_target = "docker-archive:" + archive_path
-        skopeo_cmd = ["skopeo", "copy", skopeo_source, skopeo_target]
+        # we are re-downloading the image again, which is such a waste!
+        # unfortunately doing skopeo copy ostree:image@ostree_path docker-archive:... doesn't work
+        # the error: 'docker-archive doesn't support modifying existing images'
+        # so, we should either use rootless podman or ostree:image[@/absolute/repo/path]
+        skopeo_cmd = ["skopeo", "copy"]
+        if self.insecure:
+            skopeo_cmd += ["--src-tls-verify=false"]
+        skopeo_cmd += [skopeo_source, skopeo_target]
         run_and_log(skopeo_cmd, None,
                     "Failed to create tarball with layers from the selected image")
 
@@ -144,7 +156,11 @@ class Image(object):
 
     def _checkout(self):
         """ check out the image filesystem on self.mount_point """
-        cmd = ["atomic", "mount", "--storage", "ostree", self.image_name, self.mount_point]
+        if self.insecure:
+            image_name = 'http:' + self.image_name
+        else:
+            image_name = self.image_name
+        cmd = ["atomic", "mount", "--storage", "ostree", image_name, self.mount_point]
         # self.mount_point has to be created by us
         run_and_log(cmd, self.ostree_path, "Failed to mount selected image as an ostree repo.")
 

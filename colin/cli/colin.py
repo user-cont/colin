@@ -69,8 +69,10 @@ def cli():
               help="Pull the image from registry.")
 @click.option('--target-type', type=click.STRING, default="image",
               help="Type of selected target (one of container, image, dockerfile).")
+@click.option('--insecure', is_flag=True, default=False,
+              help="Pull from an insecure registry (HTTP or invalid TLS).")
 def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose,
-        checks_paths, target_type, pull):
+        checks_paths, target_type, pull, insecure):
     """
     Check the image/container/dockerfile (default).
     """
@@ -95,8 +97,9 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose,
             logging_level=log_level,
             tags=tag,
             pull=pull,
-            checks_paths=checks_paths
-            target_type=target_type
+            checks_paths=checks_paths,
+            target_type=target_type,
+            insecure=insecure
         )
         _print_results(results=results, stat=stat, verbose=verbose)
 
