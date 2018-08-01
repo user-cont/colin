@@ -4,6 +4,7 @@ Module with FMF abstract check class
 
 import copy
 import logging
+import inspect
 
 from .abstract_check import AbstractCheck
 from ..fmf_extension import ExtendedTree
@@ -51,9 +52,24 @@ class FMFAbstractCheck(AbstractCheck):
         """
         if not self.metadata:
             self.metadata = receive_fmf_metadata(name=self.name, path=self.fmf_metadata_path)
-        kwargs = copy.deepcopy(self.metadata.data)
-        if "class" in kwargs:
-            del kwargs["class"]
-        if "test" in kwargs:
-            del kwargs["test"]
-        super(FMFAbstractCheck, self).__init__(**kwargs)
+        master_class = super(FMFAbstractCheck, self)
+        kwargs = {}
+        try:
+            # this is not available in python2, but second function is deprecated
+            args_names = [foo for foo in inspect.signature(master_class.__init__).parameters]
+        except NameError:
+            args_names = inspect.getargspec(master_class.__init__).args
+        for arg in args_names:
+            # copy all arguments from metadata.data to class __init__  kwargs
+            try:
+                kwargs[arg] = self.metadata.data[arg]
+            except KeyError:
+                pass
+        try:
+            master_class.__init__(**kwargs)
+        except TypeError as error:
+            logger.debug("missing argument (%s) in FMF metadata key (%s): %s",
+                         error,
+                         self.metadata.name,
+                         self.metadata.data)
+
