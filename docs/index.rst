@@ -46,7 +46,6 @@ Let's give it a shot:
       -> A human readable example of container execution.
       -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
    ok :passed:io_k8s_display-name_label_required
-   ok :passed:io_openshift_tags_label_required
    ok :passed:architecture_label
    ok :passed:com.redhat.build-host_label
    ok :passed:authoritative-source-url_label
@@ -74,10 +73,6 @@ Let's give it a shot:
       -> Label 'maintainer' has to be specified.
       -> The name and email of the maintainer (usually the submitter).
       -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-   nok:warning:io.openshift.expose-services_label
-      -> Label 'io.openshift.expose-services' has to be specified.
-      -> port:service pairs separated with comma, e.g. "8080:http,8443:https"
-      -> ?????
    nok:warning:maintainer_label_required
       -> Label 'maintainer' has to be specified.
       -> The name and email of the maintainer (usually the submitter).

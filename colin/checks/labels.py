@@ -194,41 +194,6 @@ class IoK8sDisplayNameLabelCheck(LabelAbstractCheck):
                       value_regex=None)
 
 
-class IoOpenshiftExposeServicesLabelCheck(LabelAbstractCheck):
-    name = "io.openshift.expose-services_label"
-
-    def __init__(self):
-        super(IoOpenshiftExposeServicesLabelCheck, self) \
-            .__init__(message="Label 'io.openshift.expose-services' has to be specified.",
-                      description="port:service pairs separated with comma,"
-                                  " e.g. \"8080:http,8443:https\"",
-                      reference_url=[
-                          "https://github.com/projectatomic/"
-                          "ContainerApplicationGenericLabels/blob/master/vendor/"
-                          "redhat/labels.md",
-                          "https://github.com/projectatomic/ContainerApplicationGenericLabels/"
-                          "blob/master/vendor/redhat/labels.md#other-labels"],
-                      tags=["io.openshift.expose-services", "label"],
-                      labels=["io.openshift.expose-services"],
-                      required=True,
-                      value_regex=None)
-
-
-class IoOpenShiftTagsLabelCheck(LabelAbstractCheck):
-    name = "io.openshift.tags_label"
-
-    def __init__(self):
-        super(IoOpenShiftTagsLabelCheck, self) \
-            .__init__(message="Label 'io.openshift.tags' has to be specified.",
-                      description="The primary purpose of this label is to include"
-                                  " all relevant search terms for this image.",
-                      reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
-                      tags=["io.openshift.tags", "label"],
-                      labels=["io.openshift.tags"],
-                      required=True,
-                      value_regex=None)
-
-
 class MaintainerLabelCheck(FMFAbstractCheck, LabelAbstractCheck):
     name = "maintainer_label"
 
