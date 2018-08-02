@@ -211,13 +211,6 @@ Below is a list of the labels which are checked in the Red Hat images.
        -> ['io.k8s.display-name', 'label', 'required']
        -> required
 
-    io_openshift_tags_label_required
-       -> Label 'io.openshift.tags' has to be specified.
-       -> The primary purpose of this label is to include all relevant search terms for this image.
-       -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-       -> ['io.openshift.tags', 'label', 'required']
-       -> required
-
     architecture_label
        -> Label 'architecture' has to be specified.
        -> Architecture the software in the image should target. (Optional: if omitted, it will be built for all supported Fedora Architectures)

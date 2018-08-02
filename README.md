@@ -140,7 +140,6 @@ FAIL:Label 'description' has to be specified.
 FAIL:Label 'distribution-scope' has to be specified.
 FAIL:Label 'help' has to be specified.
 FAIL:Label 'io.k8s.description' has to be specified.
-FAIL:Label 'io.openshift.tags' has to be specified.
 FAIL:Label 'url' has to be specified.
 FAIL:Label 'vcs-ref' has to be specified.
 FAIL:Label 'vcs-type' has to be specified.

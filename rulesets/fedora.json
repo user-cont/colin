@@ -23,9 +23,6 @@
       "name": "io.k8s.description_label"
     },
     {
-      "name": "io.openshift.tags_label"
-    },
-    {
       "name": "url_label"
     },
     {

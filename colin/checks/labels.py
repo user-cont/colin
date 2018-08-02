@@ -194,21 +194,6 @@ class IoK8sDisplayNameLabelCheck(LabelAbstractCheck):
                       value_regex=None)
 
 
-class IoOpenShiftTagsLabelCheck(LabelAbstractCheck):
-    name = "io.openshift.tags_label"
-
-    def __init__(self):
-        super(IoOpenShiftTagsLabelCheck, self) \
-            .__init__(message="Label 'io.openshift.tags' has to be specified.",
-                      description="The primary purpose of this label is to include"
-                                  " all relevant search terms for this image.",
-                      reference_url="https://fedoraproject.org/wiki/Container:Guidelines#LABELS",
-                      tags=["io.openshift.tags", "label"],
-                      labels=["io.openshift.tags"],
-                      required=True,
-                      value_regex=None)
-
-
 class MaintainerLabelCheck(FMFAbstractCheck, LabelAbstractCheck):
     name = "maintainer_label"
 
