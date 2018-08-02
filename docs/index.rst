@@ -74,10 +74,6 @@ Let's give it a shot:
       -> Label 'maintainer' has to be specified.
       -> The name and email of the maintainer (usually the submitter).
       -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-   nok:warning:io.openshift.expose-services_label
-      -> Label 'io.openshift.expose-services' has to be specified.
-      -> port:service pairs separated with comma, e.g. "8080:http,8443:https"
-      -> ?????
    nok:warning:maintainer_label_required
       -> Label 'maintainer' has to be specified.
       -> The name and email of the maintainer (usually the submitter).

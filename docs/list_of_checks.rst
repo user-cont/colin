@@ -138,13 +138,6 @@ Below is a list of the labels which are checked in the Fedora images.
        -> ['maintainer', 'label', 'required']
        -> optional
 
-    io.openshift.expose-services_label
-       -> Label 'io.openshift.expose-services' has to be specified.
-       -> port:service pairs separated with comma, e.g. "8080:http,8443:https"
-       -> ?????
-       -> ['io.openshift.expose-services', 'label', 'optional']
-       -> optional
-
     BEST_PRACTICES:
     help_file_or_readme_required
        -> The 'helpfile' has to be provided.
@@ -370,13 +363,6 @@ Below is a list of the labels which are checked in the Red Hat images.
        -> The name and email of the maintainer (usually the submitter).
        -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
        -> ['maintainer', 'label', 'required']
-       -> optional
-
-    io.openshift.expose-services_label
-       -> Label 'io.openshift.expose-services' has to be specified.
-       -> port:service pairs separated with comma, e.g. "8080:http,8443:https"
-       -> ?????
-       -> ['io.openshift.expose-services', 'label', 'optional']
        -> optional
 
     maintainer_label_required
