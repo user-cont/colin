@@ -50,11 +50,11 @@ class ExtendedTree(Tree):
 
         :param whole: 'whole' param of original climb method, in colin this is not used anyhow now
                       iterate over all items not only leaves if True
-        :param datatrees: dict of original trees with testcases to contain parent nodes
+        :param datatrees: list of original trees with testcases to contain parent nodes
         :return: None
         """
-        if not isinstance(datatrees, dict):
-            raise ValueError("datatrees  argument has to be dict of fmf trees")
+        if not isinstance(datatrees, list):
+            raise ValueError("datatrees argument has to be list of fmf trees")
         reference_nodes = self.prune(whole=whole, names=["@"])
         for node in reference_nodes:
             node.data = node.original_data
@@ -67,9 +67,12 @@ class ExtendedTree(Tree):
                 if reference_node is not None:
                     break
             if not reference_node:
-                raise ValueError("Unable to find reference for node: %s  via name search: %s" %
+                raise ValueError("Unable to find reference for node: %s via name search: %s" %
                                  (node.name, ref_item_name))
-            logger.debug("MERGING: %s @ %s from %s", node.name, reference_node.name, reference_node.root)
+            logger.debug("MERGING: %s @ %s from %s",
+                         node.name,
+                         reference_node.name,
+                         reference_node.root)
             node.merge(parent=reference_node)
 
         self.__remove_append_items(whole=whole)
