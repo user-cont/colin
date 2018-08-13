@@ -17,7 +17,7 @@
 """
 This module is responsible for loading rulesets: reading from disk, parsing/validating
 """
-import json
+import yaml
 import logging
 
 from ..exceptions import ColinRulesetException
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 def get_ruleset_struct_from_fileobj(fileobj):
     try:
         logger.debug("Loading ruleset from file '{}'.".format(fileobj.name))
-        return RulesetStruct(json.load(fileobj))
+        return RulesetStruct(yaml.safe_load(fileobj))
     except Exception as ex:
         msg = "Ruleset file '{}' cannot be loaded: {}".format(fileobj.name, ex)
         logger.error(msg)
