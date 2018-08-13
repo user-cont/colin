@@ -40,7 +40,8 @@ setup(
         'six',
         'conu>=0.3.0',
         'dockerfile_parse',
-        'fmf'
+        'fmf',
+        'PyYAML'
     ],
     entry_points='''
         [console_scripts]
