@@ -33,7 +33,8 @@ class Ruleset(object):
         """
         Load ruleset for colin.
 
-        :param ruleset_name: str (name of the ruleset file (without any file extension), default is "default"
+        :param ruleset_name: str (name of the ruleset file (without any file extension), default is
+                             "default"
         :param ruleset_file: fileobj instance holding ruleset configuration
         :param ruleset: dict, content of a ruleset file
         :param checks_paths: list of str, directories where the checks are present
@@ -187,5 +188,5 @@ def get_rulesets():
     ruleset_files = []
     for ext in YAML+[JSON]:
         ruleset_files = ruleset_files + [f[:-len(ext)] for f in os.listdir(rulesets_dir) if
-                                         os.path.isfile(os.path.join(rulesets_dir, f)) and f.lower().endswith(ext)]
+                        os.path.isfile(os.path.join(rulesets_dir, f)) and f.lower().endswith(ext)]
     return ruleset_files
