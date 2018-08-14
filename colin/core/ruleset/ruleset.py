@@ -17,7 +17,7 @@
 import logging
 import os
 
-from ..constant import JSON, YAML, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME, COLIN_CHECKS_PATH
+from ..constant import EXTS, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME, COLIN_CHECKS_PATH
 from ..exceptions import ColinRulesetException
 from ..loader import CheckLoader
 from ..target import is_compatible
@@ -138,7 +138,7 @@ def get_ruleset_file(ruleset=None):
     ruleset = ruleset or "default"
 
     ruleset_directory = get_ruleset_directory()
-    possible_ruleset_files = [os.path.join(ruleset_directory, ruleset + ext) for ext in YAML+[JSON]]
+    possible_ruleset_files = [os.path.join(ruleset_directory, ruleset + ext) for ext in EXTS]
 
     for ruleset_file in possible_ruleset_files:
         if os.path.isfile(ruleset_file):
@@ -186,7 +186,8 @@ def get_rulesets():
     """
     rulesets_dir = get_ruleset_directory()
     ruleset_files = []
-    for ext in YAML+[JSON]:
-        ruleset_files = ruleset_files + [f[:-len(ext)] for f in os.listdir(rulesets_dir) if
-                        os.path.isfile(os.path.join(rulesets_dir, f)) and f.lower().endswith(ext)]
+    for f in os.listdir(rulesets_dir):
+        for ext in EXTS:
+            if os.path.isfile(os.path.join(rulesets_dir, f)) and f.lower().endswith(ext):
+                ruleset_files.append(f[:-len(ext)])
     return ruleset_files
