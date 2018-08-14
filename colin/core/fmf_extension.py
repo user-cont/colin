@@ -26,7 +26,7 @@ class ExtendedTree(Tree):
                 if key.endswith('+'):
                     del node.data[key]
 
-    def references(self, datatree, whole=False):
+    def references(self, datatrees, whole=False):
         """
         Reference name resolver (eg. /a/b/c/d@.x.y or /a/b/c/@y will search data in .x.y or y nodes)
         there are used regular expressions (re.search) to match names
@@ -50,20 +50,29 @@ class ExtendedTree(Tree):
 
         :param whole: 'whole' param of original climb method, in colin this is not used anyhow now
                       iterate over all items not only leaves if True
-        :param datatree: original tree with testcases to contain parent nodes
+        :param datatrees: list of original trees with testcases to contain parent nodes
         :return: None
         """
+        if not isinstance(datatrees, list):
+            raise ValueError("datatrees argument has to be list of fmf trees")
         reference_nodes = self.prune(whole=whole, names=["@"])
         for node in reference_nodes:
             node.data = node.original_data
             ref_item_name = node.name.rsplit("@", 1)[1]
             # match item what does not contain @ before name, otherwise it
             # match same item
-            reference_node = datatree.search("[^@]%s" % ref_item_name)
-            logger.debug("MERGING: %s @ %s", node.name, reference_node.name)
+            reference_node = None
+            for datatree in datatrees:
+                reference_node = datatree.search("[^@]%s" % ref_item_name)
+                if reference_node is not None:
+                    break
             if not reference_node:
-                raise ValueError("Unable to find reference for node: %s  via name search: %s" %
+                raise ValueError("Unable to find reference for node: %s via name search: %s" %
                                  (node.name, ref_item_name))
+            logger.debug("MERGING: %s @ %s from %s",
+                         node.name,
+                         reference_node.name,
+                         reference_node.root)
             node.merge(parent=reference_node)
 
         self.__remove_append_items(whole=whole)
