@@ -15,18 +15,19 @@
 #
 
 import logging
+import os
 import sys
 
 import click
 import six
 
+from .default_group import DefaultGroup
 from ..core.checks.abstract_check import AbstractCheck
 from ..core.colin import get_checks, run
+from ..core.constant import COLIN_CHECKS_PATH
 from ..core.exceptions import ColinException
 from ..core.ruleset.ruleset import get_rulesets, get_checks_paths
 from ..version import __version__
-from ..core.constant import COLIN_CHECKS_PATH
-from .default_group import DefaultGroup
 
 logger = logging.getLogger("colin.cli")
 
@@ -71,6 +72,10 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose, checks
     if ruleset and ruleset_file:
         raise click.BadOptionUsage(
             "Options '--ruleset' and '--file-ruleset' cannot be used together.")
+
+    if json and not os.path.isdir(os.path.dirname(os.path.realpath(json.name))):
+        raise click.BadOptionUsage(
+            "Parent directory for the json output file does not exist.")
 
     try:
         if not debug:
