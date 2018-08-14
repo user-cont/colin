@@ -31,20 +31,19 @@ from ..core.checks.fmf_check import receive_fmf_metadata, FMFAbstractCheck
 logger = logging.getLogger(__name__)
 
 
-def path_to_module(path, top_path):
-    if top_path not in path:
-        raise RuntimeError("path {} is not placed in a dir {}".format(path, top_path))
-    mo = path[len(top_path):]
-    import_name = mo.replace("/", ".")
+def path_to_module(path):
+    if path.endswith(".py"):
+        path = path[:-3]
+    cleaned_path = path.replace(".", "").replace("-", "_")
+    path_comps = cleaned_path.split(os.sep)[-2:]
+    import_name = ".".join(path_comps)
     if import_name[0] == ".":
         import_name = import_name[1:]
-    if import_name.endswith(".py"):
-        import_name = import_name[:-3]
     return import_name
 
 
-def _load_module(path, top_path):
-    module_name = path_to_module(path, top_path)
+def _load_module(path):
+    module_name = path_to_module(path)
     logger.debug("Will try to load selected file as module '%s'.", module_name)
     if six.PY3:
         from importlib.util import module_from_spec
@@ -73,15 +72,16 @@ def should_we_load(kls):
     if not kls.__name__.endswith("Check"):
         return False
     mro = kls.__mro__
+    # and the class needs to be a child of AbstractCheck
     for m in mro:
         if m.__name__ == "AbstractCheck":
             return True
     return False
 
 
-def load_check_classes_from_file(path, top_path):
+def load_check_classes_from_file(path):
     logger.debug("Getting check(s) from the file '{}'.".format(path))
-    m = _load_module(path, top_path)
+    m = _load_module(path)
 
     check_classes = []
     for _, obj in inspect.getmembers(m, inspect.isclass):
@@ -90,7 +90,8 @@ def load_check_classes_from_file(path, top_path):
                 node_metadata = receive_fmf_metadata(name=obj.name, path=os.path.dirname(path))
                 obj.metadata = node_metadata
             check_classes.append(obj)
-            logger.debug("Check class '{}' found.".format(obj.__name__))
+            # Uncomment when debugging this code.
+            logger.debug("Check class '%s' loaded, module: '%s'", obj.__name__, obj.__module__)
     return check_classes
 
 
@@ -99,35 +100,29 @@ class CheckLoader(object):
     find recursively all checks on a given path
     """
 
-    def __init__(self, path):
+    def __init__(self, checks_paths):
         """
-        :param path: str, path to a file or a dir where check classes are present
+        :param checks_paths: list of str, directories where the checks are present
         """
-        logger.debug("Will load checks from path '{}'.".format(path))
+        logger.debug("Will load checks from paths '%s'.", checks_paths)
+        for p in checks_paths:
+            if os.path.isfile(p):
+                raise RuntimeError("Provided path %s is not a directory." % p)
         self._check_classes = None
         self._mapping = None
-        self.path = path
-        for p in sys.path:
-            if p in self.path:
-                self.top_py_path = p
-                break
-        else:
-            self.top_py_path = path
-            sys.path.insert(0, path)
-            logger.debug("%s is not on pythonpath, added it", path)
+        self.paths = checks_paths
 
     def obtain_check_classes(self):
         """ find children of AbstractCheck class and return them as a list """
         check_classes = set()
-        if os.path.isfile(self.path):
-            return load_check_classes_from_file(self.path, self.top_py_path)
-        for root, _, files in os.walk(self.path):
-            for fi in files:
-                if not fi.endswith(".py"):
-                    continue
-                path = os.path.join(root, fi)
-                check_classes = check_classes.union(set(
-                    load_check_classes_from_file(path, self.top_py_path)))
+        for path in self.paths:
+            for root, _, files in os.walk(path):
+                for fi in files:
+                    if not fi.endswith(".py"):
+                        continue
+                    path = os.path.join(root, fi)
+                    check_classes = check_classes.union(set(
+                        load_check_classes_from_file(path)))
         return list(check_classes)
 
     @property

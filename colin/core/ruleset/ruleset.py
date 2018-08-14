@@ -29,15 +29,16 @@ logger = logging.getLogger(__name__)
 
 class Ruleset(object):
 
-    def __init__(self, ruleset_name=None, ruleset_file=None, ruleset=None, checkpath=None):
+    def __init__(self, ruleset_name=None, ruleset_file=None, ruleset=None, checks_paths=None):
         """
         Load ruleset for colin.
 
         :param ruleset_name: str (name of the ruleset file (without .json), default is "default"
         :param ruleset_file: fileobj instance holding ruleset configuration
         :param ruleset: dict, content of a ruleset file
+        :param checks_paths: list of str, directories where the checks are present
         """
-        self.check_loader = CheckLoader(get_checks_path(checkpath))
+        self.check_loader = CheckLoader(get_checks_paths(checks_paths))
         if ruleset:
             self.ruleset_struct = RulesetStruct(ruleset)
         elif ruleset_file:
@@ -112,20 +113,18 @@ class Ruleset(object):
         return result
 
 
-def get_checks_path(checkpath=None):
+def get_checks_paths(checks_paths=None):
     """
     Get path to checks.
 
-    :return: str (absolute path of directory with checks)
+    :param checks_paths: list of str, directories where the checks are present
+    :return: list of str (absolute path of directory with checks)
     """
-    if checkpath is not None:
-        out_path = checkpath
-    elif os.environ.get(COLIN_CHECKS_PATH):
-        # this could be used when invoked without CLI
-        out_path = os.environ.get(COLIN_CHECKS_PATH)
-    else:
-        out_path = os.path.join(__file__, os.pardir, os.pardir, os.pardir, "checks")
-    return os.path.abspath(out_path)
+    if checks_paths:
+        return [os.path.abspath(x) for x in checks_paths]
+    p = os.path.join(__file__, os.pardir, os.pardir, os.pardir, "checks")
+    p = os.path.abspath(p)
+    return [p]
 
 
 def get_ruleset_file(ruleset=None):

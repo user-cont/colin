@@ -23,7 +23,7 @@ import six
 from ..core.checks.abstract_check import AbstractCheck
 from ..core.colin import get_checks, run
 from ..core.exceptions import ColinException
-from ..core.ruleset.ruleset import get_rulesets, get_checks_path
+from ..core.ruleset.ruleset import get_rulesets, get_checks_paths
 from ..version import __version__
 from ..core.constant import COLIN_CHECKS_PATH
 from .default_group import DefaultGroup
@@ -60,9 +60,11 @@ def cli():
               help="Filter checks with the tag.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-@click.option('checkpath', '--checks-path', type=click.Path(exists=True), envvar=COLIN_CHECKS_PATH,
-              help="Path to directory containing checks (default {}).".format(get_checks_path()))
-def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose, checkpath):
+@click.option('checks_paths', '--checks-path',
+              type=click.Path(exists=True, dir_okay=True, file_okay=False),
+              multiple=True, envvar=COLIN_CHECKS_PATH,
+              help="Path to directory containing checks (default {}).".format(get_checks_paths()))
+def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose, checks_paths):
     """
     Check the image/container/dockerfile (default).
     """
@@ -81,7 +83,7 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose, checkp
                       ruleset_file=ruleset_file,
                       logging_level=log_level,
                       tags=tag,
-                      checkpath=checkpath)
+                      checks_paths=checks_paths)
         _print_results(results=results, stat=stat, verbose=verbose)
 
         if json:
@@ -121,9 +123,11 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose, checkp
               help="Filter checks with the tag.")
 @click.option('--verbose', '-v', is_flag=True,
               help="Verbose mode.")
-@click.option('checkpath', '--checks-path', type=click.Path(exists=True), envvar=COLIN_CHECKS_PATH,
-              help="Path to directory containing checks (default {}).".format(get_checks_path()))
-def list_checks(ruleset, ruleset_file, debug, json, tag, verbose, checkpath):
+@click.option('checks_paths', '--checks-path',
+              type=click.Path(exists=True, dir_okay=True, file_okay=False),
+              multiple=True, envvar=COLIN_CHECKS_PATH,
+              help="Path to directory containing checks (default {}).".format(get_checks_paths()))
+def list_checks(ruleset, ruleset_file, debug, json, tag, verbose, checks_paths):
     """
     Print the checks.
     """
@@ -141,7 +145,7 @@ def list_checks(ruleset, ruleset_file, debug, json, tag, verbose, checkpath):
                             ruleset_file=ruleset_file,
                             logging_level=log_level,
                             tags=tag,
-                            checkpath=checkpath)
+                            checks_paths=checks_paths)
         _print_checks(checks=checks)
 
         if json:

@@ -51,20 +51,22 @@ Here's a simple template how you can create a new check:
 
 ## Label check example
 ```python
-from colin.checks.abstract.labels import LabelCheck
+from colin.core.checks.labels import LabelAbstractCheck
 
-class FooBarLabelCheck(LabelCheck):
 
+class FooBarLabelCheck(LabelAbstractCheck):
+    name = "foobar_label"
     def __init__(self):
         super(self.__class__, self) \
-            .__init__(name="foobar_label",
-                      message="Label 'foobar' has to be specified.",
-                      description="Provide a description for foobar label.",
-                      reference_url="Specify URL to foobar reference",
-                      tags=["foobar", "label"],
-                      label="foobar",
-                      required=True,
-value_regex=None)
+                .__init__(
+                        message="Label 'foobar' has to be specified.",
+                        description="Provide a description for foobar label.",
+                        reference_url="Specify URL to foobar reference",
+                        tags=["foobar", "label"],
+                        labels=["foobar"],
+                        required=True,
+                        value_regex=None
+                )
 ```
 
 Let's go through the list of keyword arguments:
@@ -79,22 +81,21 @@ Let's go through the list of keyword arguments:
 
 ## File system check example
 ```python
-from colin.checks.abstract.filesystem import FileSystemCheck
+from colin.core.checks.filesystem import FileCheck
 
 
-class FooBarFileCheck(FileSystemCheck):
-
+class FooBarFileCheck(FileCheck):
+    name = "foobar_file_required"
     def __init__(self):
         super(self.__class__, self) \
-            .__init__(name="foobar_file_required",
-                      message="The 'foobar' has to be provided.",
-                      description="Just like traditional packages, containers need "
-                                  "some 'man page' information about how they are to be used,"
-                                  " configured, and integrated into a larger stack.",
-                      reference_url="Reference to foobar file",
-                      files=['/help.1'],
-                      tags=['filesystem', 'helpfile', 'man'],
-                      all_must_be_present=False)
+                .__init__(
+                        message="The 'foobar' file has to be provided.",
+                        description="This is a more detailed description",
+                        reference_url="Reference to foobar file definition",
+                        files=['/foobar'],
+                        tags=['filesystem', 'foobar', 'banana'],
+                        all_must_be_present=False
+                )
 ```
 
 We only need to describe one argument here:
@@ -122,12 +123,66 @@ And run it with colin using command:
 $ python3 -m colin.cli.colin -f ./foobar.json <IMAGE-OR-DOCKERFILE>
 ```
 
-The checks which are verified by colin are specified within ruleset files which
-you can find [in this
+The command above implies that your check lives happily with other checks in this upstream repo. It's possible to have checks stored externally and point colin to them.
+
+Let's move one of the checks mentioned above to `/tmp/external_checks/checks.py`:
+```
+$ cat /tmp/external_checks/checks.py
+from colin.core.checks.filesystem import FileCheck
+
+
+class FooBarFileCheck(FileCheck):
+    name = "foobar_file_required"
+    def __init__(self):
+        super(self.__class__, self) \
+                .__init__(
+                        message="The 'foobar' file has to be provided.",
+                        description="This is a more detailed description",
+                        reference_url="Reference to foobar file definition",
+                        files=['/foobar'],
+                        tags=['filesystem', 'foobar', 'banana'],
+                        all_must_be_present=False
+                )
+```
+
+This would be our simple ruleset:
+```bash
+$ cat foobar.json
+{
+    "version": "1",
+    "checks": [{
+        "name": "foobar_file_required"
+    }]
+}
+```
+
+And we would just call colin and point it to `/tmp/external_checks/checks.py`:
+```
+$ python3 -m colin.cli.colin -f ./foobar.json --checks-path /tmp/external_checks/checks.py fedora:28
+10:43:38.165 loader.py         DEBUG  Getting check(s) from the file '/tmp/external_checks/checks.py'.
+10:43:38.165 loader.py         DEBUG  Will try to load selected file as module 'checks'.
+10:43:38.168 ruleset.py        DEBUG  Check instance foobar_file_required added.
+10:43:38.168 check_runner.py   DEBUG  Going through checks.
+10:43:38.168 check_runner.py   DEBUG  Checking foobar_file_required
+10:43:38.168 image.py          INFO   run container via binary in background
+10:43:38.168 image.py          DEBUG  docker command: ['docker', 'run', '--entrypoint=', '-d', '--cidfile=/tmp/conu-91klvqm4/conu-vunlfypihipcrjesycltmmipcppeyrrq', '-l', 'conu.test_artifact', 'sha256:e555121ced0fcad9197d7d0445daff0e42d8f0e0c37362b66b817b8713dcbb3a', '/bin/sleep', 'infinity']
+10:43:38.168 __init__.py       DEBUG  command: "docker run --entrypoint= -d --cidfile=/tmp/conu-91klvqm4/conu-vunlfypihipcrjesycltmmipcppeyrrq -l conu.test_artifact sha256:e555121ced0fcad9197d7d0445daff0e42d8f0e0c37362b66b817b8713dcbb3a /bin/sleep infinity"
+fcd353d77b29323bdad64b555ac32405f663e45032e3c903da2888b8fd4d8304
+10:43:39.237 probes.py         DEBUG  starting probe
+10:43:39.240 probes.py         DEBUG  first process started: pid=19550
+10:43:39.240 probes.py         DEBUG  pausing for 0.1 before next try
+10:43:39.241 probes.py         DEBUG  Running "<lambda>" with parameters: "{}": 0/10
+10:43:39.349 container.py      INFO   running command ['/bin/ls', '-1', '/foobar']
+10:43:39.414 container.py      INFO   ls: cannot access '/foobar': No such file or directory
+10:43:39.419 container.py      ERROR  command failed
+10:43:39.419 container.py      INFO   exec metadata: {'ID': 'b8a20fd59296a650a31056fe9eed133d3d0610ffd258641f91070ddb46e06246', 'Running': False, 'ExitCode': 2, 'ProcessConfig': {'tty': False, 'entrypoint': '/bin/ls', 'arguments': ['-1', '/foobar'], 'privileged': False}, 'OpenStdin': False, 'OpenStderr': True, 'OpenStdout': True, 'CanRemove': False, 'ContainerID': 'fcd353d77b29323bdad64b555ac32405f663e45032e3c903da2888b8fd4d8304', 'DetachKeys': '', 'Pid': 19571}
+10:43:39.419 filesystem.py     INFO   File /foobar is not present, ex: failed to execute command ['/bin/ls', '-1', '/foobar'], exit code 2
+FAIL:The 'foobar' file has to be provided.
+
+FAIL:1
+```
+
+Colin ships a set of predefined checks, which are available [in this
 directory](https://github.com/user-cont/colin/tree/master/rulesets).
 
 If your check is generic enough, it may make sense to add it to [default ruleset](https://github.com/user-cont/colin/blob/master/rulesets/default.json).
-
-
-Thank you!
-Colin team
