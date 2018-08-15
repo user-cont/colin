@@ -137,20 +137,21 @@ def get_ruleset_file(ruleset=None):
     """
     ruleset = ruleset or "default"
 
-    ruleset_directory = get_ruleset_directory()
-    possible_ruleset_files = [os.path.join(ruleset_directory, ruleset + ext) for ext in EXTS]
+    ruleset_dirs = get_ruleset_dirs()
+    for ruleset_directory in ruleset_dirs:
+        possible_ruleset_files = [os.path.join(ruleset_directory, ruleset + ext) for ext in EXTS]
 
-    for ruleset_file in possible_ruleset_files:
-        if os.path.isfile(ruleset_file):
-            logger.debug("Ruleset file '{}' found.".format(ruleset_file))
-            return ruleset_file
+        for ruleset_file in possible_ruleset_files:
+            if os.path.isfile(ruleset_file):
+                logger.debug("Ruleset file '{}' found.".format(ruleset_file))
+                return ruleset_file
 
     logger.warning("Ruleset with the name '{}' cannot be found at '{}'."
-                   .format(ruleset, ruleset_directory))
+                   .format(ruleset, ruleset_dirs))
     raise ColinRulesetException("Ruleset with the name '{}' cannot be found.".format(ruleset))
 
 
-def get_ruleset_directory():
+def get_ruleset_dirs():
     """
     Get the directory with ruleset files
     First directory to check:  $HOME/.local/share/colin/rulesets
@@ -158,36 +159,42 @@ def get_ruleset_directory():
     :return: str
     """
 
+    ruleset_dirs = []
+
     local_share = os.path.join(os.path.expanduser("~"),
                                ".local",
                                RULESET_DIRECTORY)
     if os.path.isdir(local_share):
         logger.debug("Local ruleset directory found ('{}').".format(local_share))
-        return local_share
+        ruleset_dirs.append(local_share)
 
     usr_local_share = os.path.join("/usr/local", RULESET_DIRECTORY)
     if os.path.isdir(usr_local_share):
         logger.debug("Global ruleset directory found ('{}').".format(usr_local_share))
-        return usr_local_share
+        ruleset_dirs.append(usr_local_share)
 
     cwd_rulesets = os.path.join(".", RULESET_DIRECTORY_NAME)
     if os.path.isdir(cwd_rulesets):
         logger.debug("Ruleset directory found in current directory ('{}').".format(cwd_rulesets))
-        return cwd_rulesets
+        ruleset_dirs.append(cwd_rulesets)
 
-    msg = "Ruleset directory cannot be found."
-    logger.warning(msg)
-    raise ColinRulesetException(msg)
+    if not ruleset_dirs:
+        msg = "Ruleset directory cannot be found."
+        logger.warning(msg)
+        raise ColinRulesetException(msg)
+
+    return ruleset_dirs
 
 
 def get_rulesets():
     """"
     Get available rulesets.
     """
-    rulesets_dir = get_ruleset_directory()
+    rulesets_dirs = get_ruleset_dirs()
     ruleset_files = []
-    for f in os.listdir(rulesets_dir):
-        for ext in EXTS:
-            if os.path.isfile(os.path.join(rulesets_dir, f)) and f.lower().endswith(ext):
-                ruleset_files.append(f[:-len(ext)])
+    for rulesets_dir in rulesets_dirs:
+        for f in os.listdir(rulesets_dir):
+            for ext in EXTS:
+                if os.path.isfile(os.path.join(rulesets_dir, f)) and f.lower().endswith(ext):
+                    ruleset_files.append(f[:-len(ext)])
     return ruleset_files
