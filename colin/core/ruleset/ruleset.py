@@ -17,7 +17,7 @@
 import logging
 import os
 
-from ..constant import JSON, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME, COLIN_CHECKS_PATH
+from ..constant import EXTS, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME, COLIN_CHECKS_PATH
 from ..exceptions import ColinRulesetException
 from ..loader import CheckLoader
 from ..target import is_compatible
@@ -33,7 +33,8 @@ class Ruleset(object):
         """
         Load ruleset for colin.
 
-        :param ruleset_name: str (name of the ruleset file (without .json), default is "default"
+        :param ruleset_name: str (name of the ruleset file (without any file extension), default is
+                             "default"
         :param ruleset_file: fileobj instance holding ruleset configuration
         :param ruleset: dict, content of a ruleset file
         :param checks_paths: list of str, directories where the checks are present
@@ -137,14 +138,15 @@ def get_ruleset_file(ruleset=None):
     ruleset = ruleset or "default"
 
     ruleset_directory = get_ruleset_directory()
-    ruleset_file = os.path.join(ruleset_directory, ruleset + JSON)
+    possible_ruleset_files = [os.path.join(ruleset_directory, ruleset + ext) for ext in EXTS]
 
-    if os.path.isfile(ruleset_file):
-        logger.debug("Ruleset file '{}' found.".format(ruleset_file))
-        return ruleset_file
+    for ruleset_file in possible_ruleset_files:
+        if os.path.isfile(ruleset_file):
+            logger.debug("Ruleset file '{}' found.".format(ruleset_file))
+            return ruleset_file
 
     logger.warning("Ruleset with the name '{}' cannot be found at '{}'."
-                   .format(ruleset, ruleset_file))
+                   .format(ruleset, ruleset_directory))
     raise ColinRulesetException("Ruleset with the name '{}' cannot be found.".format(ruleset))
 
 
@@ -183,6 +185,9 @@ def get_rulesets():
     Get available rulesets.
     """
     rulesets_dir = get_ruleset_directory()
-    ruleset_files = [f[:-len(JSON)] for f in os.listdir(rulesets_dir) if
-                     os.path.isfile(os.path.join(rulesets_dir, f)) and f.lower().endswith(JSON)]
+    ruleset_files = []
+    for f in os.listdir(rulesets_dir):
+        for ext in EXTS:
+            if os.path.isfile(os.path.join(rulesets_dir, f)) and f.lower().endswith(ext):
+                ruleset_files.append(f[:-len(ext)])
     return ruleset_files

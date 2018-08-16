@@ -16,7 +16,7 @@
 
 RULESET_DIRECTORY_NAME = "rulesets"
 RULESET_DIRECTORY = "share/colin/" + RULESET_DIRECTORY_NAME
-JSON = ".json"
+EXTS = [".yaml", '.yml', ".json"]
 
 PASSED = "PASS"
 FAILED = "FAIL"

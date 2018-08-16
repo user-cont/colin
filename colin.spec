@@ -32,6 +32,7 @@ Requires:       python3-conu
 Requires:       python3-click
 Requires:       python3-six
 Requires:       python3-dockerfile-parse
+Requires:       python3-PyYAML
 
 %description -n python3-%{pypi_name}
 `colin` as a tool to check generic rules/best-practices

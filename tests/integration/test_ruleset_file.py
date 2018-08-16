@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import json
+import yaml
 import tempfile
 
 import colin
@@ -81,7 +81,7 @@ def test_specific_ruleset_as_fileobj(tmpdir, ruleset, expected_dict):
     (_, t) = tempfile.mkstemp(dir=str(tmpdir))
 
     with open(t, "w") as f:
-        json.dump(ruleset, f)
+        yaml.dump(ruleset, f)
     with open(t, "r") as f:
         result = get_results_from_colin_labels_image(ruleset_file=f)
     assert result

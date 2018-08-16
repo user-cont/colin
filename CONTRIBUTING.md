@@ -104,23 +104,23 @@ We only need to describe one argument here:
 ## Add the new check into a ruleset
 Once code for your check is complete, here's how you can run it.
 
-Create a new ruleset file with your locally created check(s):
+Create a new ruleset file with your locally created check(s):  
+
 ```bash
-$ cat foobar.json
-{
-    "version": "1",
-    "checks": [{
-        "name": "foobar_label"
-    }, {
-        "name": "foobar_file_required"
-    }]
-}
+$ cat foobar.yaml
+version: '1'
+checks:
+- {name: foobar_label}
+- {name: foobar_file_required}
+
 ```
+__NOTE__: _Colin_ accepts `YAML` formatted ruleset files. As `JSON` is a subset of the `YAML` standard, `JSON` formatted
+rulesets are also supported, but `YAML` is recommended.  
 
-And run it with colin using command:
+Then run it with colin using command:
 
 ```bash
-$ python3 -m colin.cli.colin -f ./foobar.json <IMAGE-OR-DOCKERFILE>
+$ python3 -m colin.cli.colin -f ./foobar.yaml <IMAGE-OR-DOCKERFILE>
 ```
 
 The command above implies that your check lives happily with other checks in this upstream repo. It's possible to have checks stored externally and point colin to them.
