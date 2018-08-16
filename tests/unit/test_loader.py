@@ -46,8 +46,6 @@ def test_upstream_checks_can_be_loaded():
     assert l.mapping["help_label"]
     assert l.mapping["io.k8s.description_label"]
     assert l.mapping["io.k8s.display-name_label"]
-    assert l.mapping["io.openshift.expose-services_label"]
-    assert l.mapping["io.openshift.tags_label"]
     assert l.mapping["maintainer_label"]
     assert l.mapping["name_label"]
     assert l.mapping["release_label"]
