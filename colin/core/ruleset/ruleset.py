@@ -195,6 +195,7 @@ def get_rulesets():
     for rulesets_dir in rulesets_dirs:
         for f in os.listdir(rulesets_dir):
             for ext in EXTS:
-                if os.path.isfile(os.path.join(rulesets_dir, f)) and f.lower().endswith(ext):
-                    ruleset_files.append(f[:-len(ext)])
+                file_path = os.path.join(rulesets_dir, f)
+                if os.path.isfile(file_path) and f.lower().endswith(ext):
+                    ruleset_files.append((f[:-len(ext)], file_path))
     return ruleset_files

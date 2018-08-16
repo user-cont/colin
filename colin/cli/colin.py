@@ -180,7 +180,7 @@ def list_rulesets(debug):
     try:
         rulesets = get_rulesets()
         for r in rulesets:
-            click.echo(r)
+            click.echo('{0} ({1})'.format(r[0], r[1]))
     except Exception as ex:
         logger.error("An error occurred: %r", ex)
         if debug:
