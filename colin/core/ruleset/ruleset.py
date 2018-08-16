@@ -154,29 +154,30 @@ def get_ruleset_file(ruleset=None):
 def get_ruleset_dirs():
     """
     Get the directory with ruleset files
-    First directory to check:  $HOME/.local/share/colin/rulesets
-    Second directory to check: /usr/local/share/colin/rulesets
+    First directory to check:  ./rulesets
+    Second directory to check:  $HOME/.local/share/colin/rulesets
+    Third directory to check: /usr/local/share/colin/rulesets
     :return: str
     """
 
     ruleset_dirs = []
 
-    local_share = os.path.join(os.path.expanduser("~"),
-                               ".local",
-                               RULESET_DIRECTORY)
-    usr_local_share = os.path.join("/usr/local", RULESET_DIRECTORY)
-    if os.path.isdir(usr_local_share):
-        logger.debug("Global ruleset directory found ('{}').".format(usr_local_share))
-        ruleset_dirs.append(usr_local_share)
-
-    if os.path.isdir(local_share):
-        logger.debug("Local ruleset directory found ('{}').".format(local_share))
-        ruleset_dirs.append(local_share)
-
     cwd_rulesets = os.path.join(".", RULESET_DIRECTORY_NAME)
     if os.path.isdir(cwd_rulesets):
         logger.debug("Ruleset directory found in current directory ('{}').".format(cwd_rulesets))
         ruleset_dirs.append(cwd_rulesets)
+
+    local_share = os.path.join(os.path.expanduser("~"),
+                               ".local",
+                               RULESET_DIRECTORY)
+    if os.path.isdir(local_share):
+        logger.debug("Local ruleset directory found ('{}').".format(local_share))
+        ruleset_dirs.append(local_share)
+
+    usr_local_share = os.path.join("/usr/local", RULESET_DIRECTORY)
+    if os.path.isdir(usr_local_share):
+        logger.debug("Global ruleset directory found ('{}').".format(usr_local_share))
+        ruleset_dirs.append(usr_local_share)
 
     if not ruleset_dirs:
         msg = "Ruleset directory cannot be found."
