@@ -179,8 +179,9 @@ def list_rulesets(debug):
     """
     try:
         rulesets = get_rulesets()
+        max_len = max([len(r[0]) for r in rulesets])
         for r in rulesets:
-            click.echo('{0} ({1})'.format(r[0], r[1]))
+            click.echo('{0: <{1}} ({2})'.format(r[0], max_len, r[1]))
     except Exception as ex:
         logger.error("An error occurred: %r", ex)
         if debug:
