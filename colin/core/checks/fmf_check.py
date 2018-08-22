@@ -17,7 +17,7 @@ def receive_fmf_metadata(name, path, object_list=False):
     search node identified by name fmfpath
 
     :param path: path to filesystem
-    :param name: str - name as pattern to search (substring)
+    :param name: str - name as pattern to search - "/name" (prepended hierarchy item)
     :param object_list: bool, if true, return whole list of found items
     :return: Tree Object or list
     """
@@ -25,7 +25,7 @@ def receive_fmf_metadata(name, path, object_list=False):
     fmf_tree = ExtendedTree(path)
     logger.debug("get FMF metadata for test (path:%s name=%s)", path, name)
     # ignore items with @ in names, to avoid using unreferenced items
-    items = [x for x in fmf_tree.climb() if name in x.name and "@" not in x.name]
+    items = [x for x in fmf_tree.climb() if x.name.endswith("/" + name) and "@" not in x.name]
     if object_list:
         return items
     if len(items) == 1:

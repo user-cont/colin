@@ -18,7 +18,7 @@ tags: ["label", "deprecated"]
   old_label: "BZComponent"
   new_label: "com.redhat.component"
 
-/_install_label_capital_deprecated:
+/install_label_capital_deprecated:
   class: InstallLabelCapitalDeprecatedCheck
   message: "Label 'INSTALL' is deprecated."
   description: "Replace with 'install'."

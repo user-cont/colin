@@ -59,7 +59,7 @@ def test_list_checks():
    -> Label 'maintainer' has to be specified.
    -> The name and email of the maintainer (usually the submitter).
    -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-   -> maintainer, label, required
+   -> label, maintainer, required
 
 from_tag_not_latest
    -> In FROM, tag has to be specified and not 'latest'.

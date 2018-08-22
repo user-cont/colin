@@ -30,7 +30,7 @@ def test_upstream_checks_can_be_loaded():
     assert l.mapping["bzcomponent_deprecated"]
     assert l.mapping["architecture_label_capital_deprecated"]
     assert l.mapping["bzcomponent_deprecated"]
-    assert l.mapping["_install_label_capital_deprecated"]
+    assert l.mapping["install_label_capital_deprecated"]
     assert l.mapping["name_label_capital_deprecated"]
     assert l.mapping["release_label_capital_deprecated"]
     assert l.mapping["uninstall_label_capital_deprecated"]

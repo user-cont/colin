@@ -27,7 +27,7 @@ class BZComponentDeprecatedCheck(FMFAbstractCheck, DeprecatedLabelAbstractCheck)
 
 
 class InstallLabelCapitalDeprecatedCheck(FMFAbstractCheck, DeprecatedLabelAbstractCheck):
-    name = "_install_label_capital_deprecated"
+    name = "install_label_capital_deprecated"
 
 
 class NameLabelCapitalDeprecatedCheck(FMFAbstractCheck, DeprecatedLabelAbstractCheck):
