@@ -5,6 +5,7 @@
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/colin.svg)
 ![PyPI - Status](https://img.shields.io/pypi/status/colin.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/427eb0c5dfc040cea798b23575dba025)](https://www.codacy.com/app/user-cont/colin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=user-cont/colin&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://ci.centos.org/job/user-cont-colin-master/badge/icon)](https://ci.centos.org/job/user-cont-colin-master/)
 
 Tool to check generic rules and best-practices for containers, images and dockerfiles.
 
