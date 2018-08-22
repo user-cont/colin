@@ -166,3 +166,4 @@ Colin can exit with several codes:
 - `1` --> error in the execution
 - `2` --> CLI error, wrong parameters
 - `3` --> at least one check failed
+
