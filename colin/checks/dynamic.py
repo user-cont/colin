@@ -15,15 +15,8 @@
 #
 
 from colin.core.checks.cmd import CmdAbstractCheck
+from colin.core.checks.fmf_check import FMFAbstractCheck
 
 
-# class ShellRunableCheck(CmdAbstractCheck):
-#     name = "shell_runnable"
-#
-#     def __init__(self):
-#         super(ShellRunableCheck, self) \
-#             .__init__(message="Shell has to be runnable.",
-#                       description="The target has to be able to invoke shell.",
-#                       reference_url="https://docs.docker.com/engine/reference/run/",
-#                       tags=["sh", "cmd", "shell", "output"],
-#                       cmd=['sh', '-c', 'exit', '0'])
+class ShellRunableCheck(FMFAbstractCheck, CmdAbstractCheck):
+    name = "shell_runnable"
