@@ -23,8 +23,9 @@ from .target import Target
 logger = logging.getLogger(__name__)
 
 
-def run(target, tags=None, ruleset_name=None, ruleset_file=None,
-        ruleset=None, logging_level=logging.WARNING, checks_paths=None):
+def run(target, target_type, tags=None, ruleset_name=None, ruleset_file=None,
+        ruleset=None, logging_level=logging.WARNING, checks_paths=None, pull=None,
+        insecure=False):
     """
     Runs the sanity checks for the target.
 
@@ -32,18 +33,24 @@ def run(target, tags=None, ruleset_name=None, ruleset_file=None,
                     or Image/Container (name of the container/image or Image/Container
                                         instance from conu)
                     or path or file-like object for dockerfile
+    :param target_type: string, either image, container or dockerfile
     :param tags: list of str (if not None, the checks will be filtered by tags.)
     :param ruleset_name: str (e.g. fedora; if None, default would be used)
     :param ruleset_file: fileobj instance holding ruleset configuration
     :param ruleset: dict, content of a ruleset file
     :param logging_level: logging level (default logging.WARNING)
     :param checks_paths: list of str, directories where the checks are present
+    :param pull: bool, pull the image from registry
+    :param insecure: bool, pull from an insecure registry (HTTP/invalid TLS)
     :return: Results instance
     """
     _set_logging(level=logging_level)
     logger.debug("Checking started.")
     target = Target(target=target,
-                    logging_level=logging_level)
+                    logging_level=logging_level,
+                    pull=pull,
+                    target_type=target_type,
+                    insecure=insecure)
     checks_to_run = _get_checks(target_type=target.target_type,
                                 tags=tags,
                                 ruleset_name=ruleset_name,
@@ -112,10 +119,12 @@ def _set_logging(
         logger = logging.getLogger(logger_name)
         logger.setLevel(level)
 
-        handler_kwargs = handler_kwargs or {}
-        handler = handler_class(**handler_kwargs)
-        handler.setLevel(level)
+        # do not readd handlers if they are already present
+        if not [x for x in logger.handlers if isinstance(x, handler_class)]:
+            handler_kwargs = handler_kwargs or {}
+            handler = handler_class(**handler_kwargs)
+            handler.setLevel(level)
 
-        formatter = logging.Formatter(format, date_format)
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
+            formatter = logging.Formatter(format, date_format)
+            handler.setFormatter(formatter)
+            logger.addHandler(handler)

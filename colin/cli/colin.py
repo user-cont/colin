@@ -65,7 +65,14 @@ def cli():
               type=click.Path(exists=True, dir_okay=True, file_okay=False),
               multiple=True, envvar=COLIN_CHECKS_PATH,
               help="Path to directory containing checks (default {}).".format(get_checks_paths()))
-def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose, checks_paths):
+@click.option('--pull', is_flag=True,
+              help="Pull the image from registry.")
+@click.option('--target-type', type=click.STRING, default="image",
+              help="Type of selected target (one of container, image, dockerfile).")
+@click.option('--insecure', is_flag=True, default=False,
+              help="Pull from an insecure registry (HTTP or invalid TLS).")
+def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose,
+        checks_paths, target_type, pull, insecure):
     """
     Check the image/container/dockerfile (default).
     """
@@ -83,12 +90,17 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose, checks
 
         log_level = _get_log_level(debug=debug,
                                    verbose=verbose)
-        results = run(target=target,
-                      ruleset_name=ruleset,
-                      ruleset_file=ruleset_file,
-                      logging_level=log_level,
-                      tags=tag,
-                      checks_paths=checks_paths)
+        results = run(
+            target=target,
+            ruleset_name=ruleset,
+            ruleset_file=ruleset_file,
+            logging_level=log_level,
+            tags=tag,
+            pull=pull,
+            checks_paths=checks_paths,
+            target_type=target_type,
+            insecure=insecure
+        )
         _print_results(results=results, stat=stat, verbose=verbose)
 
         if json:
@@ -218,7 +230,12 @@ def _print_checks(checks):
 
 
 def _get_log_level(debug, verbose):
-    return logging.DEBUG if debug else logging.NOTSET
+    if debug:
+        return logging.DEBUG
+    elif verbose:
+        return logging.INFO
+    else:
+        return logging.WARNING
 
 
 if __name__ == '__main__':

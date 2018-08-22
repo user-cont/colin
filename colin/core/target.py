@@ -20,16 +20,16 @@ import logging
 import os
 
 import six
-from conu import DockerBackend, DockerImagePullPolicy
+from conu import DockerBackend
 from conu.apidefs.container import Container
-from conu.apidefs.image import Image
-from docker.errors import NotFound
 from dockerfile_parse import DockerfileParser
 
+from colin.utils.cont import Image
 from ..core.exceptions import ColinException
 from .checks.containers import ContainerAbstractCheck
 from .checks.dockerfile import DockerfileAbstractCheck
 from .checks.images import ImageAbstractCheck
+
 
 logger = logging.getLogger(__name__)
 
@@ -73,12 +73,33 @@ def inspect_object(obj, refresh=True):
 
 
 class Target(object):
+    """
+    Target is the thing we are going to check; it can be an image, container or a dockerfile
+    """
 
-    def __init__(self, target, logging_level):
-        self.instance = Target._get_target_instance(target, logging_level=logging_level)
+    def __init__(self, target, logging_level, target_type, pull=None, insecure=False):
+        """
+        :param target: str, identifier of the target (specified via CLI)
+        :param logging_level: int, log level passed to conu
+        :param target_type: string, either image, container or dockerfile
+        :param pull: bool, if the target is an image, pull it if set to true
+        :param insecure: bool, pull from an insecure registry (HTTP/invalid TLS)
+        """
+        # this is the thing which user passed
+        self.target_identifier = target
+        self._target_type_str = target_type
+        self._labels = None
+        self.instance = self._get_target_instance(target, logging_level, pull, insecure)
 
-    @staticmethod
-    def _get_target_instance(target, logging_level):
+    def clean_up(self):
+        """
+        Perform clean up on the low level objects: atm atomic and skopeo mountpoints
+        and data are being cleaned up.
+        """
+        if hasattr(self.instance, "clean_up"):
+            self.instance.clean_up()
+
+    def _get_target_instance(self, target, logging_level, pull, insecure):
         """
         Get the Container/Image instance for the given name.
         (Container is the first choice.)
@@ -87,45 +108,40 @@ class Target(object):
         :param target: str
                         or instance of Image/Container
                         or file-like object as Dockerfile
+        :param logging_level: int, logging level passed to conu
+        :param pull: bool, should the image be pulled?
+        :param insecure: bool, pull from an insecure registry (HTTP/invalid TLS)
         :return: Target object
         """
-        logger.debug("Finding target '{}'.".format(target))
+        logger.debug("Identifying target '{}'.".format(target))
 
-        if isinstance(target, (Image, Container)):
-            logger.debug("Target is a conu object.")
+        # FIXME: simplify this, only support images and dockerfiles
+
+        if isinstance(target, Container):
+            logger.debug("Target is a conu container.")
             return target
         if isinstance(target, io.IOBase):
             logger.debug("Target is a dockerfile loaded from the file-like object.")
             return DockerfileParser(fileobj=target)
-        if os.path.isfile(target):
-            logger.debug("Target is a dockerfile.")
-            return DockerfileParser(fileobj=open(target))
-
-        with DockerBackend(logging_level=logging_level) as backend:
-
+        if isinstance(target, six.string_types):
+            # user passed a string
             try:
-                cont = backend.ContainerClass(image=None,
-                                              container_id=target)
-                logger.debug("Target is a container.")
-                return cont
-            except NotFound:
-
-                image_name = ImageName.parse(target)
-                logger.debug("Finding image '{}' with tag '{}'.".format(image_name.name, image_name.tag))
-
-                if image_name.tag:
-                    image = backend.ImageClass(repository=image_name.name,
-                                               tag=image_name.tag,
-                                               pull_policy=DockerImagePullPolicy.NEVER)
-                else:
-                    image = backend.ImageClass(repository=image_name.name,
-                                               pull_policy=DockerImagePullPolicy.NEVER)
-
-                if image.is_present():
+                if self.target_type == TargetType.IMAGE:
                     logger.debug("Target is an image.")
-                    return image
-        logger.error("Target is neither image nor container.")
-        raise ColinException("Target not found.")
+                    return Image(target, pull=pull, insecure=insecure)
+                elif self.target_type == TargetType.DOCKERFILE:
+                    logger.debug("Target is a dockerfile.")
+                    return DockerfileParser(fileobj=open(target))
+                elif self.target_type == TargetType.CONTAINER:
+                    with DockerBackend(logging_level=logging_level) as backend:
+                        cont = backend.ContainerClass(image=None,
+                                                      container_id=target)
+                        logger.debug("Target is a container.")
+                        return cont
+            except Exception:
+                logger.error("Please make sure that you picked the correct target type: "
+                             "--target-type CLI option.")
+                raise
 
     @property
     def target_type(self):
@@ -134,14 +150,22 @@ class Target(object):
 
         :return: TargetType enum
         """
-        if isinstance(self.instance, Image):
+        if self._target_type_str == "image":
             return TargetType.IMAGE
-        elif isinstance(self.instance, Container):
+        elif self._target_type_str == "container":
             return TargetType.CONTAINER
-        elif isinstance(self.instance, DockerfileParser):
+        elif self._target_type_str == "dockerfile":
             return TargetType.DOCKERFILE
-        logger.debug("Target type not found.")
-        raise ColinException("Target type not found.")
+        logger.debug("Unknown target type; should be one of: container, image or dockerfile.")
+        raise ColinException(
+            "Unknown target type; should be one of: container, image or dockerfile.")
+
+    @property
+    def config_metadata(self):
+        """ metadata from "Config" key """
+        if self.target_type == TargetType.IMAGE:
+            return self.instance.metadata["config"]
+        return {}
 
     @property
     def labels(self):
@@ -150,10 +174,14 @@ class Target(object):
 
         :return: [str]
         """
-        if self.target_type == TargetType.DOCKERFILE:
-            return self.instance.labels
-        # labels won't change, hence refresh=false
-        return inspect_object(self.instance, refresh=False)["Config"]["Labels"]
+        if self._labels is None:
+            if self.target_type == TargetType.DOCKERFILE:
+                self._labels = self.instance.labels
+            elif self.target_type == TargetType.IMAGE:
+                self._labels = self.instance.labels
+            elif self.target_type == TargetType.CONTAINER:
+                self._labels = inspect_object(self.instance, refresh=True)["Config"]["Labels"]
+        return self._labels
 
     def get_output(self, cmd):
         if isinstance(cmd, six.string_types):
@@ -169,16 +197,17 @@ class Target(object):
                     "Container exited with the code {}. Output:\n{}".format(exit_code, output))
 
         elif self.target_type == TargetType.IMAGE:
-            container = self.instance.run_via_binary(command=cmd)
-            container.wait()
-            output = "".join([o.decode() for o in container.logs()])
-            exit_code = inspect_object(container, refresh=True)["State"]["ExitCode"]
-            container.delete(force=True)
+            raise RuntimeError("Unsupported right now.")
+            # container = self.instance.run_via_binary(command=cmd)
+            # container.wait()
+            # output = "".join([o.decode() for o in container.logs()])
+            # exit_code = inspect_object(container, refresh=True)["State"]["ExitCode"]
+            # container.delete(force=True)
 
-            if exit_code != 0:
-                raise ColinException(
-                    "Container exited with the code {}. Output:\n{}".format(exit_code, output))
-            return output
+            # if exit_code != 0:
+            #     raise ColinException(
+            #         "Container exited with the code {}. Output:\n{}".format(exit_code, output))
+            # return output
         else:
             raise ColinException("Cannot get command output for given target type.")
 
@@ -187,79 +216,3 @@ class TargetType(enum.Enum):
     DOCKERFILE = 0
     CONTAINER = 1
     IMAGE = 2
-
-
-class ImageName(object):
-    def __init__(self, registry=None, namespace=None, repository=None, tag=None, digest=None):
-        self.registry = registry
-        self.namespace = namespace
-        self.repository = repository
-        self.tag = tag
-        self.digest = digest
-
-    @classmethod
-    def parse(cls, image_name):
-        """
-        Get the instance of ImageName from the string representation.
-
-        :param image_name: str (any possible form of image name)
-        :return: ImageName instance
-        """
-        result = cls()
-
-        # registry.org/namespace/repo:tag
-        s = image_name.split('/', 2)
-
-        if len(s) == 2:
-            if '.' in s[0] or ':' in s[0]:
-                result.registry = s[0]
-            else:
-                result.namespace = s[0]
-        elif len(s) == 3:
-            result.registry = s[0]
-            result.namespace = s[1]
-        result.repository = s[-1]
-
-        try:
-            result.repository, result.digest = result.repository.rsplit("@", 1)
-        except ValueError:
-            pass
-
-        try:
-            result.repository, result.tag = result.repository.rsplit(":", 1)
-        except ValueError:
-            pass
-
-        return result
-
-    def __str__(self):
-        return "Image: registry='{}' namespace='{}' " \
-               "repository='{}' tag='{}' digest='{}'".format(self.registry,
-                                                             self.namespace,
-                                                             self.repository,
-                                                             self.tag,
-                                                             self.digest)
-
-    @property
-    def name(self):
-        """
-        Get the string representation of the image
-        (registry, namespace, repository and digest together).
-
-        :return: str
-        """
-        name_parts = []
-        if self.registry:
-            name_parts.append(self.registry)
-
-        if self.namespace:
-            name_parts.append(self.namespace)
-
-        if self.repository:
-            name_parts.append(self.repository)
-        name = "/".join(name_parts)
-
-        if self.digest:
-            name += "@{}".format(self.digest)
-
-        return name

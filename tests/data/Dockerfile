@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/fedora:27
+FROM scratch
 
 ENV NAME=colin-labels \
     VERSION=0.0.4

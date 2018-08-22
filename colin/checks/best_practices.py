@@ -20,7 +20,6 @@ from colin.core.checks.containers import ContainerAbstractCheck
 from colin.core.checks.filesystem import FileCheck
 from colin.core.checks.images import ImageAbstractCheck
 from colin.core.result import CheckResult
-from colin.core.target import inspect_object
 
 
 logger = logging.getLogger(__name__)
@@ -40,7 +39,7 @@ class CmdOrEntrypointCheck(ContainerAbstractCheck, ImageAbstractCheck):
                       tags=["cmd", "entrypoint"])
 
     def check(self, target):
-        metadata = inspect_object(target.instance)["Config"]
+        metadata = target.config_metadata
         cmd_present = "Cmd" in metadata and metadata["Cmd"]
         msg_cmd_present = "Cmd {}specified.".format("" if cmd_present else "not ")
         logger.debug(msg_cmd_present)
@@ -85,7 +84,7 @@ class NoRootCheck(ContainerAbstractCheck, ImageAbstractCheck):
                       tags=["root", "user"])
 
     def check(self, target):
-        metadata = inspect_object(target.instance)["Config"]
+        metadata = target.config_metadata
         root_present = "User" in metadata and metadata["User"] in ["", "0", "root"]
 
         return CheckResult(ok=not root_present,

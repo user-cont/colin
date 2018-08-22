@@ -1,2 +1,2 @@
-FROM fedora:28
+FROM scratch
 COPY files/usage README.md
