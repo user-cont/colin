@@ -33,7 +33,7 @@ def run(target, target_type, tags=None, ruleset_name=None, ruleset_file=None,
                     or Image/Container (name of the container/image or Image/Container
                                         instance from conu)
                     or path or file-like object for dockerfile
-    :param target_type: string, either image, container or dockerfile
+    :param target_type: string, either image, container, dockerfile, dockertar
     :param tags: list of str (if not None, the checks will be filtered by tags.)
     :param ruleset_name: str (e.g. fedora; if None, default would be used)
     :param ruleset_file: fileobj instance holding ruleset configuration

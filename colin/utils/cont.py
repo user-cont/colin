@@ -51,14 +51,16 @@ def extract_file_from_tarball(tarball_path, file_path, wd):
 class Image(object):
     """ Image representation using skopeo, ostree and atomic tool """
 
-    def __init__(self, image_name, pull, insecure=False):
+    def __init__(self, image_name, pull, insecure=False, iz_dockertar=False):
         """
         :param image_name: str, name of the image to access
         :param pull: bool, pull the image from registry or from local dockerd
         :param insecure: bool, pull from an insecure registry (HTTP/invalid TLS)
+        :param iz_dockertar: bool, is the target a path to docker tarball?
         """
         self.image_name = image_name
         self.pull = pull
+        self.iz_dockertar = iz_dockertar
         self._tmpdir = None
         self._mount_point = None
         self._ostree_path = None
@@ -103,17 +105,20 @@ class Image(object):
 
     def _pull_image(self):
         """ pull the image using atomic --storage ostree """
-        image_name = ImageName.parse(self.image_name)
-
-        if self.pull:
-            skopeo_source = "docker://" + image_name.name
-            if self.insecure:
-                atomic_source = 'http:' + image_name.name
-            else:
-                atomic_source = image_name.name
+        if self.iz_dockertar:
+            atomic_source = "dockertar:/" + self.image_name
         else:
-            skopeo_source = "docker-daemon:" + image_name.name
-            atomic_source = "docker:" + image_name.name
+            image_name = ImageName.parse(self.image_name)
+
+            if self.pull:
+                skopeo_source = "docker://" + image_name.name
+                if self.insecure:
+                    atomic_source = 'http:' + image_name.name
+                else:
+                    atomic_source = image_name.name
+            else:
+                skopeo_source = "docker-daemon:" + image_name.name
+                atomic_source = "docker:" + image_name.name
 
         # we are using atomic pull --storage ostree, b/c atomic is able to
         # put all the layers in an ostree repo and then provide checkout
@@ -123,24 +128,30 @@ class Image(object):
         run_and_log(cmd, self.ostree_path,
                     "Failed to pull selected container image. Does it exist?")
 
-        archive_file_name = "archive.tar"
-        archive_path = os.path.join(self.tmpdir, archive_file_name)
-        skopeo_target = "docker-archive:" + archive_path
-        # we are re-downloading the image again, which is such a waste!
-        # unfortunately doing skopeo copy ostree:image@ostree_path docker-archive:... doesn't work
-        # the error: 'docker-archive doesn't support modifying existing images'
-        # so, we should either use rootless podman or ostree:image[@/absolute/repo/path]
-        skopeo_cmd = ["skopeo", "copy"]
-        if self.insecure:
-            skopeo_cmd += ["--src-tls-verify=false"]
-        skopeo_cmd += [skopeo_source, skopeo_target]
-        run_and_log(skopeo_cmd, None,
-                    "Failed to create tarball with layers from the selected image")
+        if self.iz_dockertar:
+            archive_path = self.image_name
+            # the thing is that once we extract the image into ostree, we don't know its name
+            # it seems that atomic names the image by using base name of the archive
+            self.image_name = os.path.splitext(os.path.basename(self.image_name))[0]
+        else:
+            archive_file_name = "archive.tar"
+            archive_path = os.path.join(self.tmpdir, archive_file_name)
+            skopeo_target = "docker-archive:" + archive_path
+            # we are re-downloading the image again, which is such a waste!
+            # unfortunately doing skopeo copy ostree:image@ostree_path docker-archive:... doesn't work
+            # the error: 'docker-archive doesn't support modifying existing images'
+            # so, we should either use rootless podman or ostree:image[@/absolute/repo/path]
+            skopeo_cmd = ["skopeo", "copy"]
+            if self.insecure:
+                skopeo_cmd += ["--src-tls-verify=false"]
+            skopeo_cmd += [skopeo_source, skopeo_target]
+            run_and_log(skopeo_cmd, None,
+                        "Failed to create tarball with layers from the selected image")
 
         manifest_file_name = "manifest.json"
 
         # first extract manifest
-        extract_file_from_tarball(archive_file_name, manifest_file_name, self.tmpdir)
+        extract_file_from_tarball(archive_path, manifest_file_name, self.tmpdir)
         manifest_path = os.path.join(self.tmpdir, manifest_file_name)
         with open(manifest_path) as fd:
             j = json.load(fd)
@@ -149,7 +160,7 @@ class Image(object):
         metadata_file_name = j[0]["Config"]
 
         # then extract the metadata
-        extract_file_from_tarball(archive_file_name, metadata_file_name, self.tmpdir)
+        extract_file_from_tarball(archive_path, metadata_file_name, self.tmpdir)
         metadata_file_path = os.path.join(self.tmpdir, metadata_file_name)
         with open(metadata_file_path) as fd:
             self.metadata = json.load(fd)
