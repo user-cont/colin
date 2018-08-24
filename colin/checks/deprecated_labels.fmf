@@ -1,0 +1,59 @@
+test: "deprecated_labels.py"
+reference_url: "?????"
+tags: ["label", "deprecated"]
+
+/architecture_label_capital_deprecated:
+  class: ArchitectureLabelCapitalDeprecatedCheck
+  message: "Label 'Architecture' is deprecated."
+  description: "Replace with 'architecture'."
+  tags+: ["architecture", "capital"]
+  old_label: "Architecture"
+  new_label: "architecture"
+
+/bzcomponent_deprecated:
+  class: BZComponentDeprecatedCheck
+  message: "Label 'BZComponent' is deprecated."
+  description: "Replace with 'com.redhat.component'."
+  tags+: ["com.redhat.component", "bzcomponent"]
+  old_label: "BZComponent"
+  new_label: "com.redhat.component"
+
+/install_label_capital_deprecated:
+  class: InstallLabelCapitalDeprecatedCheck
+  message: "Label 'INSTALL' is deprecated."
+  description: "Replace with 'install'."
+  tags+: ["install", "capital"]
+  old_label: "INSTALL"
+  new_label: "install"
+
+/name_label_capital_deprecated:
+  class: NameLabelCapitalDeprecatedCheck
+  message: "Label 'Name' is deprecated."
+  description: "Replace with 'name'."
+  tags+: ["name", "capital"]
+  old_label: "Name"
+  new_label: "name"
+
+/release_label_capital_deprecated:
+  class: ReleaseLabelCapitalDeprecatedCheck
+  message: "Label 'Release' is deprecated."
+  description: "Replace with 'release'."
+  tags+: ["release", "capital"]
+  old_label: "Release"
+  new_label: "release"
+
+/uninstall_label_capital_deprecated:
+  class: UninstallLabelCapitalDeprecatedCheck
+  message: "Label 'UNINSTALL' is deprecated."
+  description: "Replace with 'uninstall'."
+  tags+: ["uninstall", "capital"]
+  old_label: "UNINSTALL"
+  new_label: "uninstall"
+
+/version_label_capital_deprecated:
+  class: VersionLabelCapitalDeprecatedCheck
+  message: "Label 'Version' is deprecated."
+  description: "Replace with 'version'."
+  tags+: ["version", "capital"]
+  old_label: "Version"
+  new_label: "version"
