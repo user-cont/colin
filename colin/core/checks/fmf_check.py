@@ -2,9 +2,9 @@
 Module with FMF abstract check class
 """
 
-import copy
 import logging
 import inspect
+import os
 
 from .abstract_check import AbstractCheck
 from ..fmf_extension import ExtendedTree
@@ -51,6 +51,11 @@ class FMFAbstractCheck(AbstractCheck):
         wraps parameters to COLIN __init__ method format
         """
         if not self.metadata:
+            if not self.fmf_metadata_path:
+                logger.info("setting self.fmf_metadata_path by class location."
+                            " DO NOT use it in this way."
+                            " Metadata are set in colin.core.loader (use proper path)")
+                self.fmf_metadata_path = os.path.dirname(inspect.getfile(self.__class__))
             self.metadata = receive_fmf_metadata(name=self.name, path=self.fmf_metadata_path)
         master_class = super(FMFAbstractCheck, self)
         kwargs = {}
