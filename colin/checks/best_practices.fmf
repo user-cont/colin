@@ -3,7 +3,7 @@ test: "best_practices.py"
 /cmd_or_entrypoint:
   class: "CmdOrEntrypointCheck"
   message: "Cmd or Entrypoint has to be specified"
-  description: "An ENTRYPOINT allows you to configure a container that will run as an executable. The main purpose of a CMD is to provide defaults for an executing container"
+  description: "An ENTRYPOINT allows you to configure a container that will run as an executable. The main purpose of a CMD is to provide defaults for an executing container."
   reference_url: "https://fedoraproject.org/wiki/Container:Guidelines#CMD.2FENTRYPOINT_2"
   tags: ["cmd", "entrypoint"]
 
