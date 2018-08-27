@@ -54,11 +54,9 @@ def is_compatible(target_type, check_instance):
             isinstance(check_instance, ContainerAbstractCheck)
         )
         or (
-            target_type == TargetType.IMAGE and isinstance(check_instance, ImageAbstractCheck)
-        )
-        or (
             # docker image tarballs are also images
-            target_type == TargetType.DOCKER_TAR and isinstance(check_instance, ImageAbstractCheck)
+            target_type in [TargetType.IMAGE, TargetType.DOCKER_TAR]
+            and isinstance(check_instance, ImageAbstractCheck)
         )
     )
 
