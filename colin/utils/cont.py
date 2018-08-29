@@ -137,10 +137,8 @@ class Image(object):
             archive_file_name = "archive.tar"
             archive_path = os.path.join(self.tmpdir, archive_file_name)
             skopeo_target = "docker-archive:" + archive_path
-            # we are re-downloading the image again, which is such a waste!
-            # unfortunately doing skopeo copy ostree:image@ostree_path docker-archive:... doesn't work
-            # the error: 'docker-archive doesn't support modifying existing images'
-            # so, we should either use rootless podman or ostree:image[@/absolute/repo/path]
+            # this downloads the image again; consider downloading it with skopeo and
+            # using dockertar target type
             skopeo_cmd = ["skopeo", "copy"]
             if self.insecure:
                 skopeo_cmd += ["--src-tls-verify=false"]
@@ -205,7 +203,8 @@ class Image(object):
                 return fd.read()
         except IOError as ex:
             logger.error("error while accessing file %s: %r", file_path, ex)
-            raise ColinException("There was an error while accessing file %s: %r" % (file_path, ex))
+            raise ColinException(
+                "There was an error while accessing file %s: %r" % (file_path, ex))
 
     def get_file(self, file_path, mode="r"):
         """
@@ -243,6 +242,7 @@ class Image(object):
 
 
 class ImageName(object):
+    """ parse image references and access their components easily """
     def __init__(self, registry=None, namespace=None, repository=None, tag=None, digest=None):
         self.registry = registry
         self.namespace = namespace
