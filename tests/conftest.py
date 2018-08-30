@@ -14,7 +14,7 @@ _set_logging(level=logging.DEBUG)
 BASH_IMAGE = "colin-test-bash"
 LS_IMAGE = "colin-test-ls"
 BUSYBOX_IMAGE = "docker.io/library/busybox"
-LABELS_IMAGE = "colin-labels"
+LABELS_IMAGE = "colin-labels:latest"
 IMAGES = {
     BASH_IMAGE: {
         "dockerfile_path": "Dockerfile-bash"

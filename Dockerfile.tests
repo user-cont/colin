@@ -1,7 +1,10 @@
-FROM registry.fedoraproject.org/fedora:28
+FROM registry.fedoraproject.org/fedora:29
 
-RUN dnf install -y make python3-pytest python3-pyxattr docker \
-    skopeo atomic \
+# atomic in F28 can't mount: can't find the image
+RUN dnf install -y make python3-pytest python3-pyxattr \
+    skopeo \
+    docker \
+    https://kojipkgs.fedoraproject.org//packages/atomic/1.22.1/27.gitb507039.fc29/x86_64/atomic-1.22.1-27.gitb507039.fc29.x86_64.rpm \
     && dnf clean all
 
 WORKDIR /src
