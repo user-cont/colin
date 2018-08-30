@@ -1,5 +1,7 @@
 FROM registry.fedoraproject.org/fedora:29
 
+ENV PYTHONDONTWRITEBYTECODE=yes-please
+
 # atomic in F28 can't mount: can't find the image
 RUN dnf install -y make python3-pytest python3-pyxattr \
     skopeo \
