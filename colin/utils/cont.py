@@ -29,14 +29,10 @@ def run_and_log(cmd, ostree_repo_path, error_msg, wd=None):
     if wd:
         kwargs["cwd"] = wd
     try:
-        out = subprocess.check_output(cmd, **kwargs)
-    except subprocess.CalledProcessError:
+        subprocess.check_call(cmd, **kwargs)
+    except subprocess.CalledProcessError as ex:
         logger.error(error_msg)
         raise
-    else:
-        if out:
-            logger.debug("output of the command:")
-            logger.debug(out)
 
 
 def extract_file_from_tarball(tarball_path, file_path, wd):
@@ -51,14 +47,19 @@ def extract_file_from_tarball(tarball_path, file_path, wd):
 class Image(object):
     """ Image representation using skopeo, ostree and atomic tool """
 
-    def __init__(self, image_name, pull, insecure=False):
+    def __init__(self, image_name, pull, insecure=False, iz_dockertar=False, iz_ostree=False):
         """
         :param image_name: str, name of the image to access
         :param pull: bool, pull the image from registry or from local dockerd
         :param insecure: bool, pull from an insecure registry (HTTP/invalid TLS)
+        :param iz_dockertar: bool, is the target a path to docker tarball?
+        :param iz_ostree: bool, is the target a directory with an ostree repo?
         """
         self.image_name = image_name
+        self.ref_image_name = None  # we'll use this one when using skopeo or atomic
         self.pull = pull
+        self.iz_dockertar = iz_dockertar
+        self.iz_ostree = iz_ostree
         self._tmpdir = None
         self._mount_point = None
         self._ostree_path = None
@@ -69,7 +70,6 @@ class Image(object):
         self._labels = None
 
         self._pull_image()
-
 
     @property
     def tmpdir(self):
@@ -83,6 +83,8 @@ class Image(object):
         """ ostree repository -- content """
         if self._ostree_path is None:
             self._ostree_path = os.path.join(self.tmpdir, "ostree-repo")
+            subprocess.check_call(["ostree", "init", "--mode", "bare-user-only",
+                                   "--repo", self._ostree_path])
         return self._ostree_path
 
     @property
@@ -103,63 +105,47 @@ class Image(object):
 
     def _pull_image(self):
         """ pull the image using atomic --storage ostree """
-        image_name = ImageName.parse(self.image_name)
-
-        if self.pull:
-            skopeo_source = "docker://" + image_name.name
-            if self.insecure:
-                atomic_source = 'http:' + image_name.name
-            else:
-                atomic_source = image_name.name
+        # FIXME: this code is absolutely horrid and should be cut to separate classes and
+        #        moved to conu; I just wanted to prototype it over here and once proven working
+        #        figure out how to move it to conu
+        skopeo_extra_args = []
+        if self.iz_dockertar:
+            skopeo_source = "docker-archive:" + self.image_name
+            self.ref_image_name = os.path.splitext(os.path.basename(self.image_name))[0]
+        elif self.iz_ostree:
+            skopeo_source = None
+            if self.image_name.startswith("ostree:"):
+                self.image_name = self.image_name[7:]
+            try:
+                self.ref_image_name, self._ostree_path = self.image_name.split("@", 1)
+            except ValueError:
+                raise RuntimeError("Invalid ostree target: should be 'image@path'.")
         else:
-            skopeo_source = "docker-daemon:" + image_name.name
-            atomic_source = "docker:" + image_name.name
+            image_name = ImageName.parse(self.image_name)
+            # atomic is confused when the image lives in multiple storages, or what
+            self.ref_image_name = 'colin-' + image_name.repository
+            if self.pull:
+                skopeo_source = "docker://" + image_name.name
+                if self.insecure:
+                    skopeo_extra_args.append("--src-tls-verify=false")
+            else:
+                skopeo_source = "docker-daemon:" + image_name.name
 
-        # we are using atomic pull --storage ostree, b/c atomic is able to
-        # put all the layers in an ostree repo and then provide checkout
-        # of the complete container filesystem; unfortunately skopeo can't
-        # do that; other alternatives are rootless podman or umoci
-        cmd = ["atomic", "pull", "--storage", "ostree", atomic_source]
-        run_and_log(cmd, self.ostree_path,
-                    "Failed to pull selected container image. Does it exist?")
+        skopeo_target = "ostree:%s@%s" % (self.ref_image_name, self.ostree_path)
+        if skopeo_source:
+            cmd = ["skopeo", "copy"] + skopeo_extra_args + [skopeo_source, skopeo_target]
+            run_and_log(cmd, None,
+                        "Failed to pull selected container image. Does it exist?")
 
-        archive_file_name = "archive.tar"
-        archive_path = os.path.join(self.tmpdir, archive_file_name)
-        skopeo_target = "docker-archive:" + archive_path
-        # we are re-downloading the image again, which is such a waste!
-        # unfortunately doing skopeo copy ostree:image@ostree_path docker-archive:... doesn't work
-        # the error: 'docker-archive doesn't support modifying existing images'
-        # so, we should either use rootless podman or ostree:image[@/absolute/repo/path]
-        skopeo_cmd = ["skopeo", "copy"]
-        if self.insecure:
-            skopeo_cmd += ["--src-tls-verify=false"]
-        skopeo_cmd += [skopeo_source, skopeo_target]
-        run_and_log(skopeo_cmd, None,
-                    "Failed to create tarball with layers from the selected image")
-
-        manifest_file_name = "manifest.json"
-
-        # first extract manifest
-        extract_file_from_tarball(archive_file_name, manifest_file_name, self.tmpdir)
-        manifest_path = os.path.join(self.tmpdir, manifest_file_name)
-        with open(manifest_path) as fd:
-            j = json.load(fd)
-
-        # figure out name of the metadata file
-        metadata_file_name = j[0]["Config"]
-
-        # then extract the metadata
-        extract_file_from_tarball(archive_file_name, metadata_file_name, self.tmpdir)
-        metadata_file_path = os.path.join(self.tmpdir, metadata_file_name)
-        with open(metadata_file_path) as fd:
-            self.metadata = json.load(fd)
+        cmd = ["skopeo", "inspect", skopeo_target]
+        self._labels = json.loads(subprocess.check_output(cmd))["Labels"]
 
     def _checkout(self):
         """ check out the image filesystem on self.mount_point """
         if self.insecure:
-            image_name = 'http:' + self.image_name
+            image_name = 'http:' + self.ref_image_name
         else:
-            image_name = self.image_name
+            image_name = self.ref_image_name
         cmd = ["atomic", "mount", "--storage", "ostree", image_name, self.mount_point]
         # self.mount_point has to be created by us
         run_and_log(cmd, self.ostree_path, "Failed to mount selected image as an ostree repo.")
@@ -194,7 +180,8 @@ class Image(object):
                 return fd.read()
         except IOError as ex:
             logger.error("error while accessing file %s: %r", file_path, ex)
-            raise ColinException("There was an error while accessing file %s: %r" % (file_path, ex))
+            raise ColinException(
+                "There was an error while accessing file %s: %r" % (file_path, ex))
 
     def get_file(self, file_path, mode="r"):
         """
@@ -232,6 +219,7 @@ class Image(object):
 
 
 class ImageName(object):
+    """ parse image references and access their components easily """
     def __init__(self, registry=None, namespace=None, repository=None, tag=None, digest=None):
         self.registry = registry
         self.namespace = namespace

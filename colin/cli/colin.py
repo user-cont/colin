@@ -68,7 +68,8 @@ def cli():
 @click.option('--pull', is_flag=True,
               help="Pull the image from registry.")
 @click.option('--target-type', type=click.STRING, default="image",
-              help="Type of selected target (one of container, image, dockerfile).")
+              help="Type of selected target (one of container, image, dockerfile, dockertar, "
+                   "ostree). For ostree, please specify image name and path like this: image@path")
 @click.option('--insecure', is_flag=True, default=False,
               help="Pull from an insecure registry (HTTP or invalid TLS).")
 def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose,
