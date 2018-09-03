@@ -17,15 +17,13 @@ import logging
 
 from conu.exceptions import ConuException
 
-from colin.core.target import TargetType
-from .containers import ContainerAbstractCheck
 from .images import ImageAbstractCheck
 from ..result import CheckResult
 
 logger = logging.getLogger(__name__)
 
 
-class FileCheck(ContainerAbstractCheck, ImageAbstractCheck):
+class FileCheck(ImageAbstractCheck):
     """ Check presence of files; w/o mounting the whole FS """
 
     def __init__(self, message, description, reference_url, tags, files, all_must_be_present):
@@ -90,20 +88,9 @@ class FileCheck(ContainerAbstractCheck, ImageAbstractCheck):
                            logs=logs)
 
     def check(self, target):
-        if target.target_type is TargetType.IMAGE:
-            return self._handle_image(target)
-        elif target.target_type is TargetType.CONTAINER:
-            return self._handle_container(target)
-        else:
-            return CheckResult(ok=False,
-                               description=self.description,
-                               message=self.message,
-                               reference_url=self.reference_url,
-                               check_name=self.name,
-                               logs=["Unsupported target, this check can "
-                                     "process only containers and images"])
+        return self._handle_image(target)
 
-# class FileSystemCheck(ContainerAbstractCheck, ImageAbstractCheck):
+# class FileSystemCheck(ImageAbstractCheck):
 #     """ check for presence of files using `docker save` """
 #
 #     def __init__(self, message, description, reference_url, tags, files, all_must_be_present):

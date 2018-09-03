@@ -36,7 +36,7 @@ def get_instructions_from_dockerfile_parse(dfp, instruction):
 
 
 class DockerfileAbstractCheck(AbstractCheck):
-    pass
+    check_type = "dockerfile"
 
 
 class InstructionAbstractCheck(DockerfileAbstractCheck):

@@ -17,13 +17,12 @@ import re
 
 from conu import ConuException
 
-from .containers import ContainerAbstractCheck
 from .images import ImageAbstractCheck
 from ..exceptions import ColinException
 from ..result import CheckResult, FailedCheckResult
 
 
-class CmdAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck):
+class CmdAbstractCheck(ImageAbstractCheck):
 
     def __init__(self, message, description, reference_url, tags, cmd, expected_output=None,
                  expected_regex=None,

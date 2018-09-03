@@ -20,6 +20,7 @@ from six import iteritems
 
 class AbstractCheck(object):
     name = None
+    check_type = None
 
     def __init__(self, message, description, reference_url, tags):
         self.message = message

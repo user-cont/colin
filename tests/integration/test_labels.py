@@ -19,13 +19,16 @@ import pytest
 
 import colin
 from colin.checks.labels import RunOrUsageLabelCheck
-from colin.core.target import Target
+from colin.core.target import ImageTarget
 from tests.conftest import LABELS_IMAGE
 
 
 @pytest.fixture("session")
 def labels_target():
-    target = Target(LABELS_IMAGE, 10, "image", pull=False)
+    target = ImageTarget(target=LABELS_IMAGE,
+                         logging_level=10,
+                         target_type="image",
+                         pull=False)
     yield target
     target.clean_up()
 
