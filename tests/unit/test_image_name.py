@@ -39,9 +39,9 @@ from colin.utils.cont import ImageName
      ('docker.io', None, 'fedora', None,
       'sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')),
     (
-    "docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    ('docker.io', 'centos', 'postgresql-96-centos7', None,
-     'sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')),
+            "docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            ('docker.io', 'centos', 'postgresql-96-centos7', None,
+             'sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')),
 ])
 def test_image_class(string_input, image_result):
     image_name = ImageName.parse(string_input)
@@ -73,9 +73,9 @@ def test_image_class(string_input, image_result):
      "docker.io/fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
      None),
     (
-    "docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    None),
+            "docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            None),
 ])
 def test_image_class_name_tag(string_input, name_result, tag_result):
     image_name = ImageName.parse(string_input)

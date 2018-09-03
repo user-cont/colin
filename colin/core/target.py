@@ -76,7 +76,7 @@ class Target(object):
             cls = TARGET_TYPES[target_type]
             try:
                 return cls(**kwargs)
-            except Exception as ex:
+            except Exception:
                 logger.error("Please make sure that you picked the correct target type: "
                              "--target-type CLI option.")
                 raise
@@ -95,6 +95,10 @@ class Target(object):
 
     @classmethod
     def get_compatible_check_class(cls):
+        """
+        Get the compatible abstract check class.
+        :return: cls
+        """
         return None
 
     @property
