@@ -103,7 +103,6 @@ class FileCheck(ContainerAbstractCheck, ImageAbstractCheck):
                                logs=["Unsupported target, this check can "
                                      "process only containers and images"])
 
-
 # class FileSystemCheck(ContainerAbstractCheck, ImageAbstractCheck):
 #     """ check for presence of files using `docker save` """
 #
@@ -142,4 +141,3 @@ class FileCheck(ContainerAbstractCheck, ImageAbstractCheck):
 #         except Exception as ex:
 #             raise ColinException("There was an error while operating on filesystem of {}: {}"
 #                                  .format(target.instance, str(ex)))
-

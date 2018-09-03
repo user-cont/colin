@@ -47,9 +47,9 @@ class CmdAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck):
                                    check_name=self.name,
                                    logs=["exec: '{}': executable file not found in $PATH".format(
                                        self.cmd)])
-            else:
-                return FailedCheckResult(check=self,
-                                         logs=[str(ex)])
+            return FailedCheckResult(check=self,
+                                     logs=[str(ex)])
+
         except ColinException as ex:
             return FailedCheckResult(check=self,
                                      logs=[str(ex)])
@@ -67,11 +67,12 @@ class CmdAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck):
         if self.expected_output is not None:
             expected_output = self.expected_output == output
             if expected_output:
-                logs.append("ok: Output of the command '{}' was as expected." \
-                            .format(self.cmd))
+                logs.append("ok: Output of the command '{}' "
+                            "was as expected.".format(self.cmd))
             else:
-                logs.append("nok: Output of the command '{}' does not match the expected one: '{}'." \
-                            .format(self.cmd, self.expected_output))
+                logs.append("nok: Output of the command '{}' "
+                            "does not match the expected one: '{}'.".format(self.cmd,
+                                                                            self.expected_output))
 
                 passed = False
 

@@ -30,14 +30,18 @@ from colin.utils.cont import ImageName
     ("some-registry.example.com:8888/image6",
      ('some-registry.example.com:8888', None, 'image6', "latest", None)),
     ("some-registry.example.com:8888/image6:some-example-6.10-something-26365-20180322014912",
-     ('some-registry.example.com:8888', None, 'image6', 'some-example-6.10-something-26365-20180322014912', None)),
+     ('some-registry.example.com:8888', None, 'image6',
+      'some-example-6.10-something-26365-20180322014912', None)),
     ("fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     (None, None, 'fedora', None, 'sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')),
-    ("docker.io/fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     ('docker.io', None, 'fedora', None, 'sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')),
-    ("docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     ('docker.io', 'centos', 'postgresql-96-centos7', None,
+     (None, None, 'fedora', None,
       'sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')),
+    ("docker.io/fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     ('docker.io', None, 'fedora', None,
+      'sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')),
+    (
+    "docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ('docker.io', 'centos', 'postgresql-96-centos7', None,
+     'sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')),
 ])
 def test_image_class(string_input, image_result):
     image_name = ImageName.parse(string_input)
@@ -66,9 +70,12 @@ def test_image_class(string_input, image_result):
     ("fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
      "fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", None),
     ("docker.io/fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "docker.io/fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", None),
-    ("docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", None),
+     "docker.io/fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     None),
+    (
+    "docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    None),
 ])
 def test_image_class_name_tag(string_input, name_result, tag_result):
     image_name = ImageName.parse(string_input)

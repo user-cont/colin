@@ -30,7 +30,6 @@ def ruleset():
         ]
     }
 
-
 # def test_dynamic_check_ls(ruleset):
 #     results = colin.run(target=LS_IMAGE, ruleset=ruleset, logging_level=10)
 #     assert not results.ok

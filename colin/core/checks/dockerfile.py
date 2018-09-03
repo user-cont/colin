@@ -57,9 +57,10 @@ class InstructionAbstractCheck(DockerfileAbstractCheck):
         for inst in instructions:
             match = bool(pattern.match(inst["value"]))
             passed = match == self.required
-            log = "Value for instruction {} {}mach regex: '{}'.".format(inst["content"],
-                                                                        "" if match else "does not ",
-                                                                        self.value_regex)
+            log = "Value for instruction {} " \
+                  "{}mach regex: '{}'.".format(inst["content"],
+                                               "" if match else "does not ",
+                                               self.value_regex)
             logs.append(log)
             logger.debug(log)
 
