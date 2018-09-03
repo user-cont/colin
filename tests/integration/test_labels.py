@@ -20,7 +20,6 @@ import pytest
 import colin
 from colin.checks.labels import RunOrUsageLabelCheck
 from colin.core.target import Target
-from colin.utils.cont import Image
 from tests.conftest import LABELS_IMAGE
 
 

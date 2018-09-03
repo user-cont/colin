@@ -21,7 +21,6 @@ loads AbstractCheck classes from it.
 import inspect
 import logging
 import os
-import sys
 import warnings
 
 import six

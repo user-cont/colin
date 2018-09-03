@@ -17,7 +17,6 @@
 import enum
 import io
 import logging
-import os
 
 import six
 from conu import DockerBackend
@@ -25,11 +24,10 @@ from conu.apidefs.container import Container
 from dockerfile_parse import DockerfileParser
 
 from colin.utils.cont import Image
-from ..core.exceptions import ColinException
 from .checks.containers import ContainerAbstractCheck
 from .checks.dockerfile import DockerfileAbstractCheck
 from .checks.images import ImageAbstractCheck
-
+from ..core.exceptions import ColinException
 
 logger = logging.getLogger(__name__)
 

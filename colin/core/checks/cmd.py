@@ -17,10 +17,10 @@ import re
 
 from conu import ConuException
 
-from ..exceptions import ColinException
-from ..result import CheckResult, FailedCheckResult
 from .containers import ContainerAbstractCheck
 from .images import ImageAbstractCheck
+from ..exceptions import ColinException
+from ..result import CheckResult, FailedCheckResult
 
 
 class CmdAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck):

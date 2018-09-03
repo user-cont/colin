@@ -18,11 +18,9 @@ import logging
 from conu.exceptions import ConuException
 
 from colin.core.target import TargetType
-from ..exceptions import ColinException
-from ..result import CheckResult
 from .containers import ContainerAbstractCheck
 from .images import ImageAbstractCheck
-
+from ..result import CheckResult
 
 logger = logging.getLogger(__name__)
 

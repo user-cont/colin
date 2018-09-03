@@ -4,14 +4,13 @@ This is a temporary module to support unpriv way of interacting with container i
 It will be migrated to conu sooner or later.
 """
 import json
-import os
 import logging
+import os
 import shutil
 import subprocess
 from tempfile import mkdtemp
 
 from colin.core.exceptions import ColinException
-
 
 logger = logging.getLogger(__name__)
 

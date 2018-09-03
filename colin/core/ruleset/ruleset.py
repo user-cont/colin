@@ -17,12 +17,12 @@
 import logging
 import os
 
-from ..constant import EXTS, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME, COLIN_CHECKS_PATH
+from .loader import (RulesetStruct, get_ruleset_struct_from_file,
+                     get_ruleset_struct_from_fileobj)
+from ..constant import EXTS, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME
 from ..exceptions import ColinRulesetException
 from ..loader import CheckLoader
 from ..target import is_compatible
-from .loader import (RulesetStruct, get_ruleset_struct_from_file,
-                     get_ruleset_struct_from_fileobj)
 
 logger = logging.getLogger(__name__)
 
