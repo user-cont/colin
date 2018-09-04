@@ -16,17 +16,15 @@
 
 import logging
 
-from colin.core.checks.containers import ContainerAbstractCheck
 from colin.core.checks.filesystem import FileCheck
+from colin.core.checks.fmf_check import FMFAbstractCheck
 from colin.core.checks.images import ImageAbstractCheck
 from colin.core.result import CheckResult
-from colin.core.checks.fmf_check import FMFAbstractCheck
-
 
 logger = logging.getLogger(__name__)
 
 
-class CmdOrEntrypointCheck(FMFAbstractCheck, ContainerAbstractCheck, ImageAbstractCheck):
+class CmdOrEntrypointCheck(FMFAbstractCheck, ImageAbstractCheck):
     name = "cmd_or_entrypoint"
 
     def check(self, target):
@@ -54,7 +52,7 @@ class HelpFileOrReadmeCheck(FMFAbstractCheck, FileCheck):
     name = "help_file_or_readme"
 
 
-class NoRootCheck(FMFAbstractCheck, ContainerAbstractCheck, ImageAbstractCheck):
+class NoRootCheck(FMFAbstractCheck, ImageAbstractCheck):
     name = "no_root"
 
     def check(self, target):

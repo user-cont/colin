@@ -7,7 +7,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/427eb0c5dfc040cea798b23575dba025)](https://www.codacy.com/app/user-cont/colin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=user-cont/colin&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://ci.centos.org/job/user-cont-colin-master/badge/icon)](https://ci.centos.org/job/user-cont-colin-master/)
 
-Tool to check generic rules and best-practices for containers, images and dockerfiles.
+Tool to check generic rules and best-practices for container images and dockerfiles.
 
 For more information, please check our [documentation on colin.readthedocs.io](https://colin.readthedocs.io/en/latest/).
 
@@ -17,8 +17,8 @@ For more information, please check our [documentation on colin.readthedocs.io](h
 # Features
 
 * Validate a selected artifact against a ruleset.
-* Artifacts can be container images, containers and dockerfiles.
-* We provide a default ruleset we believe every container should satisfy.
+* Artifacts can be container images and dockerfiles.
+* We provide a default ruleset we believe every container image should satisfy.
 * There is a ruleset to validate an artifact whether it complies to [Fedora Container Guidelines](https://fedoraproject.org/wiki/Container:Guidelines)
 * Colin can list available rulesets and list checks in a ruleset.
 * There is a python API available
@@ -52,14 +52,14 @@ $ dnf install -y colin
 $ colin -h
 Usage: colin [OPTIONS] COMMAND [ARGS]...
 
-  COLIN -- Container Linter
+  COLIN -- Image/Dockerfile Linter
 
 Options:
   -V, --version  Show the version and exit.
   -h, --help     Show this message and exit.
 
 Commands:
-  check          Check the image/container/dockerfile...
+  check          Check the image/dockerfile...
   list-checks    Print the checks.
   list-rulesets  List available rulesets.
 ```
@@ -68,7 +68,7 @@ Commands:
 $ colin check -h
 Usage: colin check [OPTIONS] TARGET
 
-  Check the image/container/dockerfile (default).
+  Check the image/dockerfile (default).
 
 Options:
   -r, --ruleset TEXT           Select a predefined ruleset (e.g. fedora).
@@ -101,23 +101,6 @@ WARN:Label 'help' has to be specified.
 WARN:Label 'build-date' has to be specified.
 WARN:Label 'distribution-scope' has to be specified.
 WARN:Label 'vcs-ref' has to be specified.
-...
-```
-
-We can also check containers:
-```
-$ docker run --name some-fedora -d fedora sleep 300
-$ colin -f ./rulesets/default.json some-fedora
-LABELS:
-FAIL:Label 'maintainer' has to be specified.
-FAIL:Label 'name' has to be specified.
-...
-$ docker run --name my-fedora -l maintainer=myname -d fedora sleep 300
-# Adding maintainer name fixes the check:
-$ colin -f ./rulesets/default.json  my-fedora
-LABELS:
-PASS:Label 'maintainer' has to be specified.
-FAIL:Label 'name' has to be specified.
 ...
 ```
 

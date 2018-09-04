@@ -17,13 +17,12 @@ import re
 
 from conu import ConuException
 
+from .images import ImageAbstractCheck
 from ..exceptions import ColinException
 from ..result import CheckResult, FailedCheckResult
-from .containers import ContainerAbstractCheck
-from .images import ImageAbstractCheck
 
 
-class CmdAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck):
+class CmdAbstractCheck(ImageAbstractCheck):
 
     def __init__(self, message, description, reference_url, tags, cmd, expected_output=None,
                  expected_regex=None,
@@ -47,9 +46,9 @@ class CmdAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck):
                                    check_name=self.name,
                                    logs=["exec: '{}': executable file not found in $PATH".format(
                                        self.cmd)])
-            else:
-                return FailedCheckResult(check=self,
-                                         logs=[str(ex)])
+            return FailedCheckResult(check=self,
+                                     logs=[str(ex)])
+
         except ColinException as ex:
             return FailedCheckResult(check=self,
                                      logs=[str(ex)])
@@ -67,11 +66,12 @@ class CmdAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck):
         if self.expected_output is not None:
             expected_output = self.expected_output == output
             if expected_output:
-                logs.append("ok: Output of the command '{}' was as expected." \
-                            .format(self.cmd))
+                logs.append("ok: Output of the command '{}' "
+                            "was as expected.".format(self.cmd))
             else:
-                logs.append("nok: Output of the command '{}' does not match the expected one: '{}'." \
-                            .format(self.cmd, self.expected_output))
+                logs.append("nok: Output of the command '{}' "
+                            "does not match the expected one: '{}'.".format(self.cmd,
+                                                                            self.expected_output))
 
                 passed = False
 

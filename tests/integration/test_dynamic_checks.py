@@ -13,10 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-import colin
 import pytest
-
-from tests.conftest import LS_IMAGE, BASH_IMAGE
 
 
 @pytest.fixture()
@@ -32,7 +29,6 @@ def ruleset():
             }
         ]
     }
-
 
 # def test_dynamic_check_ls(ruleset):
 #     results = colin.run(target=LS_IMAGE, ruleset=ruleset, logging_level=10)

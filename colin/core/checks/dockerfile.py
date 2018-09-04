@@ -16,9 +16,9 @@
 import logging
 import re
 
-from ..result import CheckResult
 from .abstract_check import AbstractCheck
 from .check_utils import check_label
+from ..result import CheckResult
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +36,7 @@ def get_instructions_from_dockerfile_parse(dfp, instruction):
 
 
 class DockerfileAbstractCheck(AbstractCheck):
-    pass
+    check_type = "dockerfile"
 
 
 class InstructionAbstractCheck(DockerfileAbstractCheck):
@@ -57,9 +57,10 @@ class InstructionAbstractCheck(DockerfileAbstractCheck):
         for inst in instructions:
             match = bool(pattern.match(inst["value"]))
             passed = match == self.required
-            log = "Value for instruction {} {}mach regex: '{}'.".format(inst["content"],
-                                                                        "" if match else "does not ",
-                                                                        self.value_regex)
+            log = "Value for instruction {} " \
+                  "{}mach regex: '{}'.".format(inst["content"],
+                                               "" if match else "does not ",
+                                               self.value_regex)
             logs.append(log)
             logger.debug(log)
 

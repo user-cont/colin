@@ -13,14 +13,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from ..result import CheckResult
 from .check_utils import check_label
-from .containers import ContainerAbstractCheck
 from .dockerfile import DockerfileAbstractCheck
 from .images import ImageAbstractCheck
+from ..result import CheckResult
 
 
-class LabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileAbstractCheck):
+class LabelAbstractCheck(ImageAbstractCheck, DockerfileAbstractCheck):
 
     def __init__(self, message, description, reference_url, tags, labels, required,
                  value_regex=None):
@@ -44,8 +43,7 @@ class LabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck, DockerfileA
                            logs=[])
 
 
-class DeprecatedLabelAbstractCheck(ContainerAbstractCheck, ImageAbstractCheck,
-                                   DockerfileAbstractCheck):
+class DeprecatedLabelAbstractCheck(ImageAbstractCheck, DockerfileAbstractCheck):
 
     def __init__(self, message, description, reference_url, tags, old_label, new_label):
         super(DeprecatedLabelAbstractCheck, self) \

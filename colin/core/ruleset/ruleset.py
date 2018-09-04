@@ -17,12 +17,12 @@
 import logging
 import os
 
-from ..constant import EXTS, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME, COLIN_CHECKS_PATH
+from .loader import (RulesetStruct, get_ruleset_struct_from_file,
+                     get_ruleset_struct_from_fileobj)
+from ..constant import EXTS, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME
 from ..exceptions import ColinRulesetException
 from ..loader import CheckLoader
 from ..target import is_compatible
-from .loader import (RulesetStruct, get_ruleset_struct_from_file,
-                     get_ruleset_struct_from_fileobj)
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +56,7 @@ class Ruleset(object):
         """
         Get all checks for given type/tags.
 
-        :param target_type: TargetType enum
+        :param target_type: TargetType class
         :param tags: list of str
         :return: list of check instances
         """
@@ -65,7 +65,8 @@ class Ruleset(object):
             logger.debug("Processing check_struct {}.".format(check_struct))
 
             usable_targets = check_struct.usable_targets
-            if target_type and usable_targets and target_type.name.lower() not in usable_targets:
+            if target_type and usable_targets \
+                    and target_type.get_compatible_check_class().check_type not in usable_targets:
                 logger.info("Skipping... Target type does not match.")
                 continue
 
@@ -91,10 +92,10 @@ class Ruleset(object):
             if not is_compatible(target_type=target_type, check_instance=check_instance):
                 logger.error(
                     "Check '{}' not compatible with the target type: {}".format(
-                        check_instance.name, target_type.name))
+                        check_instance.name, target_type.get_compatible_check_class().check_type))
                 raise ColinRulesetException(
                     "Check {} can't be used for target type {}".format(
-                        check_instance, target_type))
+                        check_instance, target_type.get_compatible_check_class().check_type))
 
             if tags:
                 if not set(tags) < set(check_instance.tags):

@@ -18,7 +18,7 @@ from .abstract_check import AbstractCheck
 
 
 class ImageAbstractCheck(AbstractCheck):
-    pass
+    check_type = "image"
 
 
 class FilesystemAbstractCheck(AbstractCheck):
