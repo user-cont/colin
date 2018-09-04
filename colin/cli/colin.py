@@ -38,7 +38,7 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.version_option(__version__, '--version', '-V')
 def cli():
     """
-    COLIN -- Image/Dockerfile Linter
+    COLIN -- Container Linter
     """
     pass
 

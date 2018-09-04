@@ -1,6 +1,10 @@
 import colin
 
-result = colin.run("image")
+result = colin.run(target="my-image",
+                   target_type="image")
+
 assert result.ok
-assert result.status == "passed"
-print(result.logs())
+print(result.results)
+print(result.get_pretty_string(stat=True,
+                               verbose=True))
+print(result.json())
