@@ -118,7 +118,7 @@ def _set_logging(
         logger = logging.getLogger(logger_name)
         logger.setLevel(level)
 
-        # do not read handlers if they are already present
+        # do not readd handlers if they are already present
         if not [x for x in logger.handlers if isinstance(x, handler_class)]:
             handler_kwargs = handler_kwargs or {}
             handler = handler_class(**handler_kwargs)
