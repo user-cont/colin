@@ -122,7 +122,7 @@ class Target(object):
 
 class DockerfileTarget(Target):
 
-    def __init__(self, target, **kwargs):
+    def __init__(self, target, **_):
         super().__init__()
         logger.debug("Target is a dockerfile.")
         if isinstance(target, io.IOBase):
@@ -149,7 +149,7 @@ class DockerfileTarget(Target):
 
 class ImageTarget(Target):
 
-    def __init__(self, target, pull, insecure=False, **kwargs):
+    def __init__(self, target, pull, insecure=False, **_):
         super().__init__()
         logger.debug("Target is an image.")
         self.instance = Image(target, pull=pull, insecure=insecure)
@@ -172,7 +172,7 @@ class ImageTarget(Target):
 
 class DockerTarTarget(Target):
 
-    def __init__(self, target, **kwargs):
+    def __init__(self, target, **_):
         super().__init__()
         logger.debug("Target is a docker tarball image.")
         self.instance = Image(target, pull=False, iz_dockertar=True)
@@ -195,7 +195,7 @@ class DockerTarTarget(Target):
 
 class OstreeTarget(Target):
 
-    def __init__(self, target, **kwargs):
+    def __init__(self, target, **_):
         super().__init__()
         logger.debug("Target is a ostree repository.")
         self.instance = Image(target, pull=False, iz_ostree=True)
