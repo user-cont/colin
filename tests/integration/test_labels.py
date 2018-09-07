@@ -65,7 +65,7 @@ def test_labels_in_image():
                      "run_or_usage_label": "PASS",
                      "release_label": "FAIL",
                      "architecture_label": "FAIL",
-                     "url_label": "FAIL",
+                     "url_label": "PASS",
                      "help_label": "FAIL",
                      "build-date_label": "FAIL",
                      "distribution-scope_label": "FAIL",

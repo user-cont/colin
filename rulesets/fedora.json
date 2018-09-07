@@ -62,9 +62,7 @@
     },
     {
       "names": [
-        "cmd_or_entrypoint",
         "help_file_or_readme",
-        "no_root",
         "run_or_usage_label"
       ],
       "additional_tags": [

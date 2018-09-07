@@ -57,6 +57,7 @@ def ruleset():
             },
             {
                 "name": "url_label",
+                "usable_targets": ["image"]
             },
             {
                 "name": "build-date_label",
@@ -105,6 +106,7 @@ def ruleset():
 def test_docker_image_target(ruleset):
     results = colin.run(LABELS_IMAGE, "image", ruleset=ruleset, logging_level=10, pull=False)
     assert results.ok
+    assert results.results_per_check["url_label"].ok
 
 
 def test_dockertar_target(tmpdir, ruleset):
@@ -113,6 +115,7 @@ def test_dockertar_target(tmpdir, ruleset):
     subprocess.check_call(cmd)
     results = colin.run(str(tb), "dockertar", ruleset=ruleset, logging_level=10, pull=False)
     assert results.ok
+    assert results.results_per_check["url_label"].ok
 
 
 def test_ostree_target(ruleset):
@@ -128,3 +131,4 @@ def test_ostree_target(ruleset):
     subprocess.check_call(cmd)
     results = colin.run(skopeo_target, "ostree", ruleset=ruleset, logging_level=10, pull=False)
     assert results.ok
+    assert results.results_per_check["url_label"].ok
