@@ -57,6 +57,10 @@ class CheckResults(object):
         self.results = CachingIterable(results)
 
     @property
+    def results_per_check(self):
+        return {r.check_name: r for r in self.results}
+
+    @property
     def _dict_of_results(self):
         """
         Get the dictionary representation of results
