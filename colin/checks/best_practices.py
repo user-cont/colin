@@ -28,7 +28,7 @@ class CmdOrEntrypointCheck(FMFAbstractCheck, ImageAbstractCheck):
     name = "cmd_or_entrypoint"
 
     def check(self, target):
-        raise RuntimeError("This check is not support now: skopeo doesn't provide this metadata.")
+        raise RuntimeError("This check is not supported now: skopeo doesn't provide this metadata.")
         metadata = target.config_metadata
         cmd_present = "Cmd" in metadata and metadata["Cmd"]
         msg_cmd_present = "Cmd {}specified.".format("" if cmd_present else "not ")
@@ -56,7 +56,7 @@ class NoRootCheck(FMFAbstractCheck, ImageAbstractCheck):
     name = "no_root"
 
     def check(self, target):
-        raise RuntimeError("This check is not support now: skopeo doesn't provide this metadata.")
+        raise RuntimeError("This check is not supported now: skopeo doesn't provide this metadata.")
         metadata = target.config_metadata
         root_present = "User" in metadata and metadata["User"] in ["", "0", "root"]
 
