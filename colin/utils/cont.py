@@ -4,29 +4,8 @@ This is a temporary module to support unpriv way of interacting with container i
 It will be migrated to conu sooner or later.
 """
 import logging
-import os
-import subprocess
 
 logger = logging.getLogger(__name__)
-
-
-def run_and_log(cmd, ostree_repo_path, error_msg, wd=None):
-    """ run provided command and log all of its output; set path to ostree repo """
-    logger.debug("running command %s", cmd)
-    kwargs = {
-        "stderr": subprocess.STDOUT,
-        "env": os.environ.copy(),
-    }
-    if ostree_repo_path:
-        # must not exist, ostree will create it
-        kwargs["env"]["ATOMIC_OSTREE_REPO"] = ostree_repo_path
-    if wd:
-        kwargs["cwd"] = wd
-    try:
-        subprocess.check_call(cmd, **kwargs)
-    except subprocess.CalledProcessError as ex:
-        logger.error(error_msg)
-        raise
 
 
 class ImageName(object):

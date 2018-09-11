@@ -142,6 +142,9 @@ class DockerfileTarget(Target):
 
 
 class AbstractImageTarget(Target):
+    """
+    Abstract predecessor for the image-target classes. (e.g. ostree and podman image)
+    """
 
     @property
     def config_metadata(self):
@@ -187,10 +190,10 @@ class AbstractImageTarget(Target):
         :param file_path: str, path to the file
         :return: True if file exists, False if file does not exist
         """
-        p = self.cont_path(file_path)
-        if not os.path.exists(p):
+        real_path = self.cont_path(file_path)
+        if not os.path.exists(real_path):
             return False
-        if not os.path.isfile(p):
+        if not os.path.isfile(real_path):
             raise IOError("%s is not a file" % file_path)
         return True
 
@@ -203,9 +206,9 @@ class AbstractImageTarget(Target):
         """
         if path.startswith("/"):
             path = path[1:]
-        p = os.path.join(self.mount_point, path)
-        logger.debug("path = %s", p)
-        return p
+        real_path = os.path.join(self.mount_point, path)
+        logger.debug("path = %s", real_path)
+        return real_path
 
     @classmethod
     def get_compatible_check_class(cls):
@@ -213,6 +216,9 @@ class AbstractImageTarget(Target):
 
 
 class ImageTarget(AbstractImageTarget):
+    """
+    Represents the podman image as a target.
+    """
 
     def __init__(self, target, pull, insecure=False, **_):
         super().__init__()
@@ -233,7 +239,7 @@ class ImageTarget(AbstractImageTarget):
         if not self._config_metadata:
             cmd = ["podman", "inspect", self.image_name.name]
             loaded_config = json.loads(subprocess.check_output(cmd))
-            if isinstance(loaded_config, list) and len(loaded_config) > 0:
+            if loaded_config and isinstance(loaded_config, list):
                 self._config_metadata = loaded_config[0]
                 # FIXME: Better validation.
             else:
@@ -296,6 +302,9 @@ class ImageTarget(AbstractImageTarget):
 
 
 class OstreeTarget(AbstractImageTarget):
+    """
+    Represents the ostree repository as an image target.
+    """
 
     def __init__(self, target, **_):
         super().__init__()
@@ -390,9 +399,14 @@ class OstreeTarget(AbstractImageTarget):
             kwargs["cwd"] = wd
         try:
             subprocess.check_call(cmd, **kwargs)
-        except subprocess.CalledProcessError as ex:
+        except subprocess.CalledProcessError:
             logger.error(error_msg)
             raise
+
+    @property
+    def config_metadata(self):
+        """ metadata from "Config" key """
+        raise NotImplementedError("Skopeo does not provide metadata yet.")
 
 
 TARGET_TYPES = {

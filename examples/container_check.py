@@ -7,4 +7,4 @@ assert result.ok
 print(result.results)
 print(result.get_pretty_string(stat=True,
                                verbose=True))
-print(result.json())
+print(result.json)
