@@ -81,8 +81,7 @@ def test_labels_in_image():
     labels_dict = {}
     for res in result.results:
         labels_dict[res.check_name] = res.status
-    for key in expected_dict.keys():
-        assert labels_dict[key] == expected_dict[key]
+    assert labels_dict == expected_dict
 
 
 @pytest.mark.parametrize("labels, should_pass", [
