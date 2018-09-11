@@ -6,6 +6,7 @@ import subprocess
 import tempfile
 
 import pytest
+
 import colin
 from tests.conftest import LABELS_IMAGE
 
@@ -105,15 +106,6 @@ def ruleset():
 
 def test_docker_image_target(ruleset):
     results = colin.run(LABELS_IMAGE, "image", ruleset=ruleset, logging_level=10, pull=False)
-    assert results.ok
-    assert results.results_per_check["url_label"].ok
-
-
-def test_dockertar_target(tmpdir, ruleset):
-    tb = tmpdir.join("colin-labels.tar")
-    cmd = ["skopeo", "copy", "docker-daemon:" + LABELS_IMAGE, "docker-archive:/" + str(tb)]
-    subprocess.check_call(cmd)
-    results = colin.run(str(tb), "dockertar", ruleset=ruleset, logging_level=10, pull=False)
     assert results.ok
     assert results.results_per_check["url_label"].ok
 

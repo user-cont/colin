@@ -86,7 +86,7 @@ Options:
                                packages/colin/checks']).
   --pull                       Pull the image from registry.
   --target-type TEXT           Type of selected target (one of image,
-                               dockerfile, dockertar, ostree). For ostree,
+                               dockerfile, ostree). For ostree,
                                please specify image name and path like this:
                                image@path
   --insecure                   Pull from an insecure registry (HTTP or invalid

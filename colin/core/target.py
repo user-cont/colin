@@ -219,6 +219,5 @@ class OstreeTarget(Target):
 TARGET_TYPES = {
     "image": ImageTarget,
     "dockerfile": DockerfileTarget,
-    "dockertar": DockerTarTarget,
     "ostree": OstreeTarget
 }
