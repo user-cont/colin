@@ -52,14 +52,14 @@ $ dnf install -y colin
 $ colin -h
 Usage: colin [OPTIONS] COMMAND [ARGS]...
 
-  COLIN -- Image/Dockerfile Linter
+  COLIN -- Container Linter
 
 Options:
   -V, --version  Show the version and exit.
   -h, --help     Show this message and exit.
 
 Commands:
-  check          Check the image/dockerfile...
+  check          Check the image/dockerfile (default).
   list-checks    Print the checks.
   list-rulesets  List available rulesets.
 ```
@@ -81,6 +81,16 @@ Options:
   -s, --stat                   Print statistics instead of full results.
   -t, --tag TEXT               Filter checks with the tag.
   -v, --verbose                Verbose mode.
+  --checks-path DIRECTORY      Path to directory containing checks (default
+                               ['/home/flachman/.local/lib/python3.6/site-
+                               packages/colin/checks']).
+  --pull                       Pull the image from registry.
+  --target-type TEXT           Type of selected target (one of image,
+                               dockerfile, dockertar, ostree). For ostree,
+                               please specify image name and path like this:
+                               image@path
+  --insecure                   Pull from an insecure registry (HTTP or invalid
+                               TLS).
   -h, --help                   Show this message and exit.
 ```
 
