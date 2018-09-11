@@ -15,14 +15,19 @@
 #
 
 import io
+import json
 import logging
+import os
+import shutil
+import subprocess
+from tempfile import mkdtemp
 
 from dockerfile_parse import DockerfileParser
 
-from colin.utils.cont import Image
 from .checks.dockerfile import DockerfileAbstractCheck
 from .checks.images import ImageAbstractCheck
 from ..core.exceptions import ColinException
+from ..utils.cont import ImageName
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +70,30 @@ class Target(object):
 
     def __init__(self):
         self._labels = None
-        self.instance = None
+
+    @property
+    def labels(self):
+        """
+        Get list of labels from the target instance.
+
+        :return: [str]
+        """
+        return None
+
+    def clean_up(self):
+        """
+        Perform clean up on the low level objects: atm atomic and skopeo mountpoints
+        and data are being cleaned up.
+        """
+        pass
+
+    @classmethod
+    def get_compatible_check_class(cls):
+        """
+        Get the compatible abstract check class.
+        :return: cls
+        """
+        return None
 
     @staticmethod
     def get_instance(target_type, **kwargs):
@@ -84,40 +112,6 @@ class Target(object):
         raise ColinException(
             "Unknown target type '{}'. Please make sure that you picked the correct target type: "
             "--target-type CLI option.".format(target_type))
-
-    def clean_up(self):
-        """
-        Perform clean up on the low level objects: atm atomic and skopeo mountpoints
-        and data are being cleaned up.
-        """
-        if hasattr(self.instance, "clean_up"):
-            self.instance.clean_up()
-
-    @classmethod
-    def get_compatible_check_class(cls):
-        """
-        Get the compatible abstract check class.
-        :return: cls
-        """
-        return None
-
-    @property
-    def config_metadata(self):
-        """ metadata from "Config" key """
-        # FIXME: unfortunately skopeo doesn't provide these; we need to wait for podman
-        return {}
-
-    @property
-    def labels(self):
-        """
-        Get list of labels from the target instance.
-
-        :return: [str]
-        """
-        return None
-
-    def get_output(self, cmd):
-        raise RuntimeError("Unsupported right now.")
 
 
 class DockerfileTarget(Target):
@@ -147,73 +141,258 @@ class DockerfileTarget(Target):
         return DockerfileAbstractCheck
 
 
-class ImageTarget(Target):
+class AbstractImageTarget(Target):
+
+    @property
+    def config_metadata(self):
+        """ metadata from "Config" key """
+        raise NotImplementedError("Unsupported right now.")
+
+    @property
+    def mount_point(self):
+        """ real filesystem """
+        raise NotImplementedError("Unsupported right now.")
+
+    def get_output(self, cmd):
+        raise NotImplementedError("Unsupported right now.")
+
+    def read_file(self, file_path):
+        """
+        read file specified via 'file_path' and return its content - raises an ConuException if
+        there is an issue accessing the file
+        :param file_path: str, path to the file to read
+        :return: str (not bytes), content of the file
+        """
+        try:
+            with open(self.cont_path(file_path)) as fd:
+                return fd.read()
+        except IOError as ex:
+            logger.error("error while accessing file %s: %r", file_path, ex)
+            raise ColinException(
+                "There was an error while accessing file %s: %r" % (file_path, ex))
+
+    def get_file(self, file_path, mode="r"):
+        """
+        provide File object specified via 'file_path'
+        :param file_path: str, path to the file
+        :param mode: str, mode used when opening the file
+        :return: File instance
+        """
+        return open(self.cont_path(file_path), mode=mode)
+
+    def file_is_present(self, file_path):
+        """
+        check if file 'file_path' is present, raises IOError if file_path
+        is not a file
+        :param file_path: str, path to the file
+        :return: True if file exists, False if file does not exist
+        """
+        p = self.cont_path(file_path)
+        if not os.path.exists(p):
+            return False
+        if not os.path.isfile(p):
+            raise IOError("%s is not a file" % file_path)
+        return True
+
+    def cont_path(self, path):
+        """
+        provide absolute path within the container
+
+        :param path: path with container
+        :return: str
+        """
+        if path.startswith("/"):
+            path = path[1:]
+        p = os.path.join(self.mount_point, path)
+        logger.debug("path = %s", p)
+        return p
+
+    @classmethod
+    def get_compatible_check_class(cls):
+        return ImageAbstractCheck
+
+
+class ImageTarget(AbstractImageTarget):
 
     def __init__(self, target, pull, insecure=False, **_):
         super().__init__()
         logger.debug("Target is an image.")
-        self.instance = Image(target, pull=pull, insecure=insecure)
+        self.pull = pull
+        self.insecure = insecure
+        self.image_name = ImageName.parse(target)
+
+        self._config_metadata = None
+        self._mount_point = None
+        self._mounted_container_id = None
+        self.image_id = None
+
+        self._try_image()
+
+    @property
+    def config_metadata(self):
+        if not self._config_metadata:
+            cmd = ["podman", "inspect", self.image_name.name]
+            loaded_config = json.loads(subprocess.check_output(cmd))
+            if isinstance(loaded_config, list) and len(loaded_config) > 0:
+                self._config_metadata = loaded_config[0]
+                # FIXME: Better validation.
+            else:
+                raise ColinException("Cannot load config for the image.")
+
+        return self._config_metadata
 
     @property
     def labels(self):
-        """
-        Get list of labels from the target instance.
+        return self.config_metadata["Labels"] or {}
 
-        :return: [str]
-        """
-        if self._labels is None:
-            self._labels = self.instance.labels
-        return self._labels
+    @property
+    def mount_point(self):
+        """ podman mount -- real filesystem """
+        if self._mount_point is None:
+            cmd_create = ["podman", "create", self.image_name.name, "some-cmd"]
+            self._mounted_container_id = subprocess.check_output(cmd_create).decode().rstrip()
+            cmd_mount = ["podman", "mount", self._mounted_container_id]
+            self._mount_point = subprocess.check_output(cmd_mount).decode().rstrip()
+        return self._mount_point
 
-    @classmethod
-    def get_compatible_check_class(cls):
-        return ImageAbstractCheck
+    def _try_image(self):
+        logger.debug("Trying to find an image.")
+        cmd = ["podman", "images", "--quiet", self.image_name.name]
+        result = subprocess.run(cmd,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+        if result.returncode == 0:
+            self.image_id = result.stdout.decode().rstrip()
+            logger.debug("Image found with id: '{}'.".format(self.image_id))
+        else:
+            if "unable to find" in result.stderr.decode():
+                if self.pull:
+                    logger.debug("Pulling an image.")
+                    cmd_pull = ["podman", "pull", "--quiet", self.image_name.name]
+                    result_pull = subprocess.run(cmd_pull,
+                                                 stdout=subprocess.PIPE,
+                                                 stderr=subprocess.PIPE)
+                    if result_pull.returncode == 0:
+                        self.image_id = result_pull.stdout.decode().rstrip()
+                        logger.debug("Image pulled with id: '{}'.".format(self.image_id))
+                    else:
+                        raise ColinException(
+                            "Cannot pull an image: '{}'.".format(self.image_name.name))
+
+                else:
+                    raise ColinException("Image '{}' not found.".format(self.image_name.name))
+            else:
+                raise ColinException("Podman error: {}".format(result.stderr))
+
+    def clean_up(self):
+        if self._mount_point:
+            cmd = ["podman", "umount", self._mounted_container_id]
+            subprocess.check_call(cmd, stdout=subprocess.DEVNULL)
+            self._mount_point = None
+        if self._mounted_container_id:
+            cmd = ["podman", "rm", self._mounted_container_id]
+            subprocess.check_call(cmd, stdout=subprocess.DEVNULL)
+            self._mounted_container_id = None
 
 
-class DockerTarTarget(Target):
+class OstreeTarget(AbstractImageTarget):
 
     def __init__(self, target, **_):
         super().__init__()
-        logger.debug("Target is a docker tarball image.")
-        self.instance = Image(target, pull=False, iz_dockertar=True)
+        logger.debug("Target is an ostree repository.")
+
+        self.image_name = target
+        if self.image_name.startswith("ostree:"):
+            self.image_name = self.image_name[7:]
+
+        try:
+            self.ref_image_name, self._ostree_path = self.image_name.split("@", 1)
+        except ValueError:
+            raise RuntimeError("Invalid ostree target: should be 'image@path'.")
+
+        self._tmpdir = None
+        self._mount_point = None
+        self._layers_path = None
+        self._labels = None
 
     @property
     def labels(self):
         """
-        Get list of labels from the target instance.
+        Provide labels without the need of dockerd. Instead skopeo is being used.
 
-        :return: [str]
+        :return: dict
         """
         if self._labels is None:
-            self._labels = self.instance.labels
+            cmd = ["skopeo", "inspect", self.skopeo_target]
+            self._labels = json.loads(subprocess.check_output(cmd))["Labels"]
         return self._labels
-
-    @classmethod
-    def get_compatible_check_class(cls):
-        return ImageAbstractCheck
-
-
-class OstreeTarget(Target):
-
-    def __init__(self, target, **_):
-        super().__init__()
-        logger.debug("Target is a ostree repository.")
-        self.instance = Image(target, pull=False, iz_ostree=True)
 
     @property
-    def labels(self):
-        """
-        Get list of labels from the target instance.
+    def layers_path(self):
+        """ Directory with all the layers (docker save). """
+        if self._layers_path is None:
+            self._layers_path = os.path.join(self.tmpdir, "layers")
+        return self._layers_path
 
-        :return: [str]
-        """
-        if self._labels is None:
-            self._labels = self.instance.labels
-        return self._labels
+    @property
+    def mount_point(self):
+        """ ostree checkout -- real filesystem """
+        if self._mount_point is None:
+            self._mount_point = os.path.join(self.tmpdir, "checkout")
+            os.makedirs(self._mount_point)
+            self._checkout()
+        return self._mount_point
 
-    @classmethod
-    def get_compatible_check_class(cls):
-        return ImageAbstractCheck
+    @property
+    def ostree_path(self):
+        """ ostree repository -- content """
+        if self._ostree_path is None:
+            self._ostree_path = os.path.join(self.tmpdir, "ostree-repo")
+            subprocess.check_call(["ostree", "init", "--mode", "bare-user-only",
+                                   "--repo", self._ostree_path])
+        return self._ostree_path
+
+    @property
+    def skopeo_target(self):
+        return "ostree:{}@{}".format(self.ref_image_name, self.ostree_path)
+
+    @property
+    def tmpdir(self):
+        """ Temporary directory holding all the runtime data. """
+        if self._tmpdir is None:
+            self._tmpdir = mkdtemp(prefix="colin-", dir="/var/tmp")
+        return self._tmpdir
+
+    def clean_up(self):
+        cmd = ["atomic", "unmount", self.mount_point]
+        self._run_and_log(cmd, self.ostree_path, "Failed to unmount ostree checkout.")
+        shutil.rmtree(self.tmpdir)
+
+    def _checkout(self):
+        """ check out the image filesystem on self.mount_point """
+        cmd = ["atomic", "mount", "--storage", "ostree", self.ref_image_name, self.mount_point]
+        # self.mount_point has to be created by us
+        self._run_and_log(cmd, self.ostree_path,
+                          "Failed to mount selected image as an ostree repo.")
+
+    @staticmethod
+    def _run_and_log(cmd, ostree_repo_path, error_msg, wd=None):
+        """ run provided command and log all of its output; set path to ostree repo """
+        logger.debug("running command %s", cmd)
+        kwargs = {
+            "stderr": subprocess.STDOUT,
+            "env": os.environ.copy(),
+        }
+        if ostree_repo_path:
+            # must not exist, ostree will create it
+            kwargs["env"]["ATOMIC_OSTREE_REPO"] = ostree_repo_path
+        if wd:
+            kwargs["cwd"] = wd
+        try:
+            subprocess.check_call(cmd, **kwargs)
+        except subprocess.CalledProcessError as ex:
+            logger.error(error_msg)
+            raise
 
 
 TARGET_TYPES = {

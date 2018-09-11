@@ -38,7 +38,7 @@ class FileCheck(ImageAbstractCheck):
         logs = []
         for f in self.files:
             try:
-                f_present = target.instance.file_is_present(f)
+                f_present = target.file_is_present(f)
                 logs.append("File '{}' is {}present."
                             .format(f, "" if f_present else "not "))
             except IOError as ex:
