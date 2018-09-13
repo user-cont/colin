@@ -1,4 +1,4 @@
-.PHONY: check build-test-image test-in-container exec-test check-local check-code-style check-pylint check-bandit
+.PHONY: check build-test-image test-in-container exec-test check-local check-code-style check-pylint check-bandit setup-ci
 
 TEST_IMAGE_NAME := colin-test
 TEST_TARGET = ./tests
@@ -14,8 +14,14 @@ test-in-container-now:
 	@# use it like this: `make test-in-container TEST_TARGET=./tests/integration/test_utils.py`
 	docker run --rm --privileged --security-opt label=disable --cap-add SYS_ADMIN -ti -v $(CURDIR):/src $(TEST_IMAGE_NAME) make exec-test TEST_TARGET="$(TEST_TARGET)"
 
+test-in-ci: setup-ci
+	PYTHONPATH=$(CURDIR) py.test $(TEST_TARGET)
+
 exec-test:
 	PYTHONPATH=$(CURDIR) py.test-3 $(TEST_TARGET)
+
+setup-ci:
+	./setup-ci.sh
 
 check-code-style: check-pylint check-bandit
 
