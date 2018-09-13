@@ -4,7 +4,7 @@ Testing of low level interaction with images.
 import pytest
 
 from colin.core.target import ImageTarget
-from tests.conftest import BUSYBOX_IMAGE, LABELS_IMAGE
+from tests.integration.conftest import BUSYBOX_IMAGE, LABELS_IMAGE
 
 
 def test_file_is_present():

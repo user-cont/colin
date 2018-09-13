@@ -157,6 +157,11 @@ class AbstractImageTarget(Target):
         raise NotImplementedError("Unsupported right now.")
 
     def get_output(self, cmd):
+        """
+        Get output of the command from the container based on this image.
+        :param cmd: [str]
+        :return: str
+        """
         raise NotImplementedError("Unsupported right now.")
 
     def read_file(self, file_path):
@@ -300,6 +305,9 @@ class ImageTarget(AbstractImageTarget):
             subprocess.check_call(cmd, stdout=subprocess.DEVNULL)
             self._mounted_container_id = None
 
+    def get_output(self, cmd):
+        raise NotImplementedError("Unsupported right now.")
+
 
 class OstreeTarget(AbstractImageTarget):
     """
@@ -363,6 +371,7 @@ class OstreeTarget(AbstractImageTarget):
 
     @property
     def skopeo_target(self):
+        """ Skopeo format for the ostree repository. """
         return "ostree:{}@{}".format(self.ref_image_name, self.ostree_path)
 
     @property
@@ -407,6 +416,9 @@ class OstreeTarget(AbstractImageTarget):
     def config_metadata(self):
         """ metadata from "Config" key """
         raise NotImplementedError("Skopeo does not provide metadata yet.")
+
+    def get_output(self, cmd):
+        raise NotImplementedError("Unsupported right now.")
 
 
 TARGET_TYPES = {

@@ -13,6 +13,6 @@ LABEL name="${NAME}" \
     run="docker run <application image>" \
     url="https://project.example.com/"
 
-COPY ./files/usage /files/usage
+COPY files/usage /files/usage
 
 CMD ["/files/usage"]

@@ -8,7 +8,7 @@ import tempfile
 import pytest
 
 import colin
-from tests.conftest import LABELS_IMAGE
+from tests.integration.conftest import LABELS_IMAGE
 
 
 @pytest.fixture()

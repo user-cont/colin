@@ -16,7 +16,7 @@
 import colin
 import pytest
 
-from tests.conftest import BASH_IMAGE, LS_IMAGE
+from tests.integration.conftest import BASH_IMAGE, LS_IMAGE
 
 
 @pytest.fixture()

@@ -20,7 +20,7 @@ import pytest
 import colin
 from colin.checks.labels import RunOrUsageLabelCheck
 from colin.core.target import ImageTarget
-from tests.conftest import LABELS_IMAGE
+from tests.integration.conftest import LABELS_IMAGE
 
 
 @pytest.fixture("session")

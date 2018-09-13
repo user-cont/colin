@@ -28,7 +28,7 @@ IMAGES = {
 def build_images():
     """ build container images we need for testing """
     this_dir = os.path.abspath(os.path.dirname(__file__))
-    data_dir = os.path.join(this_dir, "data")
+    data_dir = os.path.join(this_dir, os.path.pardir, "data")
     for image_name, image_data in IMAGES.items():
         cmd_create = ["podman", "build", "-t", image_name, "-f",
                       image_data["dockerfile_path"], data_dir]
