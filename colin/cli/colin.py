@@ -38,7 +38,7 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.version_option(__version__, '--version', '-V')
 def cli():
     """
-    COLIN -- Image/Dockerfile Linter
+    COLIN -- Container Linter
     """
     pass
 
@@ -68,7 +68,7 @@ def cli():
 @click.option('--pull', is_flag=True,
               help="Pull the image from registry.")
 @click.option('--target-type', type=click.STRING, default="image",
-              help="Type of selected target (one of image, dockerfile, dockertar, "
+              help="Type of selected target (one of image, dockerfile, "
                    "ostree). For ostree, please specify image name and path like this: image@path")
 @click.option('--insecure', is_flag=True, default=False,
               help="Pull from an insecure registry (HTTP or invalid TLS).")

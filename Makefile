@@ -1,25 +1,27 @@
-.PHONY: check build-test-image build-labels-image test-in-container exec-test check-local check-code-style check-pylint check-bandit
+.PHONY: check build-test-image test-in-container exec-test check-local check-code-style check-pylint check-bandit setup-ci
 
 TEST_IMAGE_NAME := colin-test
-TEST_IMAGE_LABELS_NAME := colin-labels
 TEST_TARGET = ./tests
 
-check: build-test-image build-labels-image test-in-container
+check: build-test-image test-in-container
 
 build-test-image:
 	docker build --network host --tag=$(TEST_IMAGE_NAME) -f ./Dockerfile.tests .
 
-build-labels-image:
-	cd tests/data && docker build --tag=$(TEST_IMAGE_LABELS_NAME) .
-
-test-in-container: build-test-image build-labels-image test-in-container-now
+test-in-container: build-test-image test-in-container-now
 
 test-in-container-now:
 	@# use it like this: `make test-in-container TEST_TARGET=./tests/integration/test_utils.py`
-	docker run --net=host --rm -v /dev:/dev:ro --security-opt label=disable --cap-add SYS_ADMIN -ti -v /var/run/docker.sock:/var/run/docker.sock:Z -v $(CURDIR):/src $(TEST_IMAGE_NAME) make exec-test TEST_TARGET="$(TEST_TARGET)"
+	docker run --rm --privileged --security-opt label=disable --cap-add SYS_ADMIN -ti -v $(CURDIR):/src $(TEST_IMAGE_NAME) make exec-test TEST_TARGET="$(TEST_TARGET)"
+
+test-in-ci: setup-ci
+	PYTHONPATH=$(CURDIR) py.test $(TEST_TARGET)
 
 exec-test:
 	PYTHONPATH=$(CURDIR) py.test-3 $(TEST_TARGET)
+
+setup-ci:
+	./setup-ci.sh
 
 check-code-style: check-pylint check-bandit
 

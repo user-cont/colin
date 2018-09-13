@@ -6,8 +6,9 @@ import subprocess
 import tempfile
 
 import pytest
+
 import colin
-from tests.conftest import LABELS_IMAGE
+from tests.integration.conftest import LABELS_IMAGE
 
 
 @pytest.fixture()
@@ -103,17 +104,8 @@ def ruleset():
     }
 
 
-def test_docker_image_target(ruleset):
+def test_podman_image_target(ruleset):
     results = colin.run(LABELS_IMAGE, "image", ruleset=ruleset, logging_level=10, pull=False)
-    assert results.ok
-    assert results.results_per_check["url_label"].ok
-
-
-def test_dockertar_target(tmpdir, ruleset):
-    tb = tmpdir.join("colin-labels.tar")
-    cmd = ["skopeo", "copy", "docker-daemon:" + LABELS_IMAGE, "docker-archive:/" + str(tb)]
-    subprocess.check_call(cmd)
-    results = colin.run(str(tb), "dockertar", ruleset=ruleset, logging_level=10, pull=False)
     assert results.ok
     assert results.results_per_check["url_label"].ok
 
@@ -125,10 +117,13 @@ def test_ostree_target(ruleset):
     os.makedirs(ostree_path)
     image_name = 'colin-labels'
     skopeo_target = "ostree:%s@%s" % (image_name, ostree_path)
+
     subprocess.check_call(["ostree", "init", "--mode", "bare-user-only",
                            "--repo", ostree_path])
-    cmd = ["skopeo", "copy", "docker-daemon:" + LABELS_IMAGE, skopeo_target]
+
+    cmd = ["podman", "push", image_name, skopeo_target]
     subprocess.check_call(cmd)
+
     results = colin.run(skopeo_target, "ostree", ruleset=ruleset, logging_level=10, pull=False)
     assert results.ok
     assert results.results_per_check["url_label"].ok

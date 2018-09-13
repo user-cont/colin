@@ -1,21 +1,20 @@
 """
 Testing of low level interaction with images.
 """
-from colin.utils.cont import Image
-
-from tests.conftest import BUSYBOX_IMAGE, LABELS_IMAGE
-
 import pytest
+
+from colin.core.target import ImageTarget
+from tests.integration.conftest import BUSYBOX_IMAGE, LABELS_IMAGE
 
 
 def test_file_is_present():
-    im = Image(BUSYBOX_IMAGE, True)
-    assert im.file_is_present("/etc/passwd")
-    assert not im.file_is_present("/oglogoblogologlo")
+    image = ImageTarget(target=BUSYBOX_IMAGE, pull=True)
+    assert image.file_is_present("/etc/passwd")
+    assert not image.file_is_present("/oglogoblogologlo")
     with pytest.raises(IOError):
-        im.file_is_present("/etc")
+        image.file_is_present("/etc")
 
 
 def test_labels_are_present():
-    im = Image(LABELS_IMAGE, False)
-    assert isinstance(im.labels, dict)
+    image = ImageTarget(target=LABELS_IMAGE, pull=False)
+    assert isinstance(image.labels, dict)

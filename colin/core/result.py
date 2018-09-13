@@ -18,8 +18,8 @@ import json
 
 import six
 
-from ..utils.caching_iterable import CachingIterable
 from .constant import (COLOURS, ERROR, FAILED, OUTPUT_CHARS, PASSED)
+from ..utils.caching_iterable import CachingIterable
 
 
 class CheckResult(object):
@@ -188,7 +188,7 @@ class CheckResults(object):
 class FailedCheckResult(CheckResult):
 
     def __init__(self, check, logs=None):
-        super(self.__class__, self) \
+        super(FailedCheckResult, self) \
             .__init__(ok=False,
                       message=check.message,
                       description=check.description,
