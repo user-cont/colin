@@ -16,7 +16,6 @@
 import pytest
 
 import colin
-from colin.core.target import ImageTarget
 
 
 @pytest.fixture()
@@ -50,7 +49,7 @@ def test_help_file_or_readme_ls(ruleset, target_ls):
 def help_file_or_readme_test(ruleset, image, should_pass):
     """ verify that help_file_or_readme check works well """
     results = colin.run(target=image.name,
-                        target_type="image" if isinstance(image, ImageTarget) else "ostree",
+                        target_type=image.target_type,
                         ruleset=ruleset, logging_level=10, pull=False)
     assert results.ok
     assert results.fail is not should_pass
