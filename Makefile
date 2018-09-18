@@ -15,7 +15,7 @@ test-in-container-now:
 	docker run --rm --privileged --security-opt label=disable --cap-add SYS_ADMIN -ti -v $(CURDIR):/src $(TEST_IMAGE_NAME) make exec-test TEST_TARGET="$(TEST_TARGET)"
 
 test-in-ci: setup-ci
-	PYTHONPATH=$(CURDIR) py.test $(TEST_TARGET)
+	PYTHONPATH=$(CURDIR) py.test --cov=colin $(TEST_TARGET)
 
 exec-test:
 	PYTHONPATH=$(CURDIR) py.test-3 --cov=colin $(TEST_TARGET)
