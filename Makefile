@@ -18,7 +18,7 @@ test-in-ci: setup-ci
 	PYTHONPATH=$(CURDIR) py.test $(TEST_TARGET)
 
 exec-test:
-	PYTHONPATH=$(CURDIR) py.test-3 $(TEST_TARGET)
+	PYTHONPATH=$(CURDIR) py.test-3 --cov=colin $(TEST_TARGET)
 
 setup-ci:
 	./setup-ci.sh
