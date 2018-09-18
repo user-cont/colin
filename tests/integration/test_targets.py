@@ -1,14 +1,11 @@
 """
 Test different target types.
 """
-import os
-import subprocess
-import tempfile
 
 import pytest
 
 import colin
-from tests.integration.conftest import LABELS_IMAGE
+from tests.integration.conftest import LABELS_IMAGE, convert_image_to_ostree, get_skopeo_path
 
 
 @pytest.fixture()
@@ -111,19 +108,9 @@ def test_podman_image_target(ruleset):
 
 
 def test_ostree_target(ruleset):
-    # /tmp is tmpfs and ostree can't do its magic there
-    tmpdir_path = tempfile.mkdtemp(prefix="pytest-", dir="/var/tmp")
-    ostree_path = os.path.join(tmpdir_path, "os3")
-    os.makedirs(ostree_path)
-    image_name = 'colin-labels'
-    skopeo_target = "ostree:%s@%s" % (image_name, ostree_path)
-
-    subprocess.check_call(["ostree", "init", "--mode", "bare-user-only",
-                           "--repo", ostree_path])
-
-    cmd = ["podman", "push", image_name, skopeo_target]
-    subprocess.check_call(cmd)
-
+    image_name = "colin-labels"
+    ostree_path = convert_image_to_ostree(image_name=image_name)
+    skopeo_target = get_skopeo_path(image_name=image_name, ostree_path=ostree_path)
     results = colin.run(skopeo_target, "ostree", ruleset=ruleset, logging_level=10, pull=False)
     assert results.ok
     assert results.results_per_check["url_label"].ok

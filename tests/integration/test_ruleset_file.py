@@ -14,11 +14,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import yaml
 import tempfile
 
-import colin
 import pytest
+import yaml
+
+import colin
 
 
 @pytest.fixture()
@@ -72,18 +73,20 @@ def expected_dict():
             }
 
 
-def get_results_from_colin_labels_image(ruleset_name=None, ruleset_file=None, ruleset=None):
-    return colin.run("colin-labels", "image", ruleset_name=ruleset_name,
+def get_results_from_colin_labels_image(image, ruleset_name=None, ruleset_file=None, ruleset=None):
+    return colin.run(image.name, image.target_type, ruleset_name=ruleset_name,
                      ruleset_file=ruleset_file, ruleset=ruleset)
 
 
-def test_specific_ruleset_as_fileobj(tmpdir, ruleset, expected_dict):
+def test_specific_ruleset_as_fileobj(tmpdir, ruleset, expected_dict,
+                                     target_label):
     (_, t) = tempfile.mkstemp(dir=str(tmpdir))
 
     with open(t, "w") as f:
         yaml.dump(ruleset, f)
     with open(t, "r") as f:
-        result = get_results_from_colin_labels_image(ruleset_file=f)
+        result = get_results_from_colin_labels_image(image=target_label,
+                                                     ruleset_file=f)
     assert result
     labels_dict = {}
     for res in result.results:
@@ -92,8 +95,9 @@ def test_specific_ruleset_as_fileobj(tmpdir, ruleset, expected_dict):
         assert labels_dict[key] == expected_dict[key]
 
 
-def test_specific_ruleset_directly(ruleset, expected_dict):
-    result = get_results_from_colin_labels_image(ruleset=ruleset)
+def test_specific_ruleset_directly(ruleset, expected_dict, target_label):
+    result = get_results_from_colin_labels_image(image=target_label,
+                                                 ruleset=ruleset)
     assert result
     labels_dict = {}
     for res in result.results:
