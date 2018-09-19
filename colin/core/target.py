@@ -70,6 +70,7 @@ class Target(object):
 
     def __init__(self):
         self._labels = None
+        self.target_name = None
 
     @property
     def labels(self):
@@ -115,9 +116,11 @@ class Target(object):
 
 
 class DockerfileTarget(Target):
+    target_type = "dockerfile"
 
     def __init__(self, target, **_):
         super().__init__()
+        self.target_name = target
         logger.debug("Target is a dockerfile.")
         if isinstance(target, io.IOBase):
             logger.debug("Target is a dockerfile loaded from the file-like object.")
@@ -224,13 +227,15 @@ class ImageTarget(AbstractImageTarget):
     """
     Represents the podman image as a target.
     """
+    target_type = "image"
 
     def __init__(self, target, pull, insecure=False, **_):
         super().__init__()
         logger.debug("Target is an image.")
         self.pull = pull
         self.insecure = insecure
-        self.image_name = ImageName.parse(target)
+        self.image_name_obj = ImageName.parse(target)
+        self.target_name = self.image_name_obj.name
 
         self._config_metadata = None
         self._mount_point = None
@@ -242,7 +247,7 @@ class ImageTarget(AbstractImageTarget):
     @property
     def config_metadata(self):
         if not self._config_metadata:
-            cmd = ["podman", "inspect", self.image_name.name]
+            cmd = ["podman", "inspect", self.target_name]
             loaded_config = json.loads(subprocess.check_output(cmd))
             if loaded_config and isinstance(loaded_config, list):
                 self._config_metadata = loaded_config[0]
@@ -260,7 +265,7 @@ class ImageTarget(AbstractImageTarget):
     def mount_point(self):
         """ podman mount -- real filesystem """
         if self._mount_point is None:
-            cmd_create = ["podman", "create", self.image_name.name, "some-cmd"]
+            cmd_create = ["podman", "create", self.target_name, "some-cmd"]
             self._mounted_container_id = subprocess.check_output(cmd_create).decode().rstrip()
             cmd_mount = ["podman", "mount", self._mounted_container_id]
             self._mount_point = subprocess.check_output(cmd_mount).decode().rstrip()
@@ -268,7 +273,7 @@ class ImageTarget(AbstractImageTarget):
 
     def _try_image(self):
         logger.debug("Trying to find an image.")
-        cmd = ["podman", "images", "--quiet", self.image_name.name]
+        cmd = ["podman", "images", "--quiet", self.target_name]
         result = subprocess.run(cmd,
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
@@ -279,7 +284,7 @@ class ImageTarget(AbstractImageTarget):
             if "unable to find" in result.stderr.decode():
                 if self.pull:
                     logger.debug("Pulling an image.")
-                    cmd_pull = ["podman", "pull", "--quiet", self.image_name.name]
+                    cmd_pull = ["podman", "pull", "--quiet", self.target_name]
                     result_pull = subprocess.run(cmd_pull,
                                                  stdout=subprocess.PIPE,
                                                  stderr=subprocess.PIPE)
@@ -288,10 +293,10 @@ class ImageTarget(AbstractImageTarget):
                         logger.debug("Image pulled with id: '{}'.".format(self.image_id))
                     else:
                         raise ColinException(
-                            "Cannot pull an image: '{}'.".format(self.image_name.name))
+                            "Cannot pull an image: '{}'.".format(self.target_name))
 
                 else:
-                    raise ColinException("Image '{}' not found.".format(self.image_name.name))
+                    raise ColinException("Image '{}' not found.".format(self.target_name))
             else:
                 raise ColinException("Podman error: {}".format(result.stderr))
 
@@ -313,17 +318,18 @@ class OstreeTarget(AbstractImageTarget):
     """
     Represents the ostree repository as an image target.
     """
+    target_type = "ostree"
 
     def __init__(self, target, **_):
         super().__init__()
         logger.debug("Target is an ostree repository.")
 
-        self.image_name = target
-        if self.image_name.startswith("ostree:"):
-            self.image_name = self.image_name[7:]
+        self.target_name = target
+        if self.target_name.startswith("ostree:"):
+            self.target_name = self.target_name[7:]
 
         try:
-            self.ref_image_name, self._ostree_path = self.image_name.split("@", 1)
+            self.ref_image_name, self._ostree_path = self.target_name.split("@", 1)
         except ValueError:
             raise RuntimeError("Invalid ostree target: should be 'image@path'.")
 

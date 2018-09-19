@@ -10,7 +10,7 @@ echo "yum -y install make gcc python36 python36-devel python36-setuptools python
 yum -y install make gcc python36 python36-devel python36-setuptools python36-pip python36-cffi python36-pycparser
 
 echo "pip3 install pytest xattr"
-pip3.6 install pytest xattr
+pip3.6 install pytest pytest-cov xattr
 
 echo "yum copr enable -y baude/Upstream_CRIO_Family"
 yum copr enable -y baude/Upstream_CRIO_Family

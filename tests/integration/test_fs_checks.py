@@ -13,10 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-import colin
 import pytest
 
-from tests.integration.conftest import BASH_IMAGE, LS_IMAGE
+import colin
 
 
 @pytest.fixture()
@@ -35,13 +34,22 @@ def ruleset():
     }
 
 
-@pytest.mark.parametrize("image_name,should_pass", [
-    (LS_IMAGE, False),
-    (BASH_IMAGE, True),
-])
-def test_help_file_or_readme(ruleset, image_name, should_pass):
+def test_help_file_or_readme_bash(ruleset, target_bash):
+    help_file_or_readme_test(ruleset=ruleset,
+                             image=target_bash,
+                             should_pass=True)
+
+
+def test_help_file_or_readme_ls(ruleset, target_ls):
+    help_file_or_readme_test(ruleset=ruleset,
+                             image=target_ls,
+                             should_pass=False)
+
+
+def help_file_or_readme_test(ruleset, image, should_pass):
     """ verify that help_file_or_readme check works well """
-    results = colin.run(image_name, "image", ruleset=ruleset, logging_level=10, pull=False)
+    results = colin.run(target=image.target_name,
+                        target_type=image.target_type,
+                        ruleset=ruleset, logging_level=10, pull=False)
     assert results.ok
     assert results.fail is not should_pass
-

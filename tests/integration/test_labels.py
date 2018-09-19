@@ -19,18 +19,7 @@ import pytest
 
 import colin
 from colin.checks.labels import RunOrUsageLabelCheck
-from colin.core.target import ImageTarget
-from tests.integration.conftest import LABELS_IMAGE
-
-
-@pytest.fixture("session")
-def labels_target():
-    target = ImageTarget(target=LABELS_IMAGE,
-                         logging_level=10,
-                         target_type="image",
-                         pull=False)
-    yield target
-    target.clean_up()
+from colin.core.target import DockerfileTarget
 
 
 @pytest.fixture()
@@ -45,17 +34,19 @@ def empty_ruleset():
     }
 
 
-def get_results_from_colin_labels_image():
-    return colin.run(LABELS_IMAGE, "image", ruleset_name="fedora",
+def get_results_from_colin_labels_image(target):
+    return colin.run(target=target.target_name,
+                     target_type=target.target_type,
+                     ruleset_name="fedora",
                      logging_level=logging.DEBUG, pull=False)
 
 
-def test_colin_image():
-    assert get_results_from_colin_labels_image()
+def test_colin_image(target_label):
+    assert get_results_from_colin_labels_image(target=target_label)
 
 
-def test_labels_in_image():
-    result = get_results_from_colin_labels_image()
+def test_labels_in_image(target_label):
+    result = get_results_from_colin_labels_image(target=target_label)
     assert result
     expected_dict = {"maintainer_label": "PASS",
                      "name_label": "PASS",
@@ -78,6 +69,14 @@ def test_labels_in_image():
                      # "cmd_or_entrypoint": "PASS",
                      # "no_root": "FAIL",
                      }
+
+    if isinstance(target_label, DockerfileTarget):
+        expected_dict.update({'description_or_io.k8s.description_label': 'PASS',
+                              'from_tag_not_latest': 'FAIL',
+                              'maintainer_deprecated': 'PASS'}
+                             )
+        del (expected_dict['help_file_or_readme'])
+        del (expected_dict['run_or_usage_label'])
     labels_dict = {}
     for res in result.results:
         labels_dict[res.check_name] = res.status
@@ -91,10 +90,10 @@ def test_labels_in_image():
     (["something", "different"], False),
     (["something", "completely", "different"], False),
 ])
-def test_multiple_labels_check(labels, should_pass, labels_target):
+def test_multiple_labels_check(labels, should_pass, target_label):
     check = RunOrUsageLabelCheck()
     check.labels = labels
 
-    result = check.check(labels_target)
+    result = check.check(target_label)
 
     assert result.ok == should_pass
