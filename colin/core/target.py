@@ -407,10 +407,11 @@ class OstreeTarget(AbstractImageTarget):
         if wd:
             kwargs["cwd"] = wd
         try:
-            subprocess.check_call(cmd, **kwargs)
+            out = subprocess.check_output(cmd, **kwargs)
         except subprocess.CalledProcessError:
             logger.error(error_msg)
             raise
+        logger.debug("%s", out)
 
     @property
     def config_metadata(self):
