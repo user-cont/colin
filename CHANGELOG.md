@@ -1,3 +1,29 @@
+# 0.2.0
+
+## Breaking changes
+
+* switch from docker to podman, thanks to @lachmanfrantisek
+* remove `container` target type
+* new cli arg: target type (defaults to image -- for podman)
+
+## New Features
+
+* add `ostree` target, thanks to @TomasTomecek
+* use fmf format in checks, thanks to @jscotka
+* allow rulesets in the YAML format, thanks to @SkullTech
+
+## Fixes
+
+* many code style fixes
+* use Centos CI, thanks to @jpopelka
+* better loading of the ruleset files (subdir -> user -> system), thanks to @SkullTech
+* check existence of json output file directory
+* simpler loading of checks
+* tinker CONTRIBUTING.md
+* do not mount whole FS when checking for files
+* improve tests quality
+
+
 # 0.1.0
 
 Welcome to the first official release of colin. With `0.0.*` releases we tried to iterate on a minimal viable product and with this `0.1.0` release we believe it's finally here.
