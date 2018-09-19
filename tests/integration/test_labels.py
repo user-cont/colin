@@ -35,7 +35,7 @@ def empty_ruleset():
 
 
 def get_results_from_colin_labels_image(target):
-    return colin.run(target=target.name,
+    return colin.run(target=target.target_name,
                      target_type=target.target_type,
                      ruleset_name="fedora",
                      logging_level=logging.DEBUG, pull=False)

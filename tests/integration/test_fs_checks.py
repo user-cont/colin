@@ -48,7 +48,7 @@ def test_help_file_or_readme_ls(ruleset, target_ls):
 
 def help_file_or_readme_test(ruleset, image, should_pass):
     """ verify that help_file_or_readme check works well """
-    results = colin.run(target=image.name,
+    results = colin.run(target=image.target_name,
                         target_type=image.target_type,
                         ruleset=ruleset, logging_level=10, pull=False)
     assert results.ok
