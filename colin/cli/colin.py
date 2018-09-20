@@ -19,8 +19,11 @@ import os
 import sys
 
 import click
+import conu
 import six
 
+from colin.utils.cmd_tools import get_version_msg_from_the_cmd, is_rpm_installed, \
+    get_version_of_the_python_package
 from .default_group import DefaultGroup
 from ..core.checks.abstract_check import AbstractCheck
 from ..core.colin import get_checks, run
@@ -73,7 +76,7 @@ def cli():
 @click.option('--insecure', is_flag=True, default=False,
               help="Pull from an insecure registry (HTTP or invalid TLS).")
 def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose,
-        checks_paths, target_type, pull, insecure):
+          checks_paths, target_type, pull, insecure):
     """
     Check the image/dockerfile (default).
     """
@@ -203,9 +206,31 @@ def list_rulesets(debug):
             raise click.ClickException(str(ex))
 
 
+@click.command(name="info",
+               context_settings=CONTEXT_SETTINGS)
+def info():
+    """
+    Show info about colin and its dependencies.
+    """
+    installation_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+
+    click.echo("colin {} {}".format(__version__, installation_path))
+    click.echo("colin-cli {}\n".format(os.path.realpath(__file__)))
+
+    click.echo(get_version_of_the_python_package(module=conu))
+
+    rpm_installed = is_rpm_installed()
+    click.echo(get_version_msg_from_the_cmd(package_name="podman", use_rpm=rpm_installed))
+    click.echo(get_version_msg_from_the_cmd(package_name="skopeo", use_rpm=rpm_installed))
+    click.echo(get_version_msg_from_the_cmd(package_name="ostree",
+                                            use_rpm=rpm_installed,
+                                            max_lines_of_the_output=3))
+
+
 cli.add_command(check)
 cli.add_command(list_checks)
 cli.add_command(list_rulesets)
+cli.add_command(info)
 cli.set_default_command(check)
 
 
