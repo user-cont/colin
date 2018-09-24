@@ -13,9 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
+import conu
 from click.testing import CliRunner
-from colin.cli.colin import check, list_checks, list_rulesets
+
+from colin.cli.colin import check, list_checks, list_rulesets, info
+from colin.version import __version__
 
 
 def _call_colin(fnc, parameters=None):
@@ -113,3 +115,21 @@ Options:
 """
     assert result.exit_code == 0
     assert result.output == expected_result
+
+
+def test_info():
+    result = _call_colin(info)
+    assert result.exit_code == 0
+
+    output = result.output.split("\n")
+    assert output[0].startswith("colin")
+    assert output[0].endswith("/colin")
+    assert __version__ in output[0]
+    assert "cli/colin.py" in output[1]
+
+    assert output[3].startswith("conu")
+    assert conu.version in output[3]
+    assert output[3].endswith("/conu")
+    assert output[4].startswith("podman")
+    assert output[5].startswith("skopeo")
+    assert output[6].startswith("ostree")
