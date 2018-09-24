@@ -24,9 +24,9 @@ def get_version_of_the_python_package(module):
     :param module: module to show info about
     :return: str 'name version path'
     """
-    return "{} {} {}".format(module.__name__,
-                             module.__version__,
-                             module.__path__[0])
+    return "{} {} {}".format(getattr(module, "__name__", None),
+                             getattr(module, "__version__", None),
+                             getattr(module, "__path__", [None])[0])
 
 
 def get_version_msg_from_the_cmd(package_name, cmd=None, use_rpm=None,
