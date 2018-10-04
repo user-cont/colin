@@ -168,6 +168,13 @@ def get_ruleset_dirs():
         logger.debug("Ruleset directory found in current directory ('{}').".format(cwd_rulesets))
         ruleset_dirs.append(cwd_rulesets)
 
+    if "VIRTUAL_ENV" in os.environ:
+        venv_local_share = os.path.join(os.environ["VIRTUAL_ENV"],
+                                        RULESET_DIRECTORY)
+        if os.path.isdir(venv_local_share):
+            logger.debug("Virtual env ruleset directory found ('{}').".format(venv_local_share))
+            ruleset_dirs.append(venv_local_share)
+
     local_share = os.path.join(os.path.expanduser("~"),
                                ".local",
                                RULESET_DIRECTORY)
