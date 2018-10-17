@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+
 import conu
 from click.testing import CliRunner
 
@@ -20,12 +21,13 @@ from colin.cli.colin import check, list_checks, list_rulesets, info
 from colin.version import __version__
 
 
-def _call_colin(fnc, parameters=None):
+def _call_colin(fnc, parameters=None, envs=None):
     runner = CliRunner()
+    envs = envs or {}
     if not parameters:
-        return runner.invoke(fnc)
+        return runner.invoke(fnc, env=envs)
     else:
-        return runner.invoke(fnc, parameters)
+        return runner.invoke(fnc, parameters, env=envs)
 
 
 def _common_help_options(result):
@@ -133,3 +135,8 @@ def test_info():
     assert output[4].startswith("podman")
     assert output[5].startswith("skopeo")
     assert output[6].startswith("ostree")
+
+
+def test_env():
+    result = _call_colin(info, envs={"COLIN_HELP": "1"})
+    assert "Usage" in result.output
