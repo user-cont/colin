@@ -41,8 +41,9 @@ def _common_help_options(result):
 def test_check_command():
     result = _call_colin(check)
     expected_output = """Usage: check [OPTIONS] TARGET
+Try "check -h" for help.
 
-Error: Missing argument "target".
+Error: Missing argument "TARGET".
 """
     assert result.exit_code == 2
     assert result.output == expected_output
