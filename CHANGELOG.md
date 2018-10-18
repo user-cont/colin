@@ -1,3 +1,11 @@
+# 0.2.1
+
+## New Features
+
+* Allow setting CLI options via environment variables
+* Allow loading rulesets from virtualenv
+* Add info subcommand
+
 # 0.2.0
 
 ## Breaking changes
