@@ -19,6 +19,7 @@ import os
 
 from .loader import (RulesetStruct, get_ruleset_struct_from_file,
                      get_ruleset_struct_from_fileobj)
+from ..checks.check_utils import NotLoadedCheck
 from ..constant import EXTS, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME
 from ..exceptions import ColinRulesetException
 from ..loader import CheckLoader
@@ -72,14 +73,17 @@ class Ruleset(object):
 
             try:
                 check_class = self.check_loader.mapping[check_struct.name]
-            except KeyError:
-                raise ColinRulesetException(
-                    "Can't find code for check {}.".format(check_struct.name))
-            try:
                 check_instance = check_class()
+            except KeyError as ke:
+                check_instance = NotLoadedCheck(check_name=check_struct.name,
+                                                reason="not found")
+                logger.debug("Cannot find a code for the check {}. ({})".format(check_struct.name,
+                                                                                ke))
             except Exception as ex:
-                raise ColinRulesetException(
-                    "Can't instantiate check {}: {}".format(check_class.__name__, ex))
+                check_instance = NotLoadedCheck(check_name=check_struct.name,
+                                                reason="not instantiated")
+                logger.debug("Cannot instantiate the check {}. ({})".format(check_struct.name,
+                                                                            ex))
 
             if check_struct.tags:
                 logger.info("Overriding check's tags %s with the one defined in ruleset: %s",

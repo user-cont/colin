@@ -18,7 +18,7 @@ import logging
 
 from colin.core.checks.filesystem import FileCheck
 from colin.core.checks.fmf_check import FMFAbstractCheck
-from colin.core.checks.images import ImageAbstractCheck
+from colin.core.checks.abstract_check import ImageAbstractCheck
 from colin.core.result import CheckResult
 
 logger = logging.getLogger(__name__)

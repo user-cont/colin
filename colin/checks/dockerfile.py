@@ -13,7 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from colin.core.checks.dockerfile import DockerfileAbstractCheck, InstructionCountAbstractCheck
+
+from colin.core.checks.abstract_check import DockerfileAbstractCheck
+from colin.core.checks.dockerfile import InstructionCountAbstractCheck
 from colin.core.checks.fmf_check import FMFAbstractCheck
 from colin.core.exceptions import ColinException
 from colin.core.result import CheckResult

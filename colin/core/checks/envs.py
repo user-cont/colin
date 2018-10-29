@@ -16,7 +16,7 @@
 
 import re
 
-from .images import ImageAbstractCheck
+from .abstract_check import ImageAbstractCheck
 from ..result import CheckResult
 
 

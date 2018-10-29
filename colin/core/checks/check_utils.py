@@ -1,5 +1,8 @@
 import re
 
+from .abstract_check import ImageAbstractCheck, DockerfileAbstractCheck
+from ..exceptions import ColinException
+
 
 def check_label(labels, required, value_regex, target_labels):
     """
@@ -29,3 +32,17 @@ def check_label(labels, required, value_regex, target_labels):
 
     else:
         return not required
+
+
+class NotLoadedCheck(DockerfileAbstractCheck, ImageAbstractCheck):
+
+    def __init__(self, check_name, reason):
+        self.name = check_name
+        super(NotLoadedCheck, self).__init__(
+            message="Check code '{}' {}.".format(check_name, reason),
+            description="Did you set the right name in the ruleset file?",
+            reference_url="",
+            tags=[])
+
+    def check(self, target):
+        raise ColinException(self.message)

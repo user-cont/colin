@@ -16,7 +16,7 @@
 import logging
 import re
 
-from .abstract_check import AbstractCheck
+from .abstract_check import DockerfileAbstractCheck
 from .check_utils import check_label
 from ..result import CheckResult
 
@@ -33,10 +33,6 @@ def get_instructions_from_dockerfile_parse(dfp, instruction):
     :return: list
     """
     return [inst for inst in dfp.structure if inst["instruction"] == instruction]
-
-
-class DockerfileAbstractCheck(AbstractCheck):
-    check_type = "dockerfile"
 
 
 class InstructionAbstractCheck(DockerfileAbstractCheck):

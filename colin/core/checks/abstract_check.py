@@ -74,3 +74,15 @@ class AbstractCheck(object):
         json.dump(obj=AbstractCheck.json_from_all_checks(checks=checks),
                   fp=file,
                   indent=4)
+
+
+class DockerfileAbstractCheck(AbstractCheck):
+    check_type = "dockerfile"
+
+
+class ImageAbstractCheck(AbstractCheck):
+    check_type = "image"
+
+
+class FilesystemAbstractCheck(AbstractCheck):
+    pass
