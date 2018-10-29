@@ -24,8 +24,7 @@ from tempfile import mkdtemp
 
 from dockerfile_parse import DockerfileParser
 
-from .checks.dockerfile import DockerfileAbstractCheck
-from .checks.images import ImageAbstractCheck
+from .checks.abstract_check import ImageAbstractCheck, DockerfileAbstractCheck
 from ..core.exceptions import ColinException
 from ..utils.cont import ImageName
 

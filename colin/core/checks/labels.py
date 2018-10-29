@@ -13,9 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from .abstract_check import ImageAbstractCheck, DockerfileAbstractCheck
 from .check_utils import check_label
-from .dockerfile import DockerfileAbstractCheck
-from .images import ImageAbstractCheck
 from ..result import CheckResult
 
 

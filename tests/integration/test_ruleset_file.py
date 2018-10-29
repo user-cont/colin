@@ -20,6 +20,8 @@ import pytest
 import yaml
 
 import colin
+from colin.core.checks.check_utils import NotLoadedCheck
+from colin.core.checks.labels import LabelAbstractCheck
 
 
 @pytest.fixture()
@@ -41,6 +43,24 @@ def ruleset():
             },
             {
                 "name": "help_label"
+            }
+        ]
+    }
+
+
+@pytest.fixture()
+def ruleset_unknown_check():
+    return {
+        "version": "1",
+        "name": "Laughing out loud ruleset",
+        "description": "This set of checks is required to pass because we said it",
+        "contact_email": "forgot-to-reply@example.nope",
+        "checks": [
+            {
+                "name": "maintainer_label"
+            },
+            {
+                "name": "i_forgot_the_name"
             }
         ]
     }
@@ -117,3 +137,16 @@ def test_coupled_ruleset(ruleset_coupled):
     assert len(checks) == 3
     for c in checks:
         assert "required" in c.tags
+
+
+def test_unknown_check(ruleset_unknown_check):
+    checks = colin.get_checks(ruleset=ruleset_unknown_check)
+    assert checks
+    assert len(checks) == 2
+    for check in checks:
+        if check.name == 'i_forgot_the_name':
+            assert isinstance(check, NotLoadedCheck)
+        elif check.name == 'maintainer_label':
+            assert isinstance(check, LabelAbstractCheck)
+        else:
+            assert False

@@ -17,7 +17,7 @@ import re
 
 from conu import ConuException
 
-from .images import ImageAbstractCheck
+from .abstract_check import ImageAbstractCheck
 from ..exceptions import ColinException
 from ..result import CheckResult, FailedCheckResult
 
