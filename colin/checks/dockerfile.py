@@ -13,10 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
 from colin.core.checks.dockerfile import DockerfileAbstractCheck, InstructionCountAbstractCheck
-from colin.core.result import CheckResult
 from colin.core.checks.fmf_check import FMFAbstractCheck
+from colin.core.exceptions import ColinException
+from colin.core.result import CheckResult
 from colin.utils.cont import ImageName
 
 
@@ -24,6 +24,9 @@ class FromTagNotLatestCheck(FMFAbstractCheck, DockerfileAbstractCheck):
     name = "from_tag_not_latest"
 
     def check(self, target):
+        if not target.instance.parent_images:
+            raise ColinException("Cannot find FROM instruction.")
+
         im = ImageName.parse(target.instance.baseimage)
         passed = im.tag and im.tag != "latest"
         return CheckResult(ok=passed,
