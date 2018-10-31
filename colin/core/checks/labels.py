@@ -22,6 +22,17 @@ class LabelAbstractCheck(ImageAbstractCheck, DockerfileAbstractCheck):
 
     def __init__(self, message, description, reference_url, tags, labels, required,
                  value_regex=None):
+        """
+        Abstract check for Dockerfile/Image labels.
+
+        :param message: str
+        :param description: str
+        :param reference_url: str
+        :param tags: [str]
+        :param labels: [str]
+        :param required: bool
+        :param value_regex: str (using search method)
+        """
         super(LabelAbstractCheck, self) \
             .__init__(message, description, reference_url, tags)
         self.labels = labels
