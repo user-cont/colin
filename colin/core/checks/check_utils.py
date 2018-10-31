@@ -10,7 +10,7 @@ def check_label(labels, required, value_regex, target_labels):
 
     :param labels: [str]
     :param required: bool (if the presence means pass or not)
-    :param value_regex: str
+    :param value_regex: str (using search method)
     :param target_labels: [str]
     :return: bool (required==True: True if the label is present and match the regex if specified)
                     (required==False: True if the label is not present)
@@ -24,7 +24,7 @@ def check_label(labels, required, value_regex, target_labels):
             pattern = re.compile(value_regex)
             present_labels = set(labels) & set(target_labels)
             for l in present_labels:
-                if not bool(pattern.match(target_labels[l])):
+                if not bool(pattern.search(target_labels[l])):
                     return False
             return True
         else:
