@@ -55,7 +55,7 @@ def test_check_help_command():
     result = _call_colin(check, parameters=["-h"])
     assert result.exit_code == 0
     _common_help_options(result)
-    assert "-s, --stat" in result.output
+    assert "--stat" in result.output
 
 
 def test_list_checks():

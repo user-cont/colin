@@ -53,16 +53,21 @@ class Ruleset(object):
             raise ColinRulesetException("colin accepts only ruleset version '1'. You provided %r"
                                         % self.ruleset_struct.version)
 
-    def get_checks(self, target_type, tags=None):
+    def get_checks(self, target_type, tags=None, skips=None):
         """
         Get all checks for given type/tags.
 
+        :param skips: list of str
         :param target_type: TargetType class
         :param tags: list of str
         :return: list of check instances
         """
+        skips = skips or []
         result = []
         for check_struct in self.ruleset_struct.checks:
+            if check_struct.name in skips:
+                continue
+
             logger.debug("Processing check_struct {}.".format(check_struct))
 
             usable_targets = check_struct.usable_targets

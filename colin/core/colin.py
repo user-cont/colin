@@ -23,12 +23,23 @@ from .target import Target
 logger = logging.getLogger(__name__)
 
 
-def run(target, target_type, tags=None, ruleset_name=None, ruleset_file=None,
-        ruleset=None, logging_level=logging.WARNING, checks_paths=None, pull=None,
-        insecure=False):
+def run(
+    target,
+    target_type,
+    tags=None,
+    ruleset_name=None,
+    ruleset_file=None,
+    ruleset=None,
+    logging_level=logging.WARNING,
+    checks_paths=None,
+    pull=None,
+    insecure=False,
+    skips=None,
+):
     """
     Runs the sanity checks for the target.
 
+    :param skips: name of checks to skip
     :param target: str (image name, ostree or dockertar)
                     or Image (instance from conu)
                     or path/file-like object for dockerfile
@@ -45,28 +56,40 @@ def run(target, target_type, tags=None, ruleset_name=None, ruleset_file=None,
     """
     _set_logging(level=logging_level)
     logger.debug("Checking started.")
-    target = Target.get_instance(target=target,
-                                 logging_level=logging_level,
-                                 pull=pull,
-                                 target_type=target_type,
-                                 insecure=insecure)
-    checks_to_run = _get_checks(target_type=target.__class__,
-                                tags=tags,
-                                ruleset_name=ruleset_name,
-                                ruleset_file=ruleset_file,
-                                ruleset=ruleset,
-                                checks_paths=checks_paths
-                                )
-    result = go_through_checks(target=target,
-                               checks=checks_to_run)
+    target = Target.get_instance(
+        target=target,
+        logging_level=logging_level,
+        pull=pull,
+        target_type=target_type,
+        insecure=insecure,
+    )
+    checks_to_run = _get_checks(
+        target_type=target.__class__,
+        tags=tags,
+        ruleset_name=ruleset_name,
+        ruleset_file=ruleset_file,
+        ruleset=ruleset,
+        checks_paths=checks_paths,
+        skips=skips,
+    )
+    result = go_through_checks(target=target, checks=checks_to_run)
     return result
 
 
-def get_checks(target_type=None, tags=None, ruleset_name=None,
-               ruleset_file=None, ruleset=None, logging_level=logging.WARNING, checks_paths=None):
+def get_checks(
+    target_type=None,
+    tags=None,
+    ruleset_name=None,
+    ruleset_file=None,
+    ruleset=None,
+    logging_level=logging.WARNING,
+    checks_paths=None,
+    skips=None,
+):
     """
     Get the sanity checks for the target.
 
+    :param skips: name of checks to skip
     :param target_type: TargetType enum
     :param tags: list of str (if not None, the checks will be filtered by tags.)
     :param ruleset_name: str (e.g. fedora; if None, default would be used)
@@ -84,17 +107,27 @@ def get_checks(target_type=None, tags=None, ruleset_name=None,
         ruleset_name=ruleset_name,
         ruleset_file=ruleset_file,
         ruleset=ruleset,
-        checks_paths=checks_paths
+        checks_paths=checks_paths,
+        skips=skips,
     )
 
 
-def _get_checks(target_type, tags=None,
-                ruleset_name=None, ruleset_file=None, ruleset=None, checks_paths=None):
-    ruleset = Ruleset(ruleset_name=ruleset_name,
-                      ruleset_file=ruleset_file,
-                      ruleset=ruleset,
-                      checks_paths=checks_paths)
-    return ruleset.get_checks(tags=tags, target_type=target_type)
+def _get_checks(
+    target_type,
+    tags=None,
+    ruleset_name=None,
+    ruleset_file=None,
+    ruleset=None,
+    checks_paths=None,
+    skips=None,
+):
+    ruleset = Ruleset(
+        ruleset_name=ruleset_name,
+        ruleset_file=ruleset_file,
+        ruleset=ruleset,
+        checks_paths=checks_paths,
+    )
+    return ruleset.get_checks(tags=tags, target_type=target_type, skips=skips)
 
 
 def _set_logging(
