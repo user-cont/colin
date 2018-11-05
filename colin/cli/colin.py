@@ -59,8 +59,10 @@ def cli():
               help="Enable debugging mode (debugging logs, full tracebacks).")
 @click.option('--json', type=click.File(mode='w'),
               help="File to save the output as json to.")
-@click.option('--stat', '-s', is_flag=True,
+@click.option('--stat', is_flag=True,
               help="Print statistics instead of full results.")
+@click.option('--skip', '-s', multiple=True, type=click.STRING,
+              help="Name of the check to skip. (this option is repeatable)")
 @click.option('--tag', '-t', multiple=True, type=click.STRING,
               help="Filter checks with the tag.")
 @click.option('--verbose', '-v', is_flag=True,
@@ -76,7 +78,7 @@ def cli():
                    "ostree). For ostree, please specify image name and path like this: image@path")
 @click.option('--insecure', is_flag=True, default=False,
               help="Pull from an insecure registry (HTTP or invalid TLS).")
-def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose,
+def check(target, ruleset, ruleset_file, debug, json, stat, skip, tag, verbose,
           checks_paths, target_type, pull, insecure):
     """
     Check the image/dockerfile (default).
@@ -104,7 +106,8 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose,
             pull=pull,
             checks_paths=checks_paths,
             target_type=target_type,
-            insecure=insecure
+            insecure=insecure,
+            skips=skip
         )
         _print_results(results=results, stat=stat, verbose=verbose)
 
@@ -141,6 +144,8 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose,
               help="Enable debugging mode (debugging logs, full tracebacks).")
 @click.option('--json', type=click.File(mode='w'),
               help="File to save the output as json to.")
+@click.option('-s', '--skip', multiple=True, type=click.STRING,
+              help="Name of the check to skip. (this option is repeatable)")
 @click.option('--tag', '-t', multiple=True, type=click.STRING,
               help="Filter checks with the tag.")
 @click.option('--verbose', '-v', is_flag=True,
@@ -149,7 +154,7 @@ def check(target, ruleset, ruleset_file, debug, json, stat, tag, verbose,
               type=click.Path(exists=True, dir_okay=True, file_okay=False),
               multiple=True, envvar=COLIN_CHECKS_PATH,
               help="Path to directory containing checks (default {}).".format(get_checks_paths()))
-def list_checks(ruleset, ruleset_file, debug, json, tag, verbose, checks_paths):
+def list_checks(ruleset, ruleset_file, debug, json, skip, tag, verbose, checks_paths):
     """
     Print the checks.
     """
@@ -167,7 +172,8 @@ def list_checks(ruleset, ruleset_file, debug, json, tag, verbose, checks_paths):
                             ruleset_file=ruleset_file,
                             logging_level=log_level,
                             tags=tag,
-                            checks_paths=checks_paths)
+                            checks_paths=checks_paths,
+                            skips=skip)
         _print_checks(checks=checks)
 
         if json:

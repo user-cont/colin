@@ -150,3 +150,10 @@ def test_unknown_check(ruleset_unknown_check):
             assert isinstance(check, LabelAbstractCheck)
         else:
             assert False
+
+
+def test_skip(ruleset):
+    checks = colin.get_checks(ruleset=ruleset, skips=["name_label", "help_label"])
+    assert len(checks) == 2
+    for check in checks:
+        assert check.name in ["com.redhat.component_label", "maintainer_label"]
