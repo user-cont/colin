@@ -13,8 +13,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
+import logging
 import subprocess
+import threading
+
+try:
+    import thread
+except ImportError:
+    import _thread as thread
+
+logger = logging.getLogger(__name__)
 
 
 def get_version_of_the_python_package(module):
@@ -85,3 +93,30 @@ def is_rpm_installed():
     except FileNotFoundError:
         rpm_installed = False
     return rpm_installed
+
+
+def exit_after(s):
+    """
+    Use as decorator to exit process if
+    function takes longer than s seconds.
+
+    Direct call is available via exit_after(TIMEOUT_IN_S)(fce)(args).
+
+    Inspired by https://stackoverflow.com/a/31667005
+    """
+
+    def outer(fn):
+        def inner(*args, **kwargs):
+            timer = threading.Timer(s, thread.interrupt_main)
+            timer.start()
+            try:
+                result = fn(*args, **kwargs)
+            except KeyboardInterrupt:
+                raise TimeoutError("Function '{}' hit the timeout ({}s).".format(fn.__name__, s))
+            finally:
+                timer.cancel()
+            return result
+
+        return inner
+
+    return outer

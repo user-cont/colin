@@ -27,6 +27,7 @@ class AbstractCheck(object):
         self.description = description
         self.reference_url = reference_url
         self.tags = tags
+        self.timeout = None
 
     def check(self, target):
         pass

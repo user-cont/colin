@@ -17,7 +17,9 @@
 import logging
 import traceback
 
+from .constant import CHECK_TIMEOUT
 from .result import CheckResults, FailedCheckResult
+from ..utils.cmd_tools import exit_after
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +36,12 @@ def _result_generator(target, checks):
         for check in checks:
             logger.debug("Checking {}".format(check.name))
             try:
-                yield check.check(target)
+                timeout = check.timeout or CHECK_TIMEOUT
+                yield exit_after(timeout)(check.check)(target)
+            except TimeoutError as ex:
+                logger.warning(
+                    "The check hit the timeout.")
+                yield FailedCheckResult(check, logs=[str(ex)])
             except Exception as ex:
                 tb = traceback.format_exc()
                 logger.warning(
