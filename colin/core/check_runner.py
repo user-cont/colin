@@ -24,19 +24,21 @@ from ..utils.cmd_tools import exit_after
 logger = logging.getLogger(__name__)
 
 
-def go_through_checks(target, checks):
+def go_through_checks(target, checks, timeout=None):
     logger.debug("Going through checks.")
     results = _result_generator(target=target,
-                                checks=checks)
+                                checks=checks,
+                                timeout=timeout)
     return CheckResults(results=results)
 
 
-def _result_generator(target, checks):
+def _result_generator(target, checks, timeout=None):
     try:
         for check in checks:
             logger.debug("Checking {}".format(check.name))
             try:
-                timeout = check.timeout or CHECK_TIMEOUT
+                timeout = timeout or check.timeout or CHECK_TIMEOUT
+                logger.debug("Check timeout: {}".format(timeout))
                 yield exit_after(timeout)(check.check)(target)
             except TimeoutError as ex:
                 logger.warning(
