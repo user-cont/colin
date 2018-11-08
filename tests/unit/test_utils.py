@@ -13,27 +13,43 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from time import sleep
 
-RULESET_DIRECTORY_NAME = "rulesets"
-RULESET_DIRECTORY = "share/colin/" + RULESET_DIRECTORY_NAME
-EXTS = [".yaml", '.yml', ".json"]
+import pytest
 
-PASSED = "PASS"
-FAILED = "FAIL"
-ERROR = "ERROR"
+from colin.core.exceptions import ColinException
+from colin.utils.cmd_tools import exit_after
 
-COLOURS = {
-    PASSED: "green",
-    FAILED: "red",
-    ERROR: "red"
-}
 
-OUTPUT_CHARS = {
-    PASSED: ".",
-    FAILED: "x",
-    ERROR: "#"
-}
+@exit_after(1)
+def fast_fce():
+    pass
 
-COLIN_CHECKS_PATH = "CHECKS_PATH"
 
-CHECK_TIMEOUT = 10 * 60  # s
+@exit_after(1)
+def slow_fce():
+    sleep(2)
+
+
+@exit_after(1)
+def bad_fce():
+    raise ColinException("Error")
+
+
+def test_timeout_fast_fce():
+    fast_fce()
+
+
+def test_timeout_slow_fce():
+    with pytest.raises(TimeoutError):
+        slow_fce()
+
+
+def test_timeout_bad_fce():
+    with pytest.raises(ColinException):
+        bad_fce()
+
+
+def test_timeout_dirrect():
+    with pytest.raises(TimeoutError):
+        exit_after(1)(sleep)(2)

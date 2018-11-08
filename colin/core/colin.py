@@ -35,10 +35,12 @@ def run(
     pull=None,
     insecure=False,
     skips=None,
+    timeout=None,
 ):
     """
     Runs the sanity checks for the target.
 
+    :param timeout: timeout per-check (in seconds)
     :param skips: name of checks to skip
     :param target: str (image name, ostree or dockertar)
                     or Image (instance from conu)
@@ -72,7 +74,7 @@ def run(
         checks_paths=checks_paths,
         skips=skips,
     )
-    result = go_through_checks(target=target, checks=checks_to_run)
+    result = go_through_checks(target=target, checks=checks_to_run, timeout=timeout)
     return result
 
 

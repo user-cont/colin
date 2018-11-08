@@ -76,10 +76,12 @@ def cli():
 @click.option('--target-type', type=click.STRING, default="image",
               help="Type of selected target (one of image, dockerfile, "
                    "ostree). For ostree, please specify image name and path like this: image@path")
+@click.option('--timeout', type=click.INT,
+              help="Timeout for each check in seconds. (default=600)")
 @click.option('--insecure', is_flag=True, default=False,
               help="Pull from an insecure registry (HTTP or invalid TLS).")
 def check(target, ruleset, ruleset_file, debug, json, stat, skip, tag, verbose,
-          checks_paths, target_type, pull, insecure):
+          checks_paths, target_type, timeout, pull, insecure):
     """
     Check the image/dockerfile (default).
     """
@@ -106,6 +108,7 @@ def check(target, ruleset, ruleset_file, debug, json, stat, skip, tag, verbose,
             pull=pull,
             checks_paths=checks_paths,
             target_type=target_type,
+            timeout=timeout,
             insecure=insecure,
             skips=skip
         )
