@@ -1,13 +1,18 @@
 # 0.3.0
 
-* Add timeout to CLI
-* Add tests for timeout
-* Add timeout for each check
+## New Features
+
+* Add check timeouts
 * Add support for check skip
+
+## Breaking changes
+
 * Use search method in label regex
-* Test for NotLoadedCheck
-* Use NotLoadedCheck when the code cannot be found
-* Error check-result when missing FROM in testing image tag
+
+## Fixes
+
+* Error result when the check code cannot be found
+* Error result when missing FROM in testing image tag
 
 # 0.2.1
 
