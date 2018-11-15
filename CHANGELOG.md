@@ -1,3 +1,19 @@
+# 0.3.0
+
+## New Features
+
+* Add check timeouts
+* Add support for check skip
+
+## Breaking changes
+
+* Use search method in label regex
+
+## Fixes
+
+* Error result when the check code cannot be found
+* Error result when missing FROM in testing image tag
+
 # 0.2.1
 
 ## New Features
