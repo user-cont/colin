@@ -2,17 +2,20 @@
 
 ## New Features
 
-* Add check timeouts
-* Add support for check skip
+* You can configure timeout for checks now:
+  * This can be done via CLI or add `timeout: <seconds>` to a check in a ruleset.
+  * Default timeout is set to 10 minutes.
+* Checks can be skipped via CLI option `--skip`.
 
 ## Breaking changes
 
-* Use search method in label regex
+* Colin searches a value in label now instead of matching it using a regex.
 
 ## Fixes
 
-* Error result when the check code cannot be found
-* Error result when missing FROM in testing image tag
+* Output a sensible error message when the check code cannot be found.
+* Handle the situation when the instruction FROM is missing in testing image tag.
+
 
 # 0.2.1
 
