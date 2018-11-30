@@ -24,7 +24,9 @@ from tempfile import mkdtemp
 
 from dockerfile_parse import DockerfileParser
 
-from .checks.abstract_check import ImageAbstractCheck, DockerfileAbstractCheck
+from .checks.abstract_check import (ImageAbstractCheck,
+                                    DockerfileAbstractCheck,
+                                    ImageDockerfileAbstractCheck)
 from ..core.exceptions import ColinException
 from ..utils.cont import ImageName
 
@@ -313,6 +315,24 @@ class ImageTarget(AbstractImageTarget):
         raise NotImplementedError("Unsupported right now.")
 
 
+class ImageWithDockerfileTarget(ImageTarget, DockerfileTarget):
+    """
+    Represents the podman image, along with the Dockerfile it was
+    built from, as a target.
+    """
+    target_type = "image+dockerfile"
+
+    def __init__(self, target, pull, supplementary_target, insecure=False,
+                 **kwargs):
+        super(ImageTarget, self).__init__(target, pull, insecure=insecure,
+                                          **kwargs)
+        super(DockerfileTarget, self).__init__(supplementary_target)
+
+    @classmethod
+    def get_compatible_check_class(cls):
+        return ImageDockerfileAbstractCheck
+
+
 class OstreeTarget(AbstractImageTarget):
     """
     Represents the ostree repository as an image target.
@@ -430,5 +450,6 @@ class OstreeTarget(AbstractImageTarget):
 TARGET_TYPES = {
     "image": ImageTarget,
     "dockerfile": DockerfileTarget,
+    "image+dockerfile": ImageWithDockerfileTarget,
     "ostree": OstreeTarget
 }

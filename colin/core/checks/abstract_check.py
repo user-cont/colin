@@ -85,5 +85,10 @@ class ImageAbstractCheck(AbstractCheck):
     check_type = "image"
 
 
+class ImageDockerfileAbstractCheck(DockerfileAbstractCheck,
+                                   ImageAbstractCheck):
+    check_type = "image+dockerfile"
+
+
 class FilesystemAbstractCheck(AbstractCheck):
     pass

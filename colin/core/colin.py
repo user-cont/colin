@@ -36,6 +36,7 @@ def run(
     insecure=False,
     skips=None,
     timeout=None,
+    supplementary_target=None,
 ):
     """
     Runs the sanity checks for the target.
@@ -54,12 +55,14 @@ def run(
     :param checks_paths: list of str, directories where the checks are present
     :param pull: bool, pull the image from registry
     :param insecure: bool, pull from an insecure registry (HTTP/invalid TLS)
+    :param supplementary_target: str, additional target (for image+dockerfile)
     :return: Results instance
     """
     _set_logging(level=logging_level)
     logger.debug("Checking started.")
     target = Target.get_instance(
         target=target,
+        supplementary_target=supplementary_target,
         logging_level=logging_level,
         pull=pull,
         target_type=target_type,

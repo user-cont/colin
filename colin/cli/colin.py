@@ -50,6 +50,9 @@ def cli():
 @click.command(name="check",
                context_settings=CONTEXT_SETTINGS)
 @click.argument('target', type=click.STRING)
+@click.option('--supplementary-target', type=click.STRING,
+              help="Additional target. For image+dockerfile target type "
+                   "this is the Dockerfile.")
 @click.option('--ruleset', '-r', type=click.STRING, envvar='COLIN_RULESET',
               help="Select a predefined ruleset (e.g. fedora).")
 @click.option('--ruleset-file', '-f', type=click.File(mode='r'),
@@ -75,13 +78,15 @@ def cli():
               help="Pull the image from registry.")
 @click.option('--target-type', type=click.STRING, default="image",
               help="Type of selected target (one of image, dockerfile, "
-                   "ostree). For ostree, please specify image name and path like this: image@path")
+                   "image+dockerflie, ostree). For ostree, please specify "
+                   "image name and path like this: image@path")
 @click.option('--timeout', type=click.INT,
               help="Timeout for each check in seconds. (default=600)")
 @click.option('--insecure', is_flag=True, default=False,
               help="Pull from an insecure registry (HTTP or invalid TLS).")
-def check(target, ruleset, ruleset_file, debug, json, stat, skip, tag, verbose,
-          checks_paths, target_type, timeout, pull, insecure):
+def check(target, supplementary_target, ruleset, ruleset_file, debug, json,
+          stat, skip, tag, verbose, checks_paths, target_type, timeout, pull,
+          insecure):
     """
     Check the image/dockerfile (default).
     """
@@ -101,6 +106,7 @@ def check(target, ruleset, ruleset_file, debug, json, stat, skip, tag, verbose,
                                    verbose=verbose)
         results = run(
             target=target,
+            supplementary_target=supplementary_target,
             ruleset_name=ruleset,
             ruleset_file=ruleset_file,
             logging_level=log_level,
