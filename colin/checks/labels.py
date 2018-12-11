@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from colin.core.checks.abstract_check import ImageDockerfileAbstractCheck
 from colin.core.checks.labels import LabelAbstractCheck
 from colin.core.checks.fmf_check import FMFAbstractCheck
 
@@ -106,3 +107,10 @@ class VendorLabelCheck(FMFAbstractCheck, LabelAbstractCheck):
 
 class VersionLabelCheck(FMFAbstractCheck, LabelAbstractCheck):
     name = "version_label"
+
+
+class InheritedOptionalLabelCheck(ImageDockerfileAbstractCheck):
+    name = "inherited_labels"
+    # TODO: Compare image labels and labels declared in Dockerfile
+    # to compute inherited labels; filter by labels which are optional;
+    # the remaining set should be empty.
