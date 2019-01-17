@@ -186,3 +186,19 @@ Colin ships a set of predefined checks, which are available [in this
 directory](https://github.com/user-cont/colin/tree/master/rulesets).
 
 If your check is generic enough, it may make sense to add it to [default ruleset](https://github.com/user-cont/colin/blob/master/rulesets/default.json).
+
+
+## Changelog
+
+When you are contributing to changelog, please follow these suggestions:
+
+* The changelog is meant to be read by everyone. Imagine that an average user
+  will read it and should understand the changes. `Add check timeouts` is
+  completely undescriptive.
+* Every line should be a complete sentence. Either tell what is the change that the tool is doing or describe it precisely:
+  * Bad: `Use search method in label regex`
+  * Good: `Colin now uses search method when...`
+* And finally, with the changelogs we are essentially selling our projects:
+  think about a situation that you met someone at a conference and you are
+  trying to convince the person to use the project and that the changelog
+  should help with that.
