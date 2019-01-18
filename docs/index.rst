@@ -17,66 +17,47 @@ This is how you can use colin afterwards:
 
 .. code-block:: bash
 
-   $ colin -h
-   Usage: colin [OPTIONS] COMMAND [ARGS]...
+    $ colin --help
+    Usage: colin [OPTIONS] COMMAND [ARGS]...
 
-     COLIN -- Container Linter
+      COLIN -- Container Linter
 
-   Options:
-     -V, --version  Show the version and exit.
-     -h, --help     Show this message and exit.
+    Options:
+      -V, --version  Show the version and exit.
+      -h, --help     Show this message and exit.
 
-   Commands:
-     check          Check the image/container (default).
-     list-checks    Print the checks.
-     list-rulesets  List available rulesets.
+    Commands:
+      check          Check the image/dockerfile (default).
+      info           Show info about colin and its dependencies.
+      list-checks    Print the checks.
+      list-rulesets  List available rulesets.
 
 Let's give it a shot:
 
 .. code-block:: bash
 
-   $ colin check -r redhat rhel7
-   LABELS:
-   ok :passed:name_label_required
-   ok :passed:com_redhat_component_label_required
-   ok :passed:summary_label_required
-   ok :passed:version_label_required
-   nok:failed:usage_label_required
-      -> Label 'usage' has to be specified.
-      -> A human readable example of container execution.
-      -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-   ok :passed:io_k8s_display-name_label_required
-   ok :passed:architecture_label
-   ok :passed:com.redhat.build-host_label
-   ok :passed:authoritative-source-url_label
-   ok :passed:url_label
-   ok :passed:vendor_label
-   ok :passed:release_label
-   ok :passed:build-date_label
-   ok :passed:distribution-scope_label
-   ok :passed:vcs-ref_label
-   ok :passed:vcs-type_label
-   ok :passed:description_label
-   ok :passed:io.k8s.description_label
-   ok :passed:architecture_label_capital_deprecated
-   ok :passed:bzcomponent_deprecated
-   ok :passed:name_label_capital_deprecated
-   ok :passed:version_label_capital_deprecated
-   ok :passed:install_label_capital_deprecated
-   ok :passed:uninstall_label_capital_deprecated
-   ok :passed:release_label_capital_deprecated
-   nok:warning:vcs-url_label
-      -> Label 'vcs-url' has to be specified.
-      -> URL of the version control repository.
-      -> https://github.com/projectatomic/ContainerApplicationGenericLabels
-   nok:warning:maintainer_label_required
-      -> Label 'maintainer' has to be specified.
-      -> The name and email of the maintainer (usually the submitter).
-      -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
-   nok:warning:maintainer_label_required
-      -> Label 'maintainer' has to be specified.
-      -> The name and email of the maintainer (usually the submitter).
-      -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
+    $ colin -f ./rulesets/fedora.json registry.fedoraproject.org/f29/cockpit
+    PASS:Label 'architecture' has to be specified.
+    PASS:Label 'build-date' has to be specified.
+    FAIL:Label 'description' has to be specified.
+    PASS:Label 'distribution-scope' has to be specified.
+    FAIL:Label 'help' has to be specified.
+    FAIL:Label 'io.k8s.description' has to be specified.
+    FAIL:Label 'url' has to be specified.
+    PASS:Label 'vcs-ref' has to be specified.
+    PASS:Label 'vcs-type' has to be specified.
+    FAIL:Label 'vcs-url' has to be specified.
+    PASS:Label 'com.redhat.component' has to be specified.
+    FAIL:Label 'maintainer' has to be specified.
+    PASS:Label 'name' has to be specified.
+    PASS:Label 'release' has to be specified.
+    FAIL:Label 'summary' has to be specified.
+    PASS:Label 'version' has to be specified.
+    FAIL:The 'helpfile' has to be provided.
+    PASS:Label 'usage' has to be specified.
+
+    PASS:10 FAIL:8
+
 
 Source code
 -----------

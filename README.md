@@ -48,7 +48,7 @@ $ dnf install -y colin
 ### Requirements
 
 - For checking `image` target-type, you have to install [podman](https://github.com/containers/libpod/blob/master/docs/tutorials/podman_tutorial.md).
-If you need to check your docker images, you need to prefix your images with `docker-daemon` (e.g. `colin check docker-daemon:docker.io/openshift/origin-web-console:v3.11`).
+If you need to check local docker images, you need to prefix your images with `docker-daemon` (e.g. `colin check docker-daemon:docker.io/openshift/origin-web-console:v3.11`).
 
 - If you want to use `ostree` target, you need to install following tools:
     - [ostree](https://github.com/ostreedev/ostree)
@@ -58,7 +58,7 @@ If you need to check your docker images, you need to prefix your images with `do
 ## Usage
 
 ```
-$ colin -h
+$ colin --help
 Usage: colin [OPTIONS] COMMAND [ARGS]...
 
   COLIN -- Container Linter
@@ -69,12 +69,13 @@ Options:
 
 Commands:
   check          Check the image/dockerfile (default).
+  info           Show info about colin and its dependencies.
   list-checks    Print the checks.
   list-rulesets  List available rulesets.
 ```
 
 ```
-$ colin check -h
+$ colin check --help
 Usage: colin check [OPTIONS] TARGET
 
   Check the image/dockerfile (default).
@@ -87,17 +88,20 @@ Options:
   --debug                      Enable debugging mode (debugging logs, full
                                tracebacks).
   --json FILENAME              File to save the output as json to.
-  -s, --stat                   Print statistics instead of full results.
+  --stat                       Print statistics instead of full results.
+  -s, --skip TEXT              Name of the check to skip. (this option is
+                               repeatable)
   -t, --tag TEXT               Filter checks with the tag.
   -v, --verbose                Verbose mode.
   --checks-path DIRECTORY      Path to directory containing checks (default
-                               ['/home/flachman/.local/lib/python3.6/site-
+                               ['/home/flachman/.local/lib/python3.7/site-
                                packages/colin/checks']).
   --pull                       Pull the image from registry.
   --target-type TEXT           Type of selected target (one of image,
-                               dockerfile, ostree). For ostree,
-                               please specify image name and path like this:
-                               image@path
+                               dockerfile, ostree). For ostree, please specify
+                               image name and path like this: image@path
+  --timeout INTEGER            Timeout for each check in seconds.
+                               (default=600)
   --insecure                   Pull from an insecure registry (HTTP or invalid
                                TLS).
   -h, --help                   Show this message and exit.
@@ -105,22 +109,14 @@ Options:
 
 Let's give it a shot:
 ```
-$ colin -f ./rulesets/fedora.json fedora:27
-LABELS:
-FAIL:Label 'maintainer' has to be specified.
-PASS:Label 'name' has to be specified.
-FAIL:Label 'com.redhat.component' has to be specified.
-FAIL:Label 'summary' has to be specified.
-PASS:Label 'version' has to be specified.
-FAIL:Label 'usage' has to be specified.
-FAIL:Label 'release' has to be specified.
-FAIL:Label 'architecture' has to be specified.
-WARN:Label 'url' has to be specified.
-WARN:Label 'help' has to be specified.
-WARN:Label 'build-date' has to be specified.
-WARN:Label 'distribution-scope' has to be specified.
-WARN:Label 'vcs-ref' has to be specified.
-...
+$ colin -f ./rulesets/fedora.json registry.fedoraproject.org/f29/cockpit
+PASS:Label 'architecture' has to be specified.
+PASS:Label 'build-date' has to be specified.
+FAIL:Label 'description' has to be specified.
+PASS:Label 'distribution-scope' has to be specified.
+:
+:
+PASS:10 FAIL:8
 ```
 
 
@@ -136,29 +132,14 @@ $ cd colin
 We can now run the analysis:
 
 ```
-$ python3 -m colin.cli.colin -f ./rulesets/fedora.json fedora:27
-FAIL:Label 'architecture' has to be specified.
-FAIL:Label 'build-date' has to be specified.
+$ python3 -m colin.cli.colin -f ./rulesets/fedora.json registry.fedoraproject.org/f29/cockpit
+PASS:Label 'architecture' has to be specified.
+PASS:Label 'build-date' has to be specified.
 FAIL:Label 'description' has to be specified.
-FAIL:Label 'distribution-scope' has to be specified.
-FAIL:Label 'help' has to be specified.
-FAIL:Label 'io.k8s.description' has to be specified.
-FAIL:Label 'url' has to be specified.
-FAIL:Label 'vcs-ref' has to be specified.
-FAIL:Label 'vcs-type' has to be specified.
-FAIL:Label 'vcs-url' has to be specified.
-FAIL:Label 'com.redhat.component' has to be specified.
-FAIL:Label 'maintainer' has to be specified.
-FAIL:Label 'name' has to be specified.
-FAIL:Label 'release' has to be specified.
-FAIL:Label 'summary' has to be specified.
-FAIL:Label 'version' has to be specified.
-FAIL:Cmd or Entrypoint has to be specified
-ERROR:The 'helpfile' has to be provided.
-FAIL:Service should not run as root by default.
-FAIL:Label 'usage' has to be specified.
-
-FAIL:21 ERROR:1
+PASS:Label 'distribution-scope' has to be specified.
+:
+:
+PASS:10 FAIL:8
 ```
 
 ### Exit codes
