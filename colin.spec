@@ -28,7 +28,6 @@ Summary:        %{summary}
 %{?python_provide:%python_provide python3-%{pypi_name}}
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
-Requires:       python3-conu
 Requires:       python3-click
 Requires:       python3-six
 Requires:       python3-dockerfile-parse

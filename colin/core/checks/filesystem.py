@@ -71,7 +71,7 @@ class FileCheck(ImageAbstractCheck):
                 f_present = cont.execute(cmd)
                 logs.append("File '{}' is {}present."
                             .format(f, "" if f_present else "not "))
-            except ConuException as ex:
+            except Exception as ex:
                 logger.info("File %s is not present, ex: %s", f, ex)
                 f_present = False
                 logs.append("File {} is not present.".format(f))

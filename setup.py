@@ -38,7 +38,6 @@ setup(
     install_requires=[
         'Click',
         'six',
-        'conu>=0.3.0',
         'dockerfile_parse',
         'fmf',
         'PyYAML'
