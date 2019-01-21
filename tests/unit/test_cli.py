@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import conu
 from click.testing import CliRunner
 
 from colin.cli.colin import check, list_checks, list_rulesets, info
@@ -130,12 +129,9 @@ def test_info():
     assert __version__ in output[0]
     assert "cli/colin.py" in output[1]
 
-    assert output[3].startswith("conu")
-    assert conu.version in output[3]
-    assert output[3].endswith("/conu")
-    assert output[4].startswith("podman")
-    assert output[5].startswith("skopeo")
-    assert output[6].startswith("ostree")
+    assert output[3].startswith("podman")
+    assert output[4].startswith("skopeo")
+    assert output[5].startswith("ostree")
 
 
 def test_env():

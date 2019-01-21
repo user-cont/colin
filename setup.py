@@ -38,7 +38,6 @@ setup(
     install_requires=[
         'Click',
         'six',
-        'conu>=0.3.0',
         'dockerfile_parse',
         'fmf',
         'PyYAML'
@@ -58,7 +57,6 @@ setup(
         'License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Topic :: Software Development',

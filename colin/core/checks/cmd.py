@@ -15,8 +15,6 @@
 #
 import re
 
-from conu import ConuException
-
 from .abstract_check import ImageAbstractCheck
 from ..exceptions import ColinException
 from ..result import CheckResult, FailedCheckResult
@@ -37,18 +35,20 @@ class CmdAbstractCheck(ImageAbstractCheck):
 
         try:
             output = target.get_output(cmd=self.cmd)
-        except ConuException as ex:
-            if str(ex).endswith("exit code 126") or str(ex).endswith("error: 127"):
-                return CheckResult(ok=False,
-                                   description=self.description,
-                                   message=self.message,
-                                   reference_url=self.reference_url,
-                                   check_name=self.name,
-                                   logs=["exec: '{}': executable file not found in $PATH".format(
-                                       self.cmd)])
-            return FailedCheckResult(check=self,
-                                     logs=[str(ex)])
 
+            """
+            except ConuException as ex:
+                if str(ex).endswith("exit code 126") or str(ex).endswith("error: 127"):
+                    return CheckResult(ok=False,
+                                       description=self.description,
+                                       message=self.message,
+                                       reference_url=self.reference_url,
+                                       check_name=self.name,
+                                       logs=["exec: '{}': executable file not found in $PATH".format(
+                                           self.cmd)])
+                return FailedCheckResult(check=self,
+                                         logs=[str(ex)])
+            """
         except ColinException as ex:
             return FailedCheckResult(check=self,
                                      logs=[str(ex)])
