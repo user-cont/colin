@@ -1,15 +1,15 @@
 # 0.3.1
 
-* Fix conu in filesystem
-* Fix conu in 'colin info' tests
-* Remove Python2 from setup.py
-* Allow metadata checks for podman images
-* Remove conu for now
-* Update outputs and ./docs
-* Add target requirements
-* Update example gif
-* doc changelog creation in contrib guide
-* more descriptive 0.3.0 changelog
+## Fixes
+
+- Fix metadata checks (ENV, USER) for podman images.
+- Fix Fedora packaging. (Conu was temporarily removed from requirements.)
+- Documentation updated.
+
+## Breaking changes
+
+* Remove support for Python 2.
+
 
 # 0.3.0
 
