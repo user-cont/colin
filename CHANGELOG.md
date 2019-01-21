@@ -1,3 +1,16 @@
+# 0.3.1
+
+* Fix conu in filesystem
+* Fix conu in 'colin info' tests
+* Remove Python2 from setup.py
+* Allow metadata checks for podman images
+* Remove conu for now
+* Update outputs and ./docs
+* Add target requirements
+* Update example gif
+* doc changelog creation in contrib guide
+* more descriptive 0.3.0 changelog
+
 # 0.3.0
 
 ## New Features
