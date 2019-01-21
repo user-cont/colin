@@ -1,3 +1,16 @@
+# 0.3.1
+
+## Fixes
+
+- Fix metadata checks (ENV, USER) for podman images.
+- Fix Fedora packaging. (Conu was temporarily removed from requirements.)
+- Documentation updated.
+
+## Breaking changes
+
+* Remove support for Python 2.
+
+
 # 0.3.0
 
 ## New Features
