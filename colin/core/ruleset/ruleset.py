@@ -77,6 +77,8 @@ class Ruleset(object):
                 continue
 
             try:
+            if check_struct.import_name:
+                check_class = self.check_loader.import_class(check_struct.import_name)
                 check_class = self.check_loader.mapping[check_struct.name]
                 check_instance = check_class()
             except KeyError as ke:

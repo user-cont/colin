@@ -73,3 +73,10 @@ def test_loading_custom_check(tmpdir):
     assert len(l.check_classes) == 3
     assert l.mapping["a-peter-file-check"]
     assert l.mapping["this-is-a-funky-check"]
+
+
+def test_import_class():
+    l = CheckLoader([])
+    check_name = "ArchitectureLabelCheck"
+    c = l.import_class("colin.checks.labels.%s" % check_name)
+    assert c.name == "architecture_label"

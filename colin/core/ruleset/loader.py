@@ -92,6 +92,11 @@ class CheckStruct(object):
 
     def __str__(self):
         return "%s" % self.name
+    
+    @property
+    def import_name(self):
+        """ module name + class, e.g. our.colin.checks.CustomCheck """
+        return self._get(False, "import_name")
 
     @property
     def name(self):

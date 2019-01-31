@@ -124,6 +124,24 @@ class CheckLoader(object):
                         load_check_classes_from_file(path)))
         return list(check_classes)
 
+    def import_class(self, import_name):
+        """
+        import selected class
+
+        :param import_name, str, e.g. some.module.MyClass
+        :return the class
+        """
+        if six.PY3:
+            from importlib import import_module
+            module_name, class_name = import_name.rsplit(".", 1)
+            mod = import_module(module_name)
+            check_class = getattr(mod, class_name)
+            self.mapping[check_class.name] = check_class
+            logger.info("successfully loaded class %s", check_class)
+            return check_class
+        else:
+            raise RuntimeError("This is not implemented for python 2.")
+
     @property
     def check_classes(self):
         if self._check_classes is None:
