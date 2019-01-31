@@ -76,21 +76,11 @@ class Ruleset(object):
                 logger.info("Skipping... Target type does not match.")
                 continue
 
-            try:
             if check_struct.import_name:
                 check_class = self.check_loader.import_class(check_struct.import_name)
+            else:
                 check_class = self.check_loader.mapping[check_struct.name]
-                check_instance = check_class()
-            except KeyError as ke:
-                check_instance = NotLoadedCheck(check_name=check_struct.name,
-                                                reason="not found")
-                logger.debug("Cannot find a code for the check {}. ({})".format(check_struct.name,
-                                                                                ke))
-            except Exception as ex:
-                check_instance = NotLoadedCheck(check_name=check_struct.name,
-                                                reason="not instantiated")
-                logger.debug("Cannot instantiate the check {}. ({})".format(check_struct.name,
-                                                                            ex))
+            check_instance = check_class()
 
             if check_struct.tags:
                 logger.info("Overriding check's tags %s with the one defined in ruleset: %s",
