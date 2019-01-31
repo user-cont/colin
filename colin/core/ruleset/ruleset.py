@@ -131,10 +131,11 @@ def get_checks_paths(checks_paths=None):
     :param checks_paths: list of str, directories where the checks are present
     :return: list of str (absolute path of directory with checks)
     """
-    if checks_paths:
-        return [os.path.abspath(x) for x in checks_paths]
     p = os.path.join(__file__, os.pardir, os.pardir, os.pardir, "checks")
     p = os.path.abspath(p)
+    # let's utilize the default upstream checks always
+    if checks_paths:
+        p += [os.path.abspath(x) for x in checks_paths]
     return [p]
 
 
