@@ -47,7 +47,7 @@ def cli():
 
 @click.command(name="check",
                context_settings=CONTEXT_SETTINGS)
-@click.argument('target', type=click.STRING)
+@click.argument('TARGET', type=click.STRING)
 @click.option('--ruleset', '-r', type=click.STRING, envvar='COLIN_RULESET',
               help="Select a predefined ruleset (e.g. fedora).")
 @click.option('--ruleset-file', '-f', type=click.File(mode='r'),
