@@ -29,12 +29,12 @@ IMAGES = {
 
 
 def build_image_if_not_exists(image_name):
+
     try:
-        subprocess.check_call(["podman", "image", "inspect", image_name],
-                              stdout=subprocess.PIPE)
+        subprocess.check_call(["podman", "image", "exists", image_name])
     except subprocess.CalledProcessError:
         this_dir = os.path.abspath(os.path.dirname(__file__))
-        data_dir = os.path.join(this_dir, os.path.pardir, "data")
+        data_dir = os.path.join(this_dir, "data")
 
         dockerfile_path = IMAGES[image_name]["dockerfile_path"]
         cmd_create = ["podman", "build", "-t", image_name, "-f", dockerfile_path, data_dir]
@@ -44,8 +44,7 @@ def build_image_if_not_exists(image_name):
 
 def pull_image_if_not_exists(image_name):
     try:
-        subprocess.check_call(["podman", "image", "inspect", image_name],
-                              stdout=subprocess.PIPE)
+        subprocess.check_call(["podman", "image", "exists", image_name])
     except subprocess.CalledProcessError:
         subprocess.check_call(["podman", "pull", image_name],
                               stdout=subprocess.PIPE)
@@ -88,7 +87,7 @@ def get_target(name, type):
     elif type == "dockerfile":
 
         this_dir = os.path.abspath(os.path.dirname(__file__))
-        data_dir = os.path.join(this_dir, os.path.pardir, "data")
+        data_dir = os.path.join(this_dir, "data")
         dockerfile_path = os.path.join(data_dir, IMAGES[name]["dockerfile_path"])
 
         yield DockerfileTarget(target=dockerfile_path)
@@ -98,7 +97,7 @@ def get_skopeo_path(image_name, ostree_path):
     return "ostree:%s@%s" % (image_name, ostree_path)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def label_image():
     build_image_if_not_exists(LABELS_IMAGE)
 
