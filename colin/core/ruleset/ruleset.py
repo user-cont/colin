@@ -79,7 +79,12 @@ class Ruleset(object):
             if check_struct.import_name:
                 check_class = self.check_loader.import_class(check_struct.import_name)
             else:
-                check_class = self.check_loader.mapping[check_struct.name]
+                try:
+                    check_class = self.check_loader.mapping[check_struct.name]
+                except KeyError:
+                    logger.error("Check %s was not found -- it can't be loaded", check_struct.name)
+                    raise ColinRulesetException(
+                        "Check {} can't be loaded, we couldn't find it.".format(check_struct.name))
             check_instance = check_class()
 
             if check_struct.tags:
