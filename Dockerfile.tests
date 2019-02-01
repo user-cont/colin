@@ -3,12 +3,9 @@ FROM registry.fedoraproject.org/fedora:29
 ENV PYTHONDONTWRITEBYTECODE=yes-please
 
 # atomic in F28 can't mount: can't find the image
-RUN dnf install -y make python3-pytest python3-pyxattr python3-pytest-cov \
-    skopeo \
-    https://kojipkgs.fedoraproject.org/packages/podman/0.9.1/3.gitaba58d1.fc29/x86_64/podman-0.9.1-3.gitaba58d1.fc29.x86_64.rpm \
-    https://kojipkgs.fedoraproject.org/packages/containernetworking-plugins/0.7.3/2.fc29/x86_64/containernetworking-plugins-0.7.3-2.fc29.x86_64.rpm \
-    https://kojipkgs.fedoraproject.org/packages/buildah/1.4/1.dev.git0a7389c.fc29/x86_64/buildah-1.4-1.dev.git0a7389c.fc29.x86_64.rpm \
-    https://kojipkgs.fedoraproject.org//packages/atomic/1.22.1/27.gitb507039.fc29/x86_64/atomic-1.22.1-27.gitb507039.fc29.x86_64.rpm \
+RUN dnf install -y \
+    make python3-pytest python3-pyxattr python3-pytest-cov \
+    skopeo podman buildah atomic \
     && dnf clean all
 
 # podman
