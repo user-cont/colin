@@ -29,7 +29,6 @@ IMAGES = {
 
 
 def build_image_if_not_exists(image_name):
-
     try:
         subprocess.check_call(["podman", "image", "exists", image_name])
     except subprocess.CalledProcessError:
@@ -38,16 +37,14 @@ def build_image_if_not_exists(image_name):
 
         dockerfile_path = IMAGES[image_name]["dockerfile_path"]
         cmd_create = ["podman", "build", "-t", image_name, "-f", dockerfile_path, data_dir]
-        output = subprocess.check_output(cmd_create)
-        assert output
+        subprocess.check_call(cmd_create)
 
 
 def pull_image_if_not_exists(image_name):
     try:
         subprocess.check_call(["podman", "image", "exists", image_name])
     except subprocess.CalledProcessError:
-        subprocess.check_call(["podman", "pull", image_name],
-                              stdout=subprocess.PIPE)
+        subprocess.check_call(["podman", "pull", image_name])
 
 
 def convert_image_to_ostree(image_name):
