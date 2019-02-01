@@ -21,9 +21,9 @@ loads AbstractCheck classes from it.
 import inspect
 import logging
 import os
-import warnings
-
-import six
+from importlib import import_module
+from importlib.util import module_from_spec
+from importlib.util import spec_from_file_location
 
 from ..core.checks.fmf_check import receive_fmf_metadata, FMFAbstractCheck
 
@@ -44,22 +44,11 @@ def path_to_module(path):
 def _load_module(path):
     module_name = path_to_module(path)
     logger.debug("Will try to load selected file as module '%s'.", module_name)
-    if six.PY3:
-        from importlib.util import module_from_spec
-        from importlib.util import spec_from_file_location
 
-        s = spec_from_file_location(module_name, path)
-        m = module_from_spec(s)
-        s.loader.exec_module(m)
-        return m
-
-    elif six.PY2:
-        import imp
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")  # FIXME: let's at least debug log other warnings
-            m = imp.load_source(module_name, path)
-        return m
+    s = spec_from_file_location(module_name, path)
+    m = module_from_spec(s)
+    s.loader.exec_module(m)
+    return m
 
 
 def should_we_load(kls):
@@ -131,16 +120,12 @@ class CheckLoader(object):
         :param import_name, str, e.g. some.module.MyClass
         :return the class
         """
-        if six.PY3:
-            from importlib import import_module
-            module_name, class_name = import_name.rsplit(".", 1)
-            mod = import_module(module_name)
-            check_class = getattr(mod, class_name)
-            self.mapping[check_class.name] = check_class
-            logger.info("successfully loaded class %s", check_class)
-            return check_class
-        else:
-            raise RuntimeError("This is not implemented for python 2.")
+        module_name, class_name = import_name.rsplit(".", 1)
+        mod = import_module(module_name)
+        check_class = getattr(mod, class_name)
+        self.mapping[check_class.name] = check_class
+        logger.info("successfully loaded class %s", check_class)
+        return check_class
 
     @property
     def check_classes(self):
