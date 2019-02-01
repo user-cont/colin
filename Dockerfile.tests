@@ -2,21 +2,19 @@ FROM registry.fedoraproject.org/fedora:29
 
 ENV PYTHONDONTWRITEBYTECODE=yes-please
 
-# atomic in F28 can't mount: can't find the image
 RUN dnf install -y \
     make python3-pytest python3-pyxattr python3-pytest-cov \
     skopeo podman buildah atomic \
     && dnf clean all
 
-# podman
-RUN useradd podm
-RUN echo "podm:231072:65536" > /etc/subuid
-RUN echo "podm:231072:65536" > /etc/subgid
-USER podm
+# # podman
+# RUN useradd podm
+# RUN echo "podm:231072:65536" > /etc/subuid
+# RUN echo "podm:231072:65536" > /etc/subgid
+# USER podm
 
 WORKDIR /src
 
-COPY ./tests /tests
 COPY . /src
 
 RUN pip3 install --user .
