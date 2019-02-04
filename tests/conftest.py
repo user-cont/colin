@@ -13,7 +13,7 @@ _set_logging(level=logging.DEBUG)
 
 BASH_IMAGE = "colin-test-bash"
 LS_IMAGE = "colin-test-ls"
-BUSYBOX_IMAGE = "busybox"
+BUSYBOX_IMAGE = "busybox:latest"
 LABELS_IMAGE = "colin-labels"
 IMAGES = {
     BASH_IMAGE: {
