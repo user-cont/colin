@@ -115,7 +115,7 @@ def target_label_image_and_dockerfile(request, label_image):
         yield t
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def target_bash_image():
     build_image_if_not_exists(BASH_IMAGE)
 
@@ -128,7 +128,7 @@ def target_bash(request, target_bash_image):
         yield t
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def target_ls_image():
     build_image_if_not_exists(LS_IMAGE)
 
@@ -150,7 +150,7 @@ def target_help_file(request, target_ls, target_bash):
         return target_bash, True
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def target_busybox_image():
     pull_image_if_not_exists(image_name=BUSYBOX_IMAGE)
 
