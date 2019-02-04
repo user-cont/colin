@@ -13,9 +13,10 @@ test-in-container: build-test-image test-in-container-now
 test-in-container-now:
 	@# use it like this: `make test-in-container TEST_TARGET=./tests/integration/test_utils.py`
 	docker run --rm --privileged --security-opt label=disable \
+		--name=colin \
 		--cap-add SYS_ADMIN -ti \
+		-v /var/tmp/ \
 		-v $(CURDIR):/src \
-		-v /var/lib/containers:/var/lib/containers \
 		$(TEST_IMAGE_NAME) \
 		make exec-test TEST_TARGET="$(TEST_TARGET)"
 
