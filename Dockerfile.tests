@@ -5,6 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE=yes-please
 RUN dnf install -y \
     make python3-pytest python3-pyxattr python3-pytest-cov \
     skopeo podman buildah atomic \
+    python3-ipdb \
     && dnf clean all
 
 # # podman
