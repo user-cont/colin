@@ -413,7 +413,8 @@ class OstreeTarget(AbstractImageTarget):
             kwargs["cwd"] = wd
         try:
             out = subprocess.check_output(cmd, **kwargs)
-        except subprocess.CalledProcessError:
+        except subprocess.CalledProcessError as ex:
+            logger.error(ex.output)
             logger.error(error_msg)
             raise
         logger.debug("%s", out)
