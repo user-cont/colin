@@ -13,7 +13,7 @@ _set_logging(level=logging.DEBUG)
 
 BASH_IMAGE = "colin-test-bash"
 LS_IMAGE = "colin-test-ls"
-BUSYBOX_IMAGE = "busybox"
+BUSYBOX_IMAGE = "busybox:latest"
 LABELS_IMAGE = "colin-labels"
 IMAGES = {
     BASH_IMAGE: {
@@ -30,25 +30,21 @@ IMAGES = {
 
 def build_image_if_not_exists(image_name):
     try:
-        subprocess.check_call(["podman", "image", "inspect", image_name],
-                              stdout=subprocess.PIPE)
+        subprocess.check_call(["podman", "image", "exists", image_name])
     except subprocess.CalledProcessError:
         this_dir = os.path.abspath(os.path.dirname(__file__))
-        data_dir = os.path.join(this_dir, os.path.pardir, "data")
+        data_dir = os.path.join(this_dir, "data")
 
         dockerfile_path = IMAGES[image_name]["dockerfile_path"]
         cmd_create = ["podman", "build", "-t", image_name, "-f", dockerfile_path, data_dir]
-        output = subprocess.check_output(cmd_create)
-        assert output
+        subprocess.check_call(cmd_create)
 
 
 def pull_image_if_not_exists(image_name):
     try:
-        subprocess.check_call(["podman", "image", "inspect", image_name],
-                              stdout=subprocess.PIPE)
+        subprocess.check_call(["podman", "image", "exists", image_name])
     except subprocess.CalledProcessError:
-        subprocess.check_call(["podman", "pull", image_name],
-                              stdout=subprocess.PIPE)
+        subprocess.check_call(["podman", "pull", image_name])
 
 
 def convert_image_to_ostree(image_name):
@@ -88,7 +84,7 @@ def get_target(name, type):
     elif type == "dockerfile":
 
         this_dir = os.path.abspath(os.path.dirname(__file__))
-        data_dir = os.path.join(this_dir, os.path.pardir, "data")
+        data_dir = os.path.join(this_dir, "data")
         dockerfile_path = os.path.join(data_dir, IMAGES[name]["dockerfile_path"])
 
         yield DockerfileTarget(target=dockerfile_path)
@@ -98,7 +94,7 @@ def get_skopeo_path(image_name, ostree_path):
     return "ostree:%s@%s" % (image_name, ostree_path)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def label_image():
     build_image_if_not_exists(LABELS_IMAGE)
 
@@ -119,7 +115,7 @@ def target_label_image_and_dockerfile(request, label_image):
         yield t
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def target_bash_image():
     build_image_if_not_exists(BASH_IMAGE)
 
@@ -132,7 +128,7 @@ def target_bash(request, target_bash_image):
         yield t
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def target_ls_image():
     build_image_if_not_exists(LS_IMAGE)
 
@@ -154,7 +150,7 @@ def target_help_file(request, target_ls, target_bash):
         return target_bash, True
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def target_busybox_image():
     pull_image_if_not_exists(image_name=BUSYBOX_IMAGE)
 

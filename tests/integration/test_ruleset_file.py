@@ -18,6 +18,7 @@ import tempfile
 
 import pytest
 import yaml
+from colin.core.exceptions import ColinRulesetException
 
 import colin
 from colin.core.checks.check_utils import NotLoadedCheck
@@ -140,16 +141,9 @@ def test_coupled_ruleset(ruleset_coupled):
 
 
 def test_unknown_check(ruleset_unknown_check):
-    checks = colin.get_checks(ruleset=ruleset_unknown_check)
-    assert checks
-    assert len(checks) == 2
-    for check in checks:
-        if check.name == 'i_forgot_the_name':
-            assert isinstance(check, NotLoadedCheck)
-        elif check.name == 'maintainer_label':
-            assert isinstance(check, LabelAbstractCheck)
-        else:
-            assert False
+    with pytest.raises(ColinRulesetException) as ex:
+        colin.get_checks(ruleset=ruleset_unknown_check)
+    assert str(ex.value) == "Check i_forgot_the_name can't be loaded, we couldn't find it."
 
 
 def test_skip(ruleset):

@@ -5,7 +5,7 @@ Test different target types.
 import pytest
 
 import colin
-from tests.integration.conftest import LABELS_IMAGE, convert_image_to_ostree, get_skopeo_path
+from tests.conftest import LABELS_IMAGE, convert_image_to_ostree, get_skopeo_path
 
 
 @pytest.fixture()

@@ -76,19 +76,16 @@ class Ruleset(object):
                 logger.info("Skipping... Target type does not match.")
                 continue
 
-            try:
-                check_class = self.check_loader.mapping[check_struct.name]
-                check_instance = check_class()
-            except KeyError as ke:
-                check_instance = NotLoadedCheck(check_name=check_struct.name,
-                                                reason="not found")
-                logger.debug("Cannot find a code for the check {}. ({})".format(check_struct.name,
-                                                                                ke))
-            except Exception as ex:
-                check_instance = NotLoadedCheck(check_name=check_struct.name,
-                                                reason="not instantiated")
-                logger.debug("Cannot instantiate the check {}. ({})".format(check_struct.name,
-                                                                            ex))
+            if check_struct.import_name:
+                check_class = self.check_loader.import_class(check_struct.import_name)
+            else:
+                try:
+                    check_class = self.check_loader.mapping[check_struct.name]
+                except KeyError:
+                    logger.error("Check %s was not found -- it can't be loaded", check_struct.name)
+                    raise ColinRulesetException(
+                        "Check {} can't be loaded, we couldn't find it.".format(check_struct.name))
+            check_instance = check_class()
 
             if check_struct.tags:
                 logger.info("Overriding check's tags %s with the one defined in ruleset: %s",
@@ -131,10 +128,11 @@ def get_checks_paths(checks_paths=None):
     :param checks_paths: list of str, directories where the checks are present
     :return: list of str (absolute path of directory with checks)
     """
-    if checks_paths:
-        return [os.path.abspath(x) for x in checks_paths]
     p = os.path.join(__file__, os.pardir, os.pardir, os.pardir, "checks")
     p = os.path.abspath(p)
+    # let's utilize the default upstream checks always
+    if checks_paths:
+        p += [os.path.abspath(x) for x in checks_paths]
     return [p]
 
 
