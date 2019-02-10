@@ -13,9 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+import functools
 import logging
 import subprocess
 import threading
+import time
 
 try:
     import thread
@@ -120,3 +122,30 @@ def exit_after(s):
         return inner
 
     return outer
+
+
+def retry(retry_count=5, delay=2):
+    """
+    Use as decorator to retry functions few times with delays
+
+    Exception will be raised if last call fails
+
+    :param retry_count: int could of retries in case of failures. It must be
+                        a positive number
+    :param delay: int delay between retries
+    """
+    if retry_count <= 0:
+        raise ValueError("retry_count have to be positive")
+
+    def decorator(f):
+        @functools.wraps(f)
+        def wrapper(*args, **kwargs):
+            for i in range(retry_count, 0, -1):
+                try:
+                    return f(*args, **kwargs)
+                except Exception:
+                    if i <= 1:
+                        raise
+                time.sleep(delay)
+        return wrapper
+    return decorator
