@@ -37,7 +37,7 @@ have to compile it yourself when getting it from PyPI.
 $ pip3 install --user colin
 ```
 
-`colin` does NOT support python 2.
+`colin` is supported on python 3.6+ only.
 
 ### On Fedora distribution
 
