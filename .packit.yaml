@@ -1,17 +1,6 @@
 specfile_path: colin.spec
 synced_files:
-  - .packit.yaml
   - colin.spec
-jobs:
-  - trigger: release
-    release_to:
-      - master
-  - trigger: pull_request
-    release_to:
-      - master
 upstream_name: colin
 package_name: colin
 dist_git_url: https://src.fedoraproject.org/rpms/colin.git
-checks:
-  - name: simple-koji-ci
-  - name: Fedora CI
