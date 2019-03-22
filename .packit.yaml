@@ -1,6 +1,6 @@
 specfile_path: colin.spec
 synced_files:
   - colin.spec
-upstream_name: colin
-package_name: colin
+upstream_project_name: colin
+downstream_package_name: colin
 dist_git_url: https://src.fedoraproject.org/rpms/colin.git

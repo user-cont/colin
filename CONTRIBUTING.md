@@ -12,9 +12,9 @@ if the problem has already been reported (or fixed in a master branch).
 
 If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/user-cont/colin/issues/new).
 Be sure to include a **descriptive title and a clear description**. Ideally, please provide:
- * version of colin you are using (`rpm -q colin` or `pip freeze | grep colin`)
- * version of [conu](https://github.com/fedora-modularity/conu) library (`rpm -q python2-conu python3-conu` or `pip freeze | grep conu`)
- * version of [dockerfile-parse](https://github.com/DBuildService/dockerfile-parse) library (`rpm -q python2-dockerfile-parse python3-dockerfile-parse` or `pip freeze | grep dockerfile-parse`)
+ * version of colin you are using (`rpm -q colin` or `pip3 freeze | grep colin`)
+ * version of [conu](https://github.com/user-cont/conu) library (`rpm -q python3-conu` or `pip3 freeze | grep conu`)
+ * version of [dockerfile-parse](https://github.com/DBuildService/dockerfile-parse) library (`rpm -q python3-dockerfile-parse` or `pip3 freeze | grep dockerfile-parse`)
  * version of container runtime you are using (`rpm -qa | grep docker`)
  * the command you executed, output and ideally please describe the image, container or dockerfile you are validating
    * invoke colin in debug mode (`--debug`)
