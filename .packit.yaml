@@ -4,3 +4,12 @@ synced_files:
 upstream_project_name: colin
 downstream_package_name: colin
 dist_git_url: https://src.fedoraproject.org/rpms/colin.git
+jobs:
+- job: sync_from_downstream
+  trigger: commit
+- job: copr_build
+  trigger: pull_request
+  metadata:
+    targets:
+    - fedora-rawhide-x86_64
+    - fedora-30-x86_64
