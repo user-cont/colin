@@ -13,9 +13,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+import logging
+
 from .abstract_check import ImageAbstractCheck, DockerfileAbstractCheck
 from .check_utils import check_label
 from ..result import CheckResult
+
+logger = logging.getLogger(__name__)
 
 
 class LabelAbstractCheck(ImageAbstractCheck, DockerfileAbstractCheck):
@@ -73,3 +77,40 @@ class DeprecatedLabelAbstractCheck(ImageAbstractCheck, DockerfileAbstractCheck):
                            reference_url=self.reference_url,
                            check_name=self.name,
                            logs=[])
+
+
+class InheritedOptionalLabelAbstractCheck(ImageAbstractCheck):
+
+    def __init__(self, message, description, reference_url, tags):
+        """
+        Abstract check for Dockerfile/Image labels.
+
+        :param message: str
+        :param description: str
+        :param reference_url: str
+        :param tags: [str]
+        """
+        super(InheritedOptionalLabelAbstractCheck, self) \
+            .__init__(message, description, reference_url, tags)
+        self.labels_list = []
+
+    def check(self, target):
+        passed = True
+        logs = []
+
+        if target.parent_target:
+            labels_to_check = (set(self.labels_list) & set(target.labels)
+                               & set(target.parent_target.labels))
+            for label in labels_to_check:
+                if target.labels[label] == target.parent_target.labels[label]:
+                    passed = False
+                    log = "optional label inherited: {}".format(label)
+                    logs.append(log)
+                    logger.debug(log)
+
+        return CheckResult(ok=passed,
+                           description=self.description,
+                           message=self.message,
+                           reference_url=self.reference_url,
+                           check_name=self.name,
+                           logs=logs)

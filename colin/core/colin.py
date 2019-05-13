@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 def run(
     target,
     target_type,
+    parent_target=None,
     tags=None,
     ruleset_name=None,
     ruleset_file=None,
@@ -45,6 +46,7 @@ def run(
     :param target: str (image name, ostree or dockertar)
                     or ImageTarget
                     or path/file-like object for dockerfile
+    :param parent_target: Target for parent image
     :param target_type: string, either image, dockerfile, dockertar
     :param tags: list of str (if not None, the checks will be filtered by tags.)
     :param ruleset_name: str (e.g. fedora; if None, default would be used)
@@ -58,13 +60,26 @@ def run(
     """
     _set_logging(level=logging_level)
     logger.debug("Checking started.")
+
+    parent = None
+    if parent_target is not None and target_type != 'dockerfile':
+        parent = Target.get_instance(
+            target=parent_target,
+            logging_level=logging_level,
+            pull=pull,
+            target_type=target_type,
+            insecure=insecure,
+        )
+
     target = Target.get_instance(
         target=target,
+        parent_target=parent,
         logging_level=logging_level,
         pull=pull,
         target_type=target_type,
         insecure=insecure,
     )
+
     checks_to_run = _get_checks(
         target_type=target.__class__,
         tags=tags,

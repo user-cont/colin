@@ -20,6 +20,7 @@ import pytest
 import colin
 from colin.checks.labels import RunOrUsageLabelCheck
 from colin.core.target import DockerfileTarget
+from tests.conftest import get_target, LABELS_IMAGE_PARENT, build_image_if_not_exists
 
 
 @pytest.fixture()
@@ -34,8 +35,9 @@ def empty_ruleset():
     }
 
 
-def get_results_from_colin_labels_image(target):
+def get_results_from_colin_labels_image(target, parent_target=None):
     return colin.run(target=target.target_name,
+                     parent_target=parent_target,
                      target_type=target.target_type,
                      ruleset_name="fedora",
                      logging_level=logging.DEBUG, pull=False)
@@ -45,8 +47,19 @@ def test_colin_image(target_label):
     assert get_results_from_colin_labels_image(target=target_label)
 
 
-def test_labels_in_image(target_label):
-    result = get_results_from_colin_labels_image(target=target_label)
+@pytest.mark.parametrize("same_parent_target", [None, True, False])
+def test_labels_in_image(target_label, same_parent_target):
+    parent = None
+    if same_parent_target:
+        parent = target_label.target_name
+    elif same_parent_target is False:
+        if not isinstance(target_label, DockerfileTarget):
+            build_image_if_not_exists(LABELS_IMAGE_PARENT)
+            parent_gen = get_target(LABELS_IMAGE_PARENT, target_label.target_type)
+            parent_target = next(parent_gen)
+            parent = parent_target.target_name
+
+    result = get_results_from_colin_labels_image(target=target_label, parent_target=parent)
     assert result
     expected_dict = {"maintainer_label": "PASS",
                      "name_label": "PASS",
@@ -66,9 +79,12 @@ def test_labels_in_image(target_label):
                      "io.k8s.description_label": "PASS",
                      "vcs-url_label": "FAIL",
                      "help_file_or_readme": "FAIL",
+                     "inherited_labels": "PASS",
                      # "cmd_or_entrypoint": "PASS",
                      # "no_root": "FAIL",
                      }
+    if same_parent_target:
+        expected_dict['inherited_labels'] = "FAIL"
 
     if isinstance(target_label, DockerfileTarget):
         expected_dict.update({'description_or_io.k8s.description_label': 'PASS',
@@ -77,6 +93,7 @@ def test_labels_in_image(target_label):
                              )
         del (expected_dict['help_file_or_readme'])
         del (expected_dict['run_or_usage_label'])
+        del (expected_dict['inherited_labels'])
     labels_dict = {}
     for res in result.results:
         labels_dict[res.check_name] = res.status

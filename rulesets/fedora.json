@@ -72,6 +72,24 @@
         "image",
         "container"
       ]
+    },
+    {
+      "names": [
+        "inherited_labels"
+      ],
+      "labels_list": [
+        "summary",
+        "description",
+        "io.k8s.description",
+        "io.k8s.display-name",
+        "io.openshift.tags"
+      ],
+      "additional_tags": [
+        "required"
+      ],
+      "usable_targets": [
+        "image"
+      ]
     }
   ]
 }

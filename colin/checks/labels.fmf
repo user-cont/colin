@@ -221,3 +221,10 @@ tags: ["label"]
   labels: ["version"]
   required: True
   value_regex: Null
+
+/inherited_labels:
+  class: InheritedOptionalLabelCheck
+  message: "Optional labels are only inherited"
+  description: "Check if optional labels provided with 'labels_list' argument, are only inherited"
+  reference_url: "?????"
+  tags+: ["inherited"]

@@ -15,6 +15,7 @@ BASH_IMAGE = "colin-test-bash"
 LS_IMAGE = "colin-test-ls"
 BUSYBOX_IMAGE = "busybox:latest"
 LABELS_IMAGE = "colin-labels"
+LABELS_IMAGE_PARENT = "colin-labels-parent"
 IMAGES = {
     BASH_IMAGE: {
         "dockerfile_path": "Dockerfile-bash"
@@ -24,6 +25,9 @@ IMAGES = {
     },
     LABELS_IMAGE: {
         "dockerfile_path": "Dockerfile"
+    },
+    LABELS_IMAGE_PARENT: {
+        "dockerfile_path": "Dockerfile-parent"
     }
 }
 
