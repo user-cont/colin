@@ -9,13 +9,14 @@
 %endif
 
 Name:           %{pypi_name}
-Version:        0.3.0
-Release:        1%{?dist}
-Summary:        Tool to check generic rules/best-practices for containers/images/dockerfiles
+Version:        0.3.1
+Release:        4%{?dist}
+Summary:        Tool to check generic rules/best-practices for containers/images/dockerfiles.
 
 License:        GPLv3+
 URL:            https://github.com/user-cont/colin
 Source0:        https://files.pythonhosted.org/packages/source/c/%{pypi_name}/%{pypi_name}-%{version}.tar.gz
+
 BuildArch:      noarch
 Requires:       python3-%{pypi_name}
 
@@ -28,10 +29,8 @@ Summary:        %{summary}
 %{?python_provide:%python_provide python3-%{pypi_name}}
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
-Requires:       python3-click
-Requires:       python3-six
-Requires:       python3-dockerfile-parse
-Requires:       python3-PyYAML
+Recommends:     moby-engine
+Recommends:     atomic
 
 %description -n python3-%{pypi_name}
 `colin` as a tool to check generic rules/best-practices
@@ -39,6 +38,7 @@ for containers/images/dockerfiles
 
 %package doc
 BuildRequires:  python3-sphinx
+BuildRequires:  python3-sphinx_rtd_theme
 Summary:        colin documentation
 
 %description doc
@@ -78,11 +78,35 @@ rm -rf html/.{doctrees,buildinfo}
 %doc html
 
 %changelog
+* Wed May 01 2019 Lukas Slebodnik <lslebodn@fedoraproject.org> 0.3.1-4
+- Change weak dependency in rawhide (docker -> moby-engine)
+
+* Wed May 01 2019 Lukas Slebodnik <lslebodn@fedoraproject.org> 0.3.1-3
+- rhbz#1684558 - Remove hard dependency on docker
+
+* Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 0.3.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
+* Mon Jan 21 2019 Tomas Tomecek <nereone@gmail.com> 0.3.1-1
+- 0.3.1 release
+
 * Wed Nov 14 2018 Frantisek Lachman <flachman@redhat.com> - 0.3.0-1
 - 0.3.0 release
 
-* Mon May 28 2018 Tomas Tomecek <ttomecek@redhat.com> - 0.1.0-1
-- new upstream release: 0.1.0
+* Mon Oct 22 2018 lachmanfrantisek <lachmanfrantisek@gmail.com> 0.2.1-1
+- 0.2.1 release
+
+* Wed Sep 19 2018 Jiri Popelka <jpopelka@redhat.com> 0.2.0-1
+- 0.2.0 release
+
+* Thu Jul 12 2018 Fedora Release Engineering <releng@fedoraproject.org> - 0.1.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
+* Tue Jun 19 2018 Miro Hrončok <mhroncok@redhat.com> - 0.1.0-2
+- Rebuilt for Python 3.7
+
+* Wed May 30 2018 Jiri Popelka <jpopelka@redhat.com> 0.1.0-1
+- 0.1.0 release
 
 * Wed May 02 2018 Petr Hracek <phracek@redhat.com> - 0.0.4-3
 - Polishing texts and remove leftovers (#1572084)
