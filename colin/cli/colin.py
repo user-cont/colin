@@ -48,6 +48,8 @@ def cli():
 @click.command(name="check",
                context_settings=CONTEXT_SETTINGS)
 @click.argument('TARGET', type=click.STRING)
+@click.option('--parent-target', type=click.STRING,
+              help="Parent target")
 @click.option('--ruleset', '-r', type=click.STRING, envvar='COLIN_RULESET',
               help="Select a predefined ruleset (e.g. fedora).")
 @click.option('--ruleset-file', '-f', type=click.File(mode='r'),
@@ -78,7 +80,7 @@ def cli():
               help="Timeout for each check in seconds. (default=600)")
 @click.option('--insecure', is_flag=True, default=False,
               help="Pull from an insecure registry (HTTP or invalid TLS).")
-def check(target, ruleset, ruleset_file, debug, json, stat, skip, tag, verbose,
+def check(target, parent_target, ruleset, ruleset_file, debug, json, stat, skip, tag, verbose,
           checks_paths, target_type, timeout, pull, insecure):
     """
     Check the image/dockerfile (default).
@@ -99,6 +101,7 @@ def check(target, ruleset, ruleset_file, debug, json, stat, skip, tag, verbose,
                                    verbose=verbose)
         results = run(
             target=target,
+            parent_target=parent_target,
             ruleset_name=ruleset,
             ruleset_file=ruleset_file,
             logging_level=log_level,

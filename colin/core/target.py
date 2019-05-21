@@ -70,6 +70,7 @@ class Target(object):
     def __init__(self):
         self._labels = None
         self.target_name = None
+        self.parent_target = None
 
     @property
     def labels(self):
@@ -228,13 +229,14 @@ class ImageTarget(AbstractImageTarget):
     """
     target_type = "image"
 
-    def __init__(self, target, pull, insecure=False, **_):
+    def __init__(self, target, pull, parent_target=None, insecure=False, **_):
         super().__init__()
         logger.debug("Target is an image.")
         self.pull = pull
         self.insecure = insecure
         self.image_name_obj = ImageName.parse(target)
         self.target_name = self.image_name_obj.name
+        self.parent_target = parent_target
 
         self._config_metadata = None
         self._mount_point = None
@@ -319,7 +321,7 @@ class OstreeTarget(AbstractImageTarget):
     """
     target_type = "ostree"
 
-    def __init__(self, target, **_):
+    def __init__(self, target, parent_target=None, **_):
         super().__init__()
         logger.debug("Target is an ostree repository.")
 
@@ -332,6 +334,7 @@ class OstreeTarget(AbstractImageTarget):
         except ValueError:
             raise RuntimeError("Invalid ostree target: should be 'image@path'.")
 
+        self.parent_target = parent_target
         self._tmpdir = None
         self._mount_point = None
         self._layers_path = None

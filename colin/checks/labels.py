@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from colin.core.checks.labels import LabelAbstractCheck
+from colin.core.checks.labels import LabelAbstractCheck, InheritedOptionalLabelAbstractCheck
 from colin.core.checks.fmf_check import FMFAbstractCheck
 
 
@@ -106,3 +106,7 @@ class VendorLabelCheck(FMFAbstractCheck, LabelAbstractCheck):
 
 class VersionLabelCheck(FMFAbstractCheck, LabelAbstractCheck):
     name = "version_label"
+
+
+class InheritedOptionalLabelCheck(FMFAbstractCheck, InheritedOptionalLabelAbstractCheck):
+    name = "inherited_labels"
