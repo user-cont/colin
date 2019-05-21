@@ -9,8 +9,8 @@
 %endif
 
 Name:           %{pypi_name}
-Version:        0.3.1
-Release:        4%{?dist}
+Version:        0.4.0
+Release:        1%{?dist}
 Summary:        Tool to check generic rules/best-practices for containers/images/dockerfiles.
 
 License:        GPLv3+
@@ -78,6 +78,9 @@ rm -rf html/.{doctrees,buildinfo}
 %doc html
 
 %changelog
+* Thu May 23 2019 Tomas Tomecek <ttomecek@redhat.com> - 0.4.0-1
+- new upstream release: 0.4.0
+
 * Wed May 01 2019 Lukas Slebodnik <lslebodn@fedoraproject.org> 0.3.1-4
 - Change weak dependency in rawhide (docker -> moby-engine)
 

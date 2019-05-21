@@ -1,3 +1,21 @@
+# 0.4.0
+
+## Features
+
+* Create a new check which makes sure that certain labels are overridden in
+  layered images.
+* Certain remote API calls are now being retried - this should help in environments where network is unreliable.
+
+## Breaking changes
+
+* Python 2 is now completely unsupported.
+
+## Minor
+
+* A bunch of usability issues: when things go wrong, colin should not
+  produce more helpful error messages and logs.
+
+
 # 0.3.1
 
 ## Fixes
