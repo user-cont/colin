@@ -33,7 +33,7 @@ setup(
     version=version["__version__"],
     description="Tool to check generic rules/best-practices for containers/images/dockerfiles.",
     long_description=long_description,
-    # long_description_content_type='text/markdown',
+    long_description_content_type='text/markdown',
     packages=find_packages(exclude=['examples', 'tests']),
     install_requires=[
         'Click',
