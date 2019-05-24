@@ -48,8 +48,7 @@ $ dnf install -y colin
 
 ### Requirements
 
-- For checking `image` target-type, you have to install [podman](https://github.com/containers/libpod/blob/master/docs/tutorials/podman_tutorial.md).
-If you need to check local docker images, you need to prefix your images with `docker-daemon` (e.g. `colin check docker-daemon:docker.io/openshift/origin-web-console:v3.11`).
+- For checking `image` target-type, you have to install [podman](https://github.com/containers/libpod/blob/master/docs/tutorials/podman_tutorial.md). If you need to check local docker images, you need to prefix your images with `docker-daemon` (e.g. `colin check docker-daemon:docker.io/openshift/origin-web-console:v3.11`).
 
 - If you want to use `ostree` target, you need to install following tools:
     - [ostree](https://github.com/ostreedev/ostree)
