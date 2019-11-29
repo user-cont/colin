@@ -1,0 +1,7 @@
+/test/build:
+    /smoke:
+      execute:
+        how: shell
+        script:
+        - colin --version
+        - colin --help

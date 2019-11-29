@@ -2,27 +2,35 @@ specfile_path: colin.spec
 synced_files:
   - colin.spec
   - .packit.yaml
-upstream_project_name: colin
+upstream_package_name: colin
 downstream_package_name: colin
 jobs:
-- job: propose_downstream
-  trigger: release
-  metadata:
-    dist_git_branch: master
-- job: propose_downstream
-  trigger: release
-  metadata:
-    dist_git_branch: f30
-- job: propose_downstream
-  trigger: release
-  metadata:
-    dist_git_branch: f29
-- job: sync_from_downstream
-  trigger: commit
-- job: copr_build
-  trigger: pull_request
-  metadata:
-    targets:
-    - fedora-30-x86_64
-    - fedora-29-x86_64
-    - fedora-rawhide-x86_64
+  - job: sync_from_downstream
+    trigger: commit
+  - job: propose_downstream
+    trigger: release
+    metadata:
+      dist-git-branch: master
+  - job: propose_downstream
+    trigger: release
+    metadata:
+      dist-git-branch: f31
+  - job: propose_downstream
+    trigger: release
+    metadata:
+      dist-git-branch: f30
+  - job: copr_build
+    trigger: pull_request
+    metadata:
+      targets:
+        - fedora-30-x86_64
+        - fedora-31-x86_64
+        - fedora-rawhide-x86_64
+  - job: tests
+    trigger: pull_request
+    metadata:
+      targets:
+        - fedora-30-x86_64
+        - fedora-31-x86_64
+        - fedora-rawhide-x86_64
+
