@@ -50,7 +50,7 @@ setup(
                                            "rulesets/fedora.json"]),
                 ("share/bash-completion/completions/", ["bash-complete/colin"])],
     license='GPLv3+',
-    python_requires=">=3.5",
+    python_requires=">=3.6",
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
