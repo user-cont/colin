@@ -34,6 +34,7 @@ def _common_help_options(result):
     assert "-f, --ruleset-file FILENAME" in result.output
     assert "--debug" in result.output
     assert "--json FILENAME" in result.output
+    assert "--xunit FILENAME" in result.output
     assert "-t, --tag TEXT" in result.output
     assert "-v, --verbose" in result.output
     assert "-h, --help" in result.output
