@@ -9,6 +9,7 @@ RUN dnf install -y \
     && dnf clean all
 
 RUN sed '/^graphroot/s/.*/graphroot="\/var\/tmp\/containers"/' -i /etc/containers/storage.conf \
+    && sed -e '/mountopt/s/,\?metacopy=on,\?//' -i /etc/containers/storage.conf \
     && printf 'checkout_path: /var/tmp/containers/atomic\n' >>/etc/atomic.conf
 
 # # podman
