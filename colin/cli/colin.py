@@ -82,8 +82,8 @@ def cli():
               help="Timeout for each check in seconds. (default=600)")
 @click.option('--insecure', is_flag=True, default=False,
               help="Pull from an insecure registry (HTTP or invalid TLS).")
-def check(target, parent_target, ruleset, ruleset_file, debug, json, xunit, stat, skip, tag, verbose,
-          checks_paths, target_type, timeout, pull, insecure):
+def check(target, parent_target, ruleset, ruleset_file, debug, json, xunit, stat, skip, tag,
+          verbose, checks_paths, target_type, timeout, pull, insecure):
     """
     Check the image/dockerfile (default).
     """

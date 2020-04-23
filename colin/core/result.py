@@ -15,7 +15,7 @@
 #
 
 import json
-from xml.etree.ElementTree import Element, SubElement, ElementTree, tostring
+from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom import minidom
 
 import six
@@ -119,7 +119,7 @@ class CheckResults(object):
                 'status': "PASSED" if r.ok else "FAILED",
                 'url': r.reference_url
             })
-            if len(r.logs) > 0:
+            if r.logs:
                 logs = SubElement(testcase, "logs")
                 for log in r.logs:
                     log = SubElement(logs, "log", {
@@ -134,6 +134,11 @@ class CheckResults(object):
         return reparsed.toprettyxml(indent="  ")
 
     def save_xunit_to_file(self, file):
+        """
+        Write the contents of xunit to the passed file pointer.
+        :param file: the file to which to write
+        :return: return code of the write command
+        """
         file.write(self.xunit)
 
     @property
