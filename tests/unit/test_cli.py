@@ -53,6 +53,7 @@ def test_check_help_command():
     assert result.exit_code == 0
     _common_help_options(result)
     assert "--stat" in result.output
+    assert "--xunit FILENAME" in result.output
 
 
 def test_list_checks():

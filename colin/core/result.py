@@ -15,6 +15,8 @@
 #
 
 import json
+from xml.etree.ElementTree import Element, SubElement, tostring
+from xml.dom import minidom
 
 import six
 
@@ -96,6 +98,48 @@ class CheckResults(object):
         json.dump(obj=self._dict_of_results,
                   fp=file,
                   indent=4)
+
+    @property
+    def xunit(self):
+        """
+        Get the xunit representation of results
+
+        :return: str
+        """
+
+        top = Element("testsuites")
+
+        testsuite = SubElement(top, "testsuite")
+
+        for r in self.results:
+            testcase = SubElement(testsuite, "testcase", {
+                'name': r.check_name,
+                # Can't use PASSED or FAILED global variables because their values are PASS
+                # and FAIL respectively and xunit wants them suffixed with -ED.
+                'status': "PASSED" if r.ok else "FAILED",
+                'url': r.reference_url
+            })
+            if r.logs:
+                logs = SubElement(testcase, "logs")
+                for log in r.logs:
+                    log = SubElement(logs, "log", {
+                        'message': log,
+                        'result': 'INFO',
+                        'waiver_authorization': 'Not Waivable'
+                    })
+
+
+        rough_string = tostring(top, 'utf-8')
+        reparsed = minidom.parseString(rough_string)
+        return reparsed.toprettyxml(indent="  ")
+
+    def save_xunit_to_file(self, file):
+        """
+        Write the contents of xunit to the passed file pointer.
+        :param file: the file to which to write
+        :return: return code of the write command
+        """
+        file.write(self.xunit)
 
     @property
     def statistics(self):
