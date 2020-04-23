@@ -37,12 +37,12 @@ def _result_generator(target, checks, timeout=None):
         for check in checks:
             logger.debug("Checking {}".format(check.name))
             try:
-                timeout = timeout or check.timeout or CHECK_TIMEOUT
-                logger.debug("Check timeout: {}".format(timeout))
-                yield exit_after(timeout)(check.check)(target)
+                _timeout = timeout or check.timeout or CHECK_TIMEOUT
+                logger.debug("Check timeout: {}".format(_timeout))
+                yield exit_after(_timeout)(check.check)(target)
             except TimeoutError as ex:
                 logger.warning(
-                    "The check hit the timeout.")
+                    "The check hit the timeout: {}".format(_timeout))
                 yield FailedCheckResult(check, logs=[str(ex)])
             except Exception as ex:
                 tb = traceback.format_exc()
