@@ -157,9 +157,9 @@ $ cat foobar.json
 }
 ```
 
-And we would just call colin and point it to `/tmp/external_checks/checks.py`:
+And we would just call colin and point it to the directory containing python files with checks:
 ```
-$ python3 -m colin.cli.colin -f ./foobar.json --checks-path /tmp/external_checks/checks.py fedora:28
+$ python3 -m colin.cli.colin -f ./foobar.json --checks-path /tmp/external_checks/ fedora:28
 10:43:38.165 loader.py         DEBUG  Getting check(s) from the file '/tmp/external_checks/checks.py'.
 10:43:38.165 loader.py         DEBUG  Will try to load selected file as module 'checks'.
 10:43:38.168 ruleset.py        DEBUG  Check instance foobar_file_required added.
