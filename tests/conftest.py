@@ -7,7 +7,7 @@ import tempfile
 import pytest
 
 from colin.core.colin import _set_logging
-from colin.core.target import ImageTarget, OstreeTarget, DockerfileTarget
+from colin.core.target import ImageTarget, OstreeTarget, OciTarget, DockerfileTarget
 
 _set_logging(level=logging.DEBUG)
 
@@ -66,6 +66,17 @@ def convert_image_to_ostree(image_name):
     return ostree_path
 
 
+def convert_image_to_oci(image_name):
+    tmpdir_path = tempfile.mkdtemp(prefix="pytest-", dir="/var/tmp")
+    oci_path = os.path.join(tmpdir_path, "oci")
+    os.makedirs(oci_path)
+    skopeo_target = get_skopeo_oci_target(image_name=image_name, oci_path=oci_path)
+
+    cmd = ["podman", "push", image_name, skopeo_target]
+    subprocess.check_call(cmd)
+    return oci_path
+
+
 def get_target(name, type):
     if type == "image":
 
@@ -85,6 +96,17 @@ def get_target(name, type):
         ostree_target.clean_up()
         shutil.rmtree(ostree_path)
 
+    elif type == "oci":
+
+        oci_path = convert_image_to_oci(name)
+        skopeo_target = get_skopeo_oci_target(image_name=name,
+                                              oci_path=oci_path)
+
+        oci_target = OciTarget(target=skopeo_target)
+        yield oci_target
+        oci_target.clean_up()
+        shutil.rmtree(oci_path)
+
     elif type == "dockerfile":
 
         this_dir = os.path.abspath(os.path.dirname(__file__))
@@ -98,13 +120,17 @@ def get_skopeo_path(image_name, ostree_path):
     return "ostree:%s@%s" % (image_name, ostree_path)
 
 
+def get_skopeo_oci_target(image_name, oci_path):
+    return "oci:%s:%s" % (oci_path, image_name)
+
+
 @pytest.fixture(scope="session", autouse=True)
 def label_image():
     build_image_if_not_exists(LABELS_IMAGE)
 
 
 @pytest.fixture(scope="session",
-                params=["image", "ostree", "dockerfile"])
+                params=["image", "ostree", "oci", "dockerfile"])
 def target_label(request, label_image):
     for t in get_target(name=LABELS_IMAGE,
                         type=request.param):
@@ -112,7 +138,7 @@ def target_label(request, label_image):
 
 
 @pytest.fixture(scope="session",
-                params=["image", "ostree", "dockerfile"])
+                params=["image", "ostree", "oci", "dockerfile"])
 def target_label_image_and_dockerfile(request, label_image):
     for t in get_target(name=LABELS_IMAGE,
                         type=request.param):
@@ -125,7 +151,7 @@ def target_bash_image():
 
 
 @pytest.fixture(scope="session",
-                params=["image", "ostree"])
+                params=["image", "ostree", "oci"])
 def target_bash(request, target_bash_image):
     for t in get_target(name=BASH_IMAGE,
                         type=request.param):
@@ -138,7 +164,7 @@ def target_ls_image():
 
 
 @pytest.fixture(scope="session",
-                params=["image", "ostree"])
+                params=["image", "ostree", "oci"])
 def target_ls(request, target_ls_image):
     for t in get_target(name=LS_IMAGE,
                         type=request.param):
@@ -160,7 +186,7 @@ def target_busybox_image():
 
 
 @pytest.fixture(scope="session",
-                params=["image", "ostree"])
+                params=["image", "ostree", "oci"])
 def target_busybox(request, target_busybox_image):
     for t in get_target(name=BUSYBOX_IMAGE,
                         type=request.param):
