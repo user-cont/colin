@@ -5,7 +5,7 @@ Test different target types.
 import pytest
 
 import colin
-from tests.conftest import LABELS_IMAGE, convert_image_to_ostree, get_skopeo_path
+from tests.conftest import LABELS_IMAGE, convert_image_to_ostree, get_skopeo_path, convert_image_to_oci, get_skopeo_oci_target
 
 
 @pytest.fixture()
@@ -112,5 +112,14 @@ def test_ostree_target(ruleset):
     ostree_path = convert_image_to_ostree(image_name=image_name)
     skopeo_target = get_skopeo_path(image_name=image_name, ostree_path=ostree_path)
     results = colin.run(skopeo_target, "ostree", ruleset=ruleset, logging_level=10, pull=False)
+    assert results.ok
+    assert results.results_per_check["url_label"].ok
+
+
+def test_oci_target(ruleset):
+    image_name = "colin-labels"
+    oci_path = convert_image_to_oci(image_name=image_name)
+    skopeo_target = get_skopeo_oci_target(image_name=image_name, oci_path=oci_path)
+    results = colin.run(skopeo_target, "oci", ruleset=ruleset, logging_level=10, pull=False)
     assert results.ok
     assert results.results_per_check["url_label"].ok
