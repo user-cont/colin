@@ -63,7 +63,7 @@ def inspect_object(obj, refresh=True):
 class Target(object):
     """
     Target is the thing we are going to check; it can be
-    - an image (specified by name, ostree or dockertar)
+    - an image (specified by name, ostree, oci or dockertar)
     - dockerfile (specified by path or file-like object)
     """
 
@@ -99,7 +99,7 @@ class Target(object):
     @staticmethod
     def get_instance(target_type, **kwargs):
         """
-        :param target_type: string, either image, dockertar, ostree or dockerfile
+        :param target_type: string, either image, dockertar, ostree, oci or dockerfile
         """
         if target_type in TARGET_TYPES:
             cls = TARGET_TYPES[target_type]
@@ -431,8 +431,117 @@ class OstreeTarget(AbstractImageTarget):
         raise NotImplementedError("Unsupported right now.")
 
 
+class OciTarget(AbstractImageTarget):
+    """
+    Represents the oci repository as an image target.
+    """
+    target_type = "oci"
+
+    def __init__(self, target, parent_target=None, **_):
+        super().__init__()
+        logger.debug("Target is an oci repository.")
+
+        self.target_name = target
+        if self.target_name.startswith("oci:"):
+            self.target_name = self.target_name[4:]
+
+        try:
+            self._oci_path, self.ref_image_name = self.target_name.split(":", 1)
+        except ValueError:
+            raise RuntimeError("Invalid oci target: should be 'path:image'.")
+
+        self.parent_target = parent_target
+        self._tmpdir = None
+        self._mount_point = None
+        self._layers_path = None
+        self._labels = None
+
+    @property
+    def labels(self):
+        """
+        Provide labels without the need of dockerd. Instead skopeo is being used.
+
+        :return: dict
+        """
+        if self._labels is None:
+            cmd = ["skopeo", "inspect", self.skopeo_target]
+            self._labels = json.loads(subprocess.check_output(cmd))["Labels"]
+        return self._labels
+
+    @property
+    def layers_path(self):
+        """ Directory with all the layers (docker save). """
+        if self._layers_path is None:
+            self._layers_path = os.path.join(self.tmpdir, "layers")
+        return self._layers_path
+
+    @property
+    def mount_point(self):
+        """ oci checkout -- real filesystem """
+        if self._mount_point is None:
+            checkout_dir = os.path.join(self.tmpdir, "checkout")
+            os.makedirs(checkout_dir)
+            # root filesystem is unpacked in rootfs subdirectory
+            self._mount_point = os.path.join(checkout_dir, "rootfs")
+            self._checkout(checkout_dir)
+        return self._mount_point
+
+    @property
+    def oci_path(self):
+        """ oci repository -- content """
+        if self._oci_path is None:
+            self._oci_path = os.path.join(self.tmpdir, "oci")
+        return self._oci_path
+
+    @property
+    def skopeo_target(self):
+        """ Skopeo format for the oci repository. """
+        return "oci:{}:{}".format(self.oci_path, self.ref_image_name)
+
+    @property
+    def tmpdir(self):
+        """ Temporary directory holding all the runtime data. """
+        if self._tmpdir is None:
+            self._tmpdir = mkdtemp(prefix="colin-", dir="/var/tmp")
+        return self._tmpdir
+
+    def clean_up(self):
+        shutil.rmtree(self.tmpdir)
+
+    def _checkout(self, checkout_dir):
+        """ check out the image filesystem on self.mount_point """
+        cmd = ["umoci", "unpack", "--rootless", "--image",
+               "{}:{}".format(self.oci_path, self.ref_image_name), checkout_dir]
+        self._run_and_log(cmd, "Failed to mount selected image as an oci repo.")
+
+    @staticmethod
+    def _run_and_log(cmd, error_msg):
+        """ run provided command and log all of its output"""
+        logger.debug("running command %s", cmd)
+        kwargs = {
+            "stderr": subprocess.STDOUT,
+            "env": os.environ.copy(),
+        }
+        try:
+            out = subprocess.check_output(cmd, **kwargs)
+        except subprocess.CalledProcessError as ex:
+            logger.error(ex.output)
+            logger.error(error_msg)
+            raise
+        logger.debug("%s", out)
+
+    @property
+    def config_metadata(self):
+        """ metadata from "Config" key """
+        raise NotImplementedError("Skopeo does not provide metadata yet.")
+
+    def get_output(self, cmd):
+        raise NotImplementedError("Unsupported right now.")
+
+
 TARGET_TYPES = {
     "image": ImageTarget,
     "dockerfile": DockerfileTarget,
-    "ostree": OstreeTarget
+    "ostree": OstreeTarget,
+    "oci": OciTarget,
 }
