@@ -6,7 +6,9 @@ RUN dnf install -y \
     make python3-pytest python3-pyxattr python3-pytest-cov \
     skopeo podman buildah atomic \
     python3-ipdb \
-    && dnf clean all
+    && dnf clean all \
+    && curl -L -o /usr/local/bin/umoci https://github.com/opencontainers/umoci/releases/download/v0.4.6/umoci.amd64 \
+    && chmod a+x /usr/local/bin/umoci
 
 RUN sed '/^graphroot/s/.*/graphroot="\/var\/tmp\/containers"/' -i /etc/containers/storage.conf \
     && sed -e '/mountopt/s/,\?metacopy=on,\?//' -i /etc/containers/storage.conf \
