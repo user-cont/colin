@@ -10,27 +10,14 @@ jobs:
   - job: propose_downstream
     trigger: release
     metadata:
-      dist-git-branch: master
-  - job: propose_downstream
-    trigger: release
-    metadata:
-      dist-git-branch: f31
-  - job: propose_downstream
-    trigger: release
-    metadata:
-      dist-git-branch: f30
+      dist-git-branch: fedora-all
   - job: copr_build
     trigger: pull_request
     metadata:
       targets:
-        - fedora-30-x86_64
-        - fedora-31-x86_64
-        - fedora-rawhide-x86_64
+        - fedora-all
   - job: tests
     trigger: pull_request
     metadata:
       targets:
-        - fedora-30-x86_64
-        - fedora-31-x86_64
-        - fedora-rawhide-x86_64
-
+        - fedora-all
