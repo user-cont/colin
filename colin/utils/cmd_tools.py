@@ -119,9 +119,7 @@ def exit_after(s):
             try:
                 result = fn(*args, **kwargs)
             except KeyboardInterrupt:
-                raise TimeoutError(
-                    f"Function '{fn.__name__}' hit the timeout ({s}s)."
-                )
+                raise TimeoutError(f"Function '{fn.__name__}' hit the timeout ({s}s).")
             finally:
                 timer.cancel()
             return result

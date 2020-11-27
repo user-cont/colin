@@ -68,7 +68,7 @@ def should_we_load(kls):
 
 
 def load_check_classes_from_file(path):
-    logger.debug("Getting check(s) from the file '{}'.".format(path))
+    logger.debug("Getting check(s) from the file '%s'.", path)
     m = _load_module(path)
 
     check_classes = []

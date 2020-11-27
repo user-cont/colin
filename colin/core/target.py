@@ -285,7 +285,7 @@ class ImageTarget(AbstractImageTarget):
         result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if result.returncode == 0:
             self.image_id = result.stdout.decode().rstrip()
-            logger.debug("Image found with id: '{}'.".format(self.image_id))
+            logger.debug("Image found with id: '%s'.", self.image_id)
         else:
             if "unable to find" in result.stderr.decode():
                 if self.pull:
@@ -296,18 +296,14 @@ class ImageTarget(AbstractImageTarget):
                     )
                     if result_pull.returncode == 0:
                         self.image_id = result_pull.stdout.decode().rstrip()
-                        logger.debug(
-                            "Image pulled with id: '{}'.".format(self.image_id)
-                        )
+                        logger.debug("Image pulled with id: '%s'.", self.image_id)
                     else:
                         raise ColinException(
                             f"Cannot pull an image: '{self.target_name}'."
                         )
 
                 else:
-                    raise ColinException(
-                        f"Image '{self.target_name}' not found."
-                    )
+                    raise ColinException(f"Image '{self.target_name}' not found.")
             else:
                 raise ColinException(f"Podman error: {result.stderr}")
 

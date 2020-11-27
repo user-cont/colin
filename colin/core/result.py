@@ -210,9 +210,7 @@ class CheckResults(object):
                     if logs and r.logs:
                         output_function("  -> logs:", fg=COLOURS[r.status])
                         for line in r.logs:
-                            output_function(
-                                f"    -> {line}", fg=COLOURS[r.status]
-                            )
+                            output_function(f"    -> {line}", fg=COLOURS[r.status])
 
         if not has_check:
             output_function("No check found.")

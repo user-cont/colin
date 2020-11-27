@@ -49,7 +49,7 @@ class Ruleset(object):
         elif ruleset_file:
             self.ruleset_struct = get_ruleset_struct_from_fileobj(ruleset_file)
         else:
-            logger.debug("Loading ruleset with the name '{}'.".format(ruleset_name))
+            logger.debug("Loading ruleset with the name '%s'.", ruleset_name)
             ruleset_path = get_ruleset_file(ruleset=ruleset_name)
             self.ruleset_struct = get_ruleset_struct_from_file(ruleset_path)
         if self.ruleset_struct.version not in ["1", 1]:
@@ -73,7 +73,7 @@ class Ruleset(object):
             if check_struct.name in skips:
                 continue
 
-            logger.debug("Processing check_struct {}.".format(check_struct))
+            logger.debug("Processing check_struct %s.", check_struct)
 
             usable_targets = check_struct.usable_targets
             if (
@@ -132,9 +132,9 @@ class Ruleset(object):
             if tags:
                 if not set(tags) < set(check_instance.tags):
                     logger.debug(
-                        "Check '{}' not passed the tag control: {}".format(
-                            check_instance.name, tags
-                        )
+                        "Check '%s' not passed the tag control: %s",
+                        check_instance.name,
+                        tags,
                     )
                     continue
 
@@ -144,7 +144,7 @@ class Ruleset(object):
                 setattr(check_instance, k, v)
 
             result.append(check_instance)
-            logger.debug("Check instance {} added.".format(check_instance.name))
+            logger.debug("Check instance %s added.", check_instance.name)
 
         return result
 
@@ -181,17 +181,13 @@ def get_ruleset_file(ruleset=None):
 
         for ruleset_file in possible_ruleset_files:
             if os.path.isfile(ruleset_file):
-                logger.debug("Ruleset file '{}' found.".format(ruleset_file))
+                logger.debug("Ruleset file '%s' found.", ruleset_file)
                 return ruleset_file
 
     logger.warning(
-        "Ruleset with the name '{}' cannot be found at '{}'.".format(
-            ruleset, ruleset_dirs
-        )
+        "Ruleset with the name '%s' cannot be found at '%s'.", ruleset, ruleset_dirs
     )
-    raise ColinRulesetException(
-        f"Ruleset with the name '{ruleset}' cannot be found."
-    )
+    raise ColinRulesetException(f"Ruleset with the name '{ruleset}' cannot be found.")
 
 
 def get_ruleset_dirs():
@@ -208,7 +204,7 @@ def get_ruleset_dirs():
     cwd_rulesets = os.path.join(".", RULESET_DIRECTORY_NAME)
     if os.path.isdir(cwd_rulesets):
         logger.debug(
-            "Ruleset directory found in current directory ('{}').".format(cwd_rulesets)
+            "Ruleset directory found in current directory ('%s').", cwd_rulesets
         )
         ruleset_dirs.append(cwd_rulesets)
 
@@ -216,18 +212,18 @@ def get_ruleset_dirs():
         venv_local_share = os.path.join(os.environ["VIRTUAL_ENV"], RULESET_DIRECTORY)
         if os.path.isdir(venv_local_share):
             logger.debug(
-                "Virtual env ruleset directory found ('{}').".format(venv_local_share)
+                "Virtual env ruleset directory found ('%s').", venv_local_share
             )
             ruleset_dirs.append(venv_local_share)
 
     local_share = os.path.join(os.path.expanduser("~"), ".local", RULESET_DIRECTORY)
     if os.path.isdir(local_share):
-        logger.debug("Local ruleset directory found ('{}').".format(local_share))
+        logger.debug("Local ruleset directory found ('%s').", local_share)
         ruleset_dirs.append(local_share)
 
     usr_local_share = os.path.join("/usr/local", RULESET_DIRECTORY)
     if os.path.isdir(usr_local_share):
-        logger.debug("Global ruleset directory found ('{}').".format(usr_local_share))
+        logger.debug("Global ruleset directory found ('%s').", usr_local_share)
         ruleset_dirs.append(usr_local_share)
 
     if not ruleset_dirs:

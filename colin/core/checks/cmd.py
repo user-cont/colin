@@ -79,9 +79,7 @@ class CmdAbstractCheck(ImageAbstractCheck):
         if self.expected_output is not None:
             expected_output = self.expected_output == output
             if expected_output:
-                logs.append(
-                    f"ok: Output of the command '{self.cmd}' was as expected."
-                )
+                logs.append(f"ok: Output of the command '{self.cmd}' was as expected.")
             else:
                 logs.append(
                     "nok: Output of the command '{}' "
