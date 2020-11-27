@@ -53,7 +53,9 @@ class CmdAbstractCheck(ImageAbstractCheck):
                                        message=self.message,
                                        reference_url=self.reference_url,
                                        check_name=self.name,
-                                       logs=["exec: '{}': executable file not found in $PATH".format(
+                                       logs=[(
+                                           "exec: '{}': executable file not found in $PATH"
+                                       ).format(
                                            self.cmd)])
                 return FailedCheckResult(check=self,
                                          logs=[str(ex)])

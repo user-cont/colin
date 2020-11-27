@@ -16,7 +16,7 @@
 
 from click.testing import CliRunner
 
-from colin.cli.colin import check, list_checks, list_rulesets, info
+from colin.cli.colin import check, info, list_checks, list_rulesets
 from colin.version import __version__
 
 
@@ -58,7 +58,8 @@ def test_check_help_command():
 
 def test_list_checks():
     result = _call_colin(list_checks)
-    expected_output = """maintainer_label
+    expected_output = (
+        """maintainer_label
    -> Label 'maintainer' has to be specified.
    -> The name and email of the maintainer (usually the submitter).
    -> https://fedoraproject.org/wiki/Container:Guidelines#LABELS
@@ -66,7 +67,8 @@ def test_list_checks():
 
 from_tag_not_latest
    -> In FROM, tag has to be specified and not 'latest'.
-   -> Using the 'latest' tag may cause unpredictable builds.It is recommended that a specific tag is used in the FROM.
+   -> Using the 'latest' tag may cause unpredictable builds."""
+        + """It is recommended that a specific tag is used in the FROM.
    -> https://fedoraproject.org/wiki/Container:Guidelines#FROM
    -> dockerfile, from, baseimage, latest, required
 
@@ -77,6 +79,7 @@ maintainer_deprecated
    -> dockerfile, maintainer, deprecated, required
 
 """
+    )
     assert result.exit_code == 0
     assert result.output == expected_output
     assert (

@@ -22,7 +22,6 @@ from .loader import (
     get_ruleset_struct_from_file,
     get_ruleset_struct_from_fileobj,
 )
-from ..checks.check_utils import NotLoadedCheck
 from ..constant import EXTS, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME
 from ..exceptions import ColinRulesetException
 from ..loader import CheckLoader

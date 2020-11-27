@@ -38,7 +38,8 @@ from colin.utils.cont import ImageName
             ("some-registry.example.com:8888", None, "image6", "latest", None),
         ),
         (
-            "some-registry.example.com:8888/image6:some-example-6.10-something-26365-20180322014912",
+            "some-registry.example.com:8888/"
+            "image6:some-example-6.10-something-26365-20180322014912",
             (
                 "some-registry.example.com:8888",
                 None,
@@ -58,7 +59,8 @@ from colin.utils.cont import ImageName
             ),
         ),
         (
-            "docker.io/fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "docker.io/fedora@sha256:"
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             (
                 "docker.io",
                 None,
@@ -68,7 +70,8 @@ from colin.utils.cont import ImageName
             ),
         ),
         (
-            "docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "docker.io/centos/postgresql-96-centos7@sha256:"
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             (
                 "docker.io",
                 "centos",
@@ -112,8 +115,10 @@ def test_image_class(string_input, image_result):
             "latest",
         ),
         (
-            "some-registry.example.com:8888/image6:some-example-6.10-something-26365-20180322014912",
-            "some-registry.example.com:8888/image6:some-example-6.10-something-26365-20180322014912",
+            "some-registry.example.com:8888/image6:"
+            "some-example-6.10-something-26365-20180322014912",
+            "some-registry.example.com:8888/image6:"
+            "some-example-6.10-something-26365-20180322014912",
             "some-example-6.10-something-26365-20180322014912",
         ),
         (
@@ -122,13 +127,17 @@ def test_image_class(string_input, image_result):
             None,
         ),
         (
-            "docker.io/fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-            "docker.io/fedora@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "docker.io/fedora@sha256:"
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "docker.io/fedora@sha256:"
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             None,
         ),
         (
-            "docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-            "docker.io/centos/postgresql-96-centos7@sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "docker.io/centos/postgresql-96-centos7@sha256:"
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "docker.io/centos/postgresql-96-centos7@sha256:"
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             None,
         ),
     ],

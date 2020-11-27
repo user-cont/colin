@@ -16,13 +16,14 @@
 #
 
 import os
+from typing import Any
 
 from setuptools import find_packages, setup
 
 BASE_PATH = os.path.dirname(__file__)
 
 # https://packaging.python.org/guides/single-sourcing-package-version/
-version = {}
+version: Any = {}
 with open("./colin/version.py") as fp:
     exec(fp.read(), version)
 

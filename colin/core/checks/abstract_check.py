@@ -14,13 +14,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 import json
+from typing import Optional
 
 from six import iteritems
 
 
-class AbstractCheck(object):
+class AbstractCheck:
     name = None
-    check_type = None
+    check_type: Optional[str] = None
 
     def __init__(self, message, description, reference_url, tags):
         self.message = message

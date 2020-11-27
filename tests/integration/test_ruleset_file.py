@@ -18,11 +18,9 @@ import tempfile
 
 import pytest
 import yaml
-from colin.core.exceptions import ColinRulesetException
 
 import colin
-from colin.core.checks.check_utils import NotLoadedCheck
-from colin.core.checks.labels import LabelAbstractCheck
+from colin.core.exceptions import ColinRulesetException
 
 
 @pytest.fixture()

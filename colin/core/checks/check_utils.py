@@ -1,6 +1,6 @@
 import re
 
-from .abstract_check import ImageAbstractCheck, DockerfileAbstractCheck
+from .abstract_check import DockerfileAbstractCheck, ImageAbstractCheck
 from ..exceptions import ColinException
 
 
@@ -25,8 +25,8 @@ def check_label(labels, required, value_regex, target_labels):
         elif value_regex:
             pattern = re.compile(value_regex)
             present_labels = set(labels) & set(target_labels)
-            for l in present_labels:
-                if not bool(pattern.search(target_labels[l])):
+            for label in present_labels:
+                if not bool(pattern.search(target_labels[label])):
                     return False
             return True
         else:

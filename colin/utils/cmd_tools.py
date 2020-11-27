@@ -22,7 +22,7 @@ import time
 try:
     import thread
 except ImportError:
-    import _thread as thread
+    import _thread as thread  # type: ignore
 
 logger = logging.getLogger(__name__)
 
