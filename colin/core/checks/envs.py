@@ -21,11 +21,17 @@ from ..result import CheckResult
 
 
 class EnvCheck(ImageAbstractCheck):
-
-    def __init__(self, message, description, reference_url, tags, env_var, required,
-                 value_regex=None):
-        super(EnvCheck, self) \
-            .__init__(message, description, reference_url, tags)
+    def __init__(
+        self,
+        message,
+        description,
+        reference_url,
+        tags,
+        env_var,
+        required,
+        value_regex=None,
+    ):
+        super(EnvCheck, self).__init__(message, description, reference_url, tags)
         self.env_var = env_var
         self.required = required
         self.value_regex = value_regex
@@ -55,9 +61,11 @@ class EnvCheck(ImageAbstractCheck):
         else:
             passed = not self.required
 
-        return CheckResult(ok=passed,
-                           description=self.description,
-                           message=self.message,
-                           reference_url=self.reference_url,
-                           check_name=self.name,
-                           logs=[])
+        return CheckResult(
+            ok=passed,
+            description=self.description,
+            message=self.message,
+            reference_url=self.reference_url,
+            check_name=self.name,
+            logs=[],
+        )

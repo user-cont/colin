@@ -32,12 +32,11 @@ from ..version import __version__
 
 logger = logging.getLogger("colin.cli")
 
-CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'],
-                        auto_envvar_prefix='COLIN')
+CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], auto_envvar_prefix="COLIN")
 
 
 @click.group(cls=DefaultGroup, context_settings=CONTEXT_SETTINGS)
-@click.version_option(__version__, '--version', '-V')
+@click.version_option(__version__, "--version", "-V")
 def cli():
     """
     COLIN -- Container Linter
@@ -45,66 +44,113 @@ def cli():
     pass
 
 
-@click.command(name="check",
-               context_settings=CONTEXT_SETTINGS)
-@click.argument('TARGET', type=click.STRING)
-@click.option('--parent-target', type=click.STRING,
-              help="Parent target")
-@click.option('--ruleset', '-r', type=click.STRING, envvar='COLIN_RULESET',
-              help="Select a predefined ruleset (e.g. fedora).")
-@click.option('--ruleset-file', '-f', type=click.File(mode='r'),
-              help="Path to a file to use for validation "
-                   "(by default they are placed in /usr/share/colin/rulesets).")
-@click.option('--debug', default=False, is_flag=True,
-              help="Enable debugging mode (debugging logs, full tracebacks).")
-@click.option('--json', type=click.File(mode='w'),
-              help="File to save the output as json to.")
-@click.option('--xunit', type=click.File(mode='w'),
-              help="File to save the output as xunit to.")
-@click.option('--stat', is_flag=True,
-              help="Print statistics instead of full results.")
-@click.option('--skip', '-s', multiple=True, type=click.STRING,
-              help="Name of the check to skip. (this option is repeatable)")
-@click.option('--tag', '-t', multiple=True, type=click.STRING,
-              help="Filter checks with the tag.")
-@click.option('--verbose', '-v', is_flag=True,
-              help="Verbose mode.")
-@click.option('checks_paths', '--checks-path',
-              type=click.Path(exists=True, dir_okay=True, file_okay=False),
-              multiple=True, envvar=COLIN_CHECKS_PATH,
-              help="Path to directory containing checks (default {}).".format(get_checks_paths()))
-@click.option('--pull', is_flag=True,
-              help="Pull the image from registry.")
-@click.option('--target-type', type=click.STRING, default="image",
-              help="Type of selected target (one of image, dockerfile, "
-                   "ostree, oci). For ostree, please specify image name and path like this: image@path")
-@click.option('--timeout', type=click.INT,
-              help="Timeout for each check in seconds. (default=600)")
-@click.option('--insecure', is_flag=True, default=False,
-              help="Pull from an insecure registry (HTTP or invalid TLS).")
-def check(target, parent_target, ruleset, ruleset_file, debug, json, xunit, stat, skip, tag,
-          verbose, checks_paths, target_type, timeout, pull, insecure):
+@click.command(name="check", context_settings=CONTEXT_SETTINGS)
+@click.argument("TARGET", type=click.STRING)
+@click.option("--parent-target", type=click.STRING, help="Parent target")
+@click.option(
+    "--ruleset",
+    "-r",
+    type=click.STRING,
+    envvar="COLIN_RULESET",
+    help="Select a predefined ruleset (e.g. fedora).",
+)
+@click.option(
+    "--ruleset-file",
+    "-f",
+    type=click.File(mode="r"),
+    help="Path to a file to use for validation "
+    "(by default they are placed in /usr/share/colin/rulesets).",
+)
+@click.option(
+    "--debug",
+    default=False,
+    is_flag=True,
+    help="Enable debugging mode (debugging logs, full tracebacks).",
+)
+@click.option(
+    "--json", type=click.File(mode="w"), help="File to save the output as json to."
+)
+@click.option(
+    "--xunit", type=click.File(mode="w"), help="File to save the output as xunit to."
+)
+@click.option("--stat", is_flag=True, help="Print statistics instead of full results.")
+@click.option(
+    "--skip",
+    "-s",
+    multiple=True,
+    type=click.STRING,
+    help="Name of the check to skip. (this option is repeatable)",
+)
+@click.option(
+    "--tag", "-t", multiple=True, type=click.STRING, help="Filter checks with the tag."
+)
+@click.option("--verbose", "-v", is_flag=True, help="Verbose mode.")
+@click.option(
+    "checks_paths",
+    "--checks-path",
+    type=click.Path(exists=True, dir_okay=True, file_okay=False),
+    multiple=True,
+    envvar=COLIN_CHECKS_PATH,
+    help="Path to directory containing checks (default {}).".format(get_checks_paths()),
+)
+@click.option("--pull", is_flag=True, help="Pull the image from registry.")
+@click.option(
+    "--target-type",
+    type=click.STRING,
+    default="image",
+    help="Type of selected target (one of image, dockerfile, "
+    "ostree, oci). For ostree, please specify image name and path like this: image@path",
+)
+@click.option(
+    "--timeout", type=click.INT, help="Timeout for each check in seconds. (default=600)"
+)
+@click.option(
+    "--insecure",
+    is_flag=True,
+    default=False,
+    help="Pull from an insecure registry (HTTP or invalid TLS).",
+)
+def check(
+    target,
+    parent_target,
+    ruleset,
+    ruleset_file,
+    debug,
+    json,
+    xunit,
+    stat,
+    skip,
+    tag,
+    verbose,
+    checks_paths,
+    target_type,
+    timeout,
+    pull,
+    insecure,
+):
     """
     Check the image/dockerfile (default).
     """
     if ruleset and ruleset_file:
         raise click.BadOptionUsage(
-            "Options '--ruleset' and '--file-ruleset' cannot be used together.")
+            "Options '--ruleset' and '--file-ruleset' cannot be used together."
+        )
 
     if json and not os.path.isdir(os.path.dirname(os.path.realpath(json.name))):
         raise click.BadOptionUsage(
-            "Parent directory for the json output file does not exist.")
+            "Parent directory for the json output file does not exist."
+        )
 
     if xunit and not os.path.isdir(os.path.dirname(os.path.realpath(xunit.name))):
         raise click.BadOptionUsage(
-            "Parent directory for the xunit output file does not exist.")
+            "Parent directory for the xunit output file does not exist."
+        )
 
     try:
         if not debug:
             logging.basicConfig(stream=six.StringIO())
 
-        log_level = _get_log_level(debug=debug,
-                                   verbose=verbose)
+        log_level = _get_log_level(debug=debug, verbose=verbose)
         results = run(
             target=target,
             parent_target=parent_target,
@@ -117,7 +163,7 @@ def check(target, parent_target, ruleset, ruleset_file, debug, json, xunit, stat
             target_type=target_type,
             timeout=timeout,
             insecure=insecure,
-            skips=skip
+            skips=skip,
         )
         _print_results(results=results, stat=stat, verbose=verbose)
 
@@ -146,47 +192,71 @@ def check(target, parent_target, ruleset, ruleset_file, debug, json, xunit, stat
             raise click.ClickException(str(ex))
 
 
-@click.command(name="list-checks",
-               context_settings=CONTEXT_SETTINGS)
-@click.option('--ruleset', '-r', type=click.STRING, envvar='COLIN_RULESET',
-              help="Select a predefined ruleset (e.g. fedora).")
-@click.option('--ruleset-file', '-f', type=click.File(mode='r'),
-              help="Path to a file to use for validation "
-                   "(by default they are placed in /usr/share/colin/rulesets).")
-@click.option('--debug', default=False, is_flag=True,
-              help="Enable debugging mode (debugging logs, full tracebacks).")
-@click.option('--json', type=click.File(mode='w'),
-              help="File to save the output as json to.")
-@click.option('-s', '--skip', multiple=True, type=click.STRING,
-              help="Name of the check to skip. (this option is repeatable)")
-@click.option('--tag', '-t', multiple=True, type=click.STRING,
-              help="Filter checks with the tag.")
-@click.option('--verbose', '-v', is_flag=True,
-              help="Verbose mode.")
-@click.option('checks_paths', '--checks-path',
-              type=click.Path(exists=True, dir_okay=True, file_okay=False),
-              multiple=True, envvar=COLIN_CHECKS_PATH,
-              help="Path to directory containing checks (default {}).".format(get_checks_paths()))
+@click.command(name="list-checks", context_settings=CONTEXT_SETTINGS)
+@click.option(
+    "--ruleset",
+    "-r",
+    type=click.STRING,
+    envvar="COLIN_RULESET",
+    help="Select a predefined ruleset (e.g. fedora).",
+)
+@click.option(
+    "--ruleset-file",
+    "-f",
+    type=click.File(mode="r"),
+    help="Path to a file to use for validation "
+    "(by default they are placed in /usr/share/colin/rulesets).",
+)
+@click.option(
+    "--debug",
+    default=False,
+    is_flag=True,
+    help="Enable debugging mode (debugging logs, full tracebacks).",
+)
+@click.option(
+    "--json", type=click.File(mode="w"), help="File to save the output as json to."
+)
+@click.option(
+    "-s",
+    "--skip",
+    multiple=True,
+    type=click.STRING,
+    help="Name of the check to skip. (this option is repeatable)",
+)
+@click.option(
+    "--tag", "-t", multiple=True, type=click.STRING, help="Filter checks with the tag."
+)
+@click.option("--verbose", "-v", is_flag=True, help="Verbose mode.")
+@click.option(
+    "checks_paths",
+    "--checks-path",
+    type=click.Path(exists=True, dir_okay=True, file_okay=False),
+    multiple=True,
+    envvar=COLIN_CHECKS_PATH,
+    help="Path to directory containing checks (default {}).".format(get_checks_paths()),
+)
 def list_checks(ruleset, ruleset_file, debug, json, skip, tag, verbose, checks_paths):
     """
     Print the checks.
     """
     if ruleset and ruleset_file:
         raise click.BadOptionUsage(
-            "Options '--ruleset' and '--file-ruleset' cannot be used together.")
+            "Options '--ruleset' and '--file-ruleset' cannot be used together."
+        )
 
     try:
         if not debug:
             logging.basicConfig(stream=six.StringIO())
 
-        log_level = _get_log_level(debug=debug,
-                                   verbose=verbose)
-        checks = get_checks(ruleset_name=ruleset,
-                            ruleset_file=ruleset_file,
-                            logging_level=log_level,
-                            tags=tag,
-                            checks_paths=checks_paths,
-                            skips=skip)
+        log_level = _get_log_level(debug=debug, verbose=verbose)
+        checks = get_checks(
+            ruleset_name=ruleset,
+            ruleset_file=ruleset_file,
+            logging_level=log_level,
+            tags=tag,
+            checks_paths=checks_paths,
+            skips=skip,
+        )
         _print_checks(checks=checks)
 
         if json:
@@ -205,10 +275,13 @@ def list_checks(ruleset, ruleset_file, debug, json, skip, tag, verbose, checks_p
             raise click.ClickException(str(ex))
 
 
-@click.command(name="list-rulesets",
-               context_settings=CONTEXT_SETTINGS)
-@click.option('--debug', default=False, is_flag=True,
-              help="Enable debugging mode (debugging logs, full tracebacks).")
+@click.command(name="list-rulesets", context_settings=CONTEXT_SETTINGS)
+@click.option(
+    "--debug",
+    default=False,
+    is_flag=True,
+    help="Enable debugging mode (debugging logs, full tracebacks).",
+)
 def list_rulesets(debug):
     """
     List available rulesets.
@@ -217,7 +290,7 @@ def list_rulesets(debug):
         rulesets = get_rulesets()
         max_len = max([len(r[0]) for r in rulesets])
         for r in rulesets:
-            click.echo('{0: <{1}} ({2})'.format(r[0], max_len, r[1]))
+            click.echo("{0: <{1}} ({2})".format(r[0], max_len, r[1]))
     except Exception as ex:
         logger.error("An error occurred: %r", ex)
         if debug:
@@ -226,13 +299,14 @@ def list_rulesets(debug):
             raise click.ClickException(str(ex))
 
 
-@click.command(name="info",
-               context_settings=CONTEXT_SETTINGS)
+@click.command(name="info", context_settings=CONTEXT_SETTINGS)
 def info():
     """
     Show info about colin and its dependencies.
     """
-    installation_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+    installation_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), os.path.pardir)
+    )
 
     click.echo("colin {} {}".format(__version__, installation_path))
     click.echo("colin-cli {}\n".format(os.path.realpath(__file__)))
@@ -240,20 +314,27 @@ def info():
     # click.echo(get_version_of_the_python_package(module=conu))
 
     rpm_installed = is_rpm_installed()
-    click.echo(get_version_msg_from_the_cmd(package_name="podman", use_rpm=rpm_installed))
-    click.echo(get_version_msg_from_the_cmd(package_name="skopeo", use_rpm=rpm_installed))
-    click.echo(get_version_msg_from_the_cmd(package_name="ostree",
-                                            use_rpm=rpm_installed,
-                                            max_lines_of_the_output=3))
-    click.echo(get_version_msg_from_the_cmd(package_name="umoci",
-                                            use_rpm=rpm_installed))
+    click.echo(
+        get_version_msg_from_the_cmd(package_name="podman", use_rpm=rpm_installed)
+    )
+    click.echo(
+        get_version_msg_from_the_cmd(package_name="skopeo", use_rpm=rpm_installed)
+    )
+    click.echo(
+        get_version_msg_from_the_cmd(
+            package_name="ostree", use_rpm=rpm_installed, max_lines_of_the_output=3
+        )
+    )
+    click.echo(
+        get_version_msg_from_the_cmd(package_name="umoci", use_rpm=rpm_installed)
+    )
 
 
 cli.add_command(check)
 cli.add_command(list_checks)
 cli.add_command(list_rulesets)
 cli.add_command(info)
-cli.set_default_command(check)
+cli.set_default_command(check)  # type: ignore
 
 
 def _print_results(results, stat=False, verbose=False):
@@ -264,9 +345,9 @@ def _print_results(results, stat=False, verbose=False):
     :param results: generator of results
     :param stat: if True print stat instead of full output
     """
-    results.generate_pretty_output(stat=stat,
-                                   verbose=verbose,
-                                   output_function=click.secho)
+    results.generate_pretty_output(
+        stat=stat, verbose=verbose, output_function=click.secho
+    )
 
 
 def _print_checks(checks):
@@ -286,5 +367,5 @@ def _get_log_level(debug, verbose):
         return logging.WARNING
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()

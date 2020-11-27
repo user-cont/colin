@@ -17,9 +17,11 @@
 import logging
 import os
 
-from .loader import (RulesetStruct, get_ruleset_struct_from_file,
-                     get_ruleset_struct_from_fileobj)
-from ..checks.check_utils import NotLoadedCheck
+from .loader import (
+    RulesetStruct,
+    get_ruleset_struct_from_file,
+    get_ruleset_struct_from_fileobj,
+)
 from ..constant import EXTS, RULESET_DIRECTORY, RULESET_DIRECTORY_NAME
 from ..exceptions import ColinRulesetException
 from ..loader import CheckLoader
@@ -29,8 +31,9 @@ logger = logging.getLogger(__name__)
 
 
 class Ruleset(object):
-
-    def __init__(self, ruleset_name=None, ruleset_file=None, ruleset=None, checks_paths=None):
+    def __init__(
+        self, ruleset_name=None, ruleset_file=None, ruleset=None, checks_paths=None
+    ):
         """
         Load ruleset for colin.
 
@@ -50,8 +53,10 @@ class Ruleset(object):
             ruleset_path = get_ruleset_file(ruleset=ruleset_name)
             self.ruleset_struct = get_ruleset_struct_from_file(ruleset_path)
         if self.ruleset_struct.version not in ["1", 1]:
-            raise ColinRulesetException("colin accepts only ruleset version '1'. You provided %r"
-                                        % self.ruleset_struct.version)
+            raise ColinRulesetException(
+                "colin accepts only ruleset version '1'. You provided %r"
+                % self.ruleset_struct.version
+            )
 
     def get_checks(self, target_type, tags=None, skips=None):
         """
@@ -71,8 +76,12 @@ class Ruleset(object):
             logger.debug("Processing check_struct {}.".format(check_struct))
 
             usable_targets = check_struct.usable_targets
-            if target_type and usable_targets \
-                    and target_type.get_compatible_check_class().check_type not in usable_targets:
+            if (
+                target_type
+                and usable_targets
+                and target_type.get_compatible_check_class().check_type
+                not in usable_targets
+            ):
                 logger.info("Skipping... Target type does not match.")
                 continue
 
@@ -82,32 +91,51 @@ class Ruleset(object):
                 try:
                     check_class = self.check_loader.mapping[check_struct.name]
                 except KeyError:
-                    logger.error("Check %s was not found -- it can't be loaded", check_struct.name)
+                    logger.error(
+                        "Check %s was not found -- it can't be loaded",
+                        check_struct.name,
+                    )
                     raise ColinRulesetException(
-                        "Check {} can't be loaded, we couldn't find it.".format(check_struct.name))
+                        "Check {} can't be loaded, we couldn't find it.".format(
+                            check_struct.name
+                        )
+                    )
             check_instance = check_class()
 
             if check_struct.tags:
-                logger.info("Overriding check's tags %s with the one defined in ruleset: %s",
-                            check_instance.tags, check_struct.tags)
+                logger.info(
+                    "Overriding check's tags %s with the one defined in ruleset: %s",
+                    check_instance.tags,
+                    check_struct.tags,
+                )
                 check_instance.tags = check_struct.tags[:]
             if check_struct.additional_tags:
                 logger.info("Adding additional tags: %s", check_struct.additional_tags)
                 check_instance.tags += check_struct.additional_tags
 
-            if not is_compatible(target_type=target_type, check_instance=check_instance):
+            if not is_compatible(
+                target_type=target_type, check_instance=check_instance
+            ):
                 logger.error(
                     "Check '{}' not compatible with the target type: {}".format(
-                        check_instance.name, target_type.get_compatible_check_class().check_type))
+                        check_instance.name,
+                        target_type.get_compatible_check_class().check_type,
+                    )
+                )
                 raise ColinRulesetException(
                     "Check {} can't be used for target type {}".format(
-                        check_instance, target_type.get_compatible_check_class().check_type))
+                        check_instance,
+                        target_type.get_compatible_check_class().check_type,
+                    )
+                )
 
             if tags:
                 if not set(tags) < set(check_instance.tags):
                     logger.debug(
-                        "Check '{}' not passed the tag control: {}".format(check_instance.name,
-                                                                           tags))
+                        "Check '{}' not passed the tag control: {}".format(
+                            check_instance.name, tags
+                        )
+                    )
                     continue
 
             # and finally, attach attributes from ruleset to the check instance
@@ -147,16 +175,23 @@ def get_ruleset_file(ruleset=None):
 
     ruleset_dirs = get_ruleset_dirs()
     for ruleset_directory in ruleset_dirs:
-        possible_ruleset_files = [os.path.join(ruleset_directory, ruleset + ext) for ext in EXTS]
+        possible_ruleset_files = [
+            os.path.join(ruleset_directory, ruleset + ext) for ext in EXTS
+        ]
 
         for ruleset_file in possible_ruleset_files:
             if os.path.isfile(ruleset_file):
                 logger.debug("Ruleset file '{}' found.".format(ruleset_file))
                 return ruleset_file
 
-    logger.warning("Ruleset with the name '{}' cannot be found at '{}'."
-                   .format(ruleset, ruleset_dirs))
-    raise ColinRulesetException("Ruleset with the name '{}' cannot be found.".format(ruleset))
+    logger.warning(
+        "Ruleset with the name '{}' cannot be found at '{}'.".format(
+            ruleset, ruleset_dirs
+        )
+    )
+    raise ColinRulesetException(
+        "Ruleset with the name '{}' cannot be found.".format(ruleset)
+    )
 
 
 def get_ruleset_dirs():
@@ -172,19 +207,20 @@ def get_ruleset_dirs():
 
     cwd_rulesets = os.path.join(".", RULESET_DIRECTORY_NAME)
     if os.path.isdir(cwd_rulesets):
-        logger.debug("Ruleset directory found in current directory ('{}').".format(cwd_rulesets))
+        logger.debug(
+            "Ruleset directory found in current directory ('{}').".format(cwd_rulesets)
+        )
         ruleset_dirs.append(cwd_rulesets)
 
     if "VIRTUAL_ENV" in os.environ:
-        venv_local_share = os.path.join(os.environ["VIRTUAL_ENV"],
-                                        RULESET_DIRECTORY)
+        venv_local_share = os.path.join(os.environ["VIRTUAL_ENV"], RULESET_DIRECTORY)
         if os.path.isdir(venv_local_share):
-            logger.debug("Virtual env ruleset directory found ('{}').".format(venv_local_share))
+            logger.debug(
+                "Virtual env ruleset directory found ('{}').".format(venv_local_share)
+            )
             ruleset_dirs.append(venv_local_share)
 
-    local_share = os.path.join(os.path.expanduser("~"),
-                               ".local",
-                               RULESET_DIRECTORY)
+    local_share = os.path.join(os.path.expanduser("~"), ".local", RULESET_DIRECTORY)
     if os.path.isdir(local_share):
         logger.debug("Local ruleset directory found ('{}').".format(local_share))
         ruleset_dirs.append(local_share)
@@ -203,7 +239,7 @@ def get_ruleset_dirs():
 
 
 def get_rulesets():
-    """"
+    """ "
     Get available rulesets.
     """
     rulesets_dirs = get_ruleset_dirs()
@@ -213,5 +249,5 @@ def get_rulesets():
             for ext in EXTS:
                 file_path = os.path.join(rulesets_dir, f)
                 if os.path.isfile(file_path) and f.lower().endswith(ext):
-                    ruleset_files.append((f[:-len(ext)], file_path))
+                    ruleset_files.append((f[: -len(ext)], file_path))
     return ruleset_files

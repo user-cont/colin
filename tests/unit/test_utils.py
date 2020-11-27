@@ -63,7 +63,7 @@ def raise_exception():
     global COUNTER
     COUNTER += 1
 
-    raise Exception('I am bad function')
+    raise Exception("I am bad function")
 
 
 def test_no_retry_for_success():
@@ -92,18 +92,18 @@ def test_retry_with_exception():
     with pytest.raises(Exception) as ex:
         always_raise_exception()
 
-    assert str(ex.value) == 'I am bad function'
+    assert str(ex.value) == "I am bad function"
     assert COUNTER == 5
 
 
 def test_wrong_parameter():
     with pytest.raises(ValueError) as ex:
         retry(-1, 1)
-    assert str(ex.value) == 'retry_count have to be positive'
+    assert str(ex.value) == "retry_count have to be positive"
 
     with pytest.raises(ValueError) as ex:
         retry(0, 1)
-    assert str(ex.value) == 'retry_count have to be positive'
+    assert str(ex.value) == "retry_count have to be positive"
 
     @retry(5, -1)
     def fail_negative_sleep():
@@ -111,14 +111,14 @@ def test_wrong_parameter():
 
     with pytest.raises(ValueError) as ex:
         fail_negative_sleep()
-    assert str(ex.value) == 'sleep length must be non-negative'
+    assert str(ex.value) == "sleep length must be non-negative"
 
 
 def test_retry_with_sleep():
     global COUNTER
     COUNTER = 0
 
-    @retry(4, .5)
+    @retry(4, 0.5)
     def fail_and_sleep():
         raise_exception()
 
@@ -127,7 +127,7 @@ def test_retry_with_sleep():
         fail_and_sleep()
     time_end = time.time()
 
-    assert str(ex.value) == 'I am bad function'
+    assert str(ex.value) == "I am bad function"
     assert COUNTER == 4
 
     # there are 3 sleeps between 4 delays

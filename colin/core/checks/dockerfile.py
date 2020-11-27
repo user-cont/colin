@@ -36,56 +36,75 @@ def get_instructions_from_dockerfile_parse(dfp, instruction):
 
 
 class InstructionAbstractCheck(DockerfileAbstractCheck):
-
-    def __init__(self, message, description, reference_url, tags, instruction, value_regex,
-                 required):
-        super(InstructionAbstractCheck, self) \
-            .__init__(message, description, reference_url, tags)
+    def __init__(
+        self,
+        message,
+        description,
+        reference_url,
+        tags,
+        instruction,
+        value_regex,
+        required,
+    ):
+        super(InstructionAbstractCheck, self).__init__(
+            message, description, reference_url, tags
+        )
         self.instruction = instruction
         self.value_regex = value_regex
         self.required = required
 
     def check(self, target):
-        instructions = get_instructions_from_dockerfile_parse(target.instance, self.instruction)
+        instructions = get_instructions_from_dockerfile_parse(
+            target.instance, self.instruction
+        )
         pattern = re.compile(self.value_regex)
         logs = []
         passed = True
         for inst in instructions:
             match = bool(pattern.match(inst["value"]))
             passed = match == self.required
-            log = "Value for instruction {} " \
-                  "{}mach regex: '{}'.".format(inst["content"],
-                                               "" if match else "does not ",
-                                               self.value_regex)
+            log = "Value for instruction {} " "{}mach regex: '{}'.".format(
+                inst["content"], "" if match else "does not ", self.value_regex
+            )
             logs.append(log)
             logger.debug(log)
 
-        return CheckResult(ok=passed,
-                           description=self.description,
-                           message=self.message,
-                           reference_url=self.reference_url,
-                           check_name=self.name,
-                           logs=logs)
+        return CheckResult(
+            ok=passed,
+            description=self.description,
+            message=self.message,
+            reference_url=self.reference_url,
+            check_name=self.name,
+            logs=logs,
+        )
 
 
 class InstructionCountAbstractCheck(DockerfileAbstractCheck):
-
-    def __init__(self, message, description, reference_url, tags, instruction, min_count=None,
-                 max_count=None):
-        super(InstructionCountAbstractCheck, self) \
-            .__init__(message, description, reference_url, tags)
+    def __init__(
+        self,
+        message,
+        description,
+        reference_url,
+        tags,
+        instruction,
+        min_count=None,
+        max_count=None,
+    ):
+        super(InstructionCountAbstractCheck, self).__init__(
+            message, description, reference_url, tags
+        )
         self.instruction = instruction
         self.min_count = min_count
         self.max_count = max_count
 
     def check(self, target):
-        count = len(get_instructions_from_dockerfile_parse(target.instance, self.instruction))
+        count = len(
+            get_instructions_from_dockerfile_parse(target.instance, self.instruction)
+        )
 
-        log = "Found {} occurrences of the {} instruction. Needed: min {} | max {}" \
-            .format(count,
-                    self.instruction,
-                    self.min_count,
-                    self.max_count)
+        log = "Found {} occurrences of the {} instruction. Needed: min {} | max {}".format(
+            count, self.instruction, self.min_count, self.max_count
+        )
         logger.debug(log)
         passed = True
         if self.min_count is not None:
@@ -93,34 +112,48 @@ class InstructionCountAbstractCheck(DockerfileAbstractCheck):
         if self.max_count is not None:
             passed = passed and count <= self.max_count
 
-        return CheckResult(ok=passed,
-                           description=self.description,
-                           message=self.message,
-                           reference_url=self.reference_url,
-                           check_name=self.name,
-                           logs=[log])
+        return CheckResult(
+            ok=passed,
+            description=self.description,
+            message=self.message,
+            reference_url=self.reference_url,
+            check_name=self.name,
+            logs=[log],
+        )
 
 
 class DockerfileLabelAbstractCheck(DockerfileAbstractCheck):
-
-    def __init__(self, message, description, reference_url, tags, label, required,
-                 value_regex=None):
-        super(DockerfileLabelAbstractCheck, self) \
-            .__init__(message, description, reference_url, tags)
+    def __init__(
+        self,
+        message,
+        description,
+        reference_url,
+        tags,
+        label,
+        required,
+        value_regex=None,
+    ):
+        super(DockerfileLabelAbstractCheck, self).__init__(
+            message, description, reference_url, tags
+        )
         self.label = label
         self.required = required
         self.value_regex = value_regex
 
     def check(self, target):
         labels = target.instance.labels
-        passed = check_label(labels=self.label,
-                             required=self.required,
-                             value_regex=self.value_regex,
-                             target_labels=labels)
+        passed = check_label(
+            labels=self.label,
+            required=self.required,
+            value_regex=self.value_regex,
+            target_labels=labels,
+        )
 
-        return CheckResult(ok=passed,
-                           description=self.description,
-                           message=self.message,
-                           reference_url=self.reference_url,
-                           check_name=self.name,
-                           logs=[])
+        return CheckResult(
+            ok=passed,
+            description=self.description,
+            message=self.message,
+            reference_url=self.reference_url,
+            check_name=self.name,
+            logs=[],
+        )

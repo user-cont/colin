@@ -5,7 +5,13 @@ Test different target types.
 import pytest
 
 import colin
-from tests.conftest import LABELS_IMAGE, convert_image_to_ostree, get_skopeo_path, convert_image_to_oci, get_skopeo_oci_target
+from tests.conftest import (
+    LABELS_IMAGE,
+    convert_image_to_ostree,
+    get_skopeo_path,
+    convert_image_to_oci,
+    get_skopeo_oci_target,
+)
 
 
 @pytest.fixture()
@@ -53,10 +59,7 @@ def ruleset():
             {
                 "name": "release_label",
             },
-            {
-                "name": "url_label",
-                "usable_targets": ["image"]
-            },
+            {"name": "url_label", "usable_targets": ["image"]},
             {
                 "name": "build-date_label",
             },
@@ -96,13 +99,14 @@ def ruleset():
             {
                 "name": "version_label_capital_deprecated",
             },
-
-        ]
+        ],
     }
 
 
 def test_podman_image_target(ruleset):
-    results = colin.run(LABELS_IMAGE, "image", ruleset=ruleset, logging_level=10, pull=False)
+    results = colin.run(
+        LABELS_IMAGE, "image", ruleset=ruleset, logging_level=10, pull=False
+    )
     assert results.ok
     assert results.results_per_check["url_label"].ok
 
@@ -111,7 +115,9 @@ def test_ostree_target(ruleset):
     image_name = "colin-labels"
     ostree_path = convert_image_to_ostree(image_name=image_name)
     skopeo_target = get_skopeo_path(image_name=image_name, ostree_path=ostree_path)
-    results = colin.run(skopeo_target, "ostree", ruleset=ruleset, logging_level=10, pull=False)
+    results = colin.run(
+        skopeo_target, "ostree", ruleset=ruleset, logging_level=10, pull=False
+    )
     assert results.ok
     assert results.results_per_check["url_label"].ok
 
@@ -120,6 +126,8 @@ def test_oci_target(ruleset):
     image_name = "colin-labels"
     oci_path = convert_image_to_oci(image_name=image_name)
     skopeo_target = get_skopeo_oci_target(image_name=image_name, oci_path=oci_path)
-    results = colin.run(skopeo_target, "oci", ruleset=ruleset, logging_level=10, pull=False)
+    results = colin.run(
+        skopeo_target, "oci", ruleset=ruleset, logging_level=10, pull=False
+    )
     assert results.ok
     assert results.results_per_check["url_label"].ok

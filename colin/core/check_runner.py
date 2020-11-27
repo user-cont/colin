@@ -26,9 +26,7 @@ logger = logging.getLogger(__name__)
 
 def go_through_checks(target, checks, timeout=None):
     logger.debug("Going through checks.")
-    results = _result_generator(target=target,
-                                checks=checks,
-                                timeout=timeout)
+    results = _result_generator(target=target, checks=checks, timeout=timeout)
     return CheckResults(results=results)
 
 
@@ -41,13 +39,13 @@ def _result_generator(target, checks, timeout=None):
                 logger.debug("Check timeout: {}".format(_timeout))
                 yield exit_after(_timeout)(check.check)(target)
             except TimeoutError as ex:
-                logger.warning(
-                    "The check hit the timeout: {}".format(_timeout))
+                logger.warning("The check hit the timeout: {}".format(_timeout))
                 yield FailedCheckResult(check, logs=[str(ex)])
             except Exception as ex:
                 tb = traceback.format_exc()
                 logger.warning(
-                    "There was an error while performing check: {}".format(tb))
+                    "There was an error while performing check: {}".format(tb)
+                )
                 yield FailedCheckResult(check, logs=[str(ex)])
     finally:
         target.clean_up()

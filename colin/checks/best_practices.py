@@ -35,16 +35,19 @@ class CmdOrEntrypointCheck(FMFAbstractCheck, ImageAbstractCheck):
 
         entrypoint_present = "Entrypoint" in metadata and metadata["Entrypoint"]
         msg_entrypoint_present = "Entrypoint {}specified.".format(
-            "" if entrypoint_present else "not ")
+            "" if entrypoint_present else "not "
+        )
         logger.debug(msg_entrypoint_present)
 
         passed = cmd_present or entrypoint_present
-        return CheckResult(ok=passed,
-                           description=self.description,
-                           message=self.message,
-                           reference_url=self.reference_url,
-                           check_name=self.name,
-                           logs=[msg_cmd_present, msg_entrypoint_present])
+        return CheckResult(
+            ok=passed,
+            description=self.description,
+            message=self.message,
+            reference_url=self.reference_url,
+            check_name=self.name,
+            logs=[msg_cmd_present, msg_entrypoint_present],
+        )
 
 
 class HelpFileOrReadmeCheck(FMFAbstractCheck, FileCheck):
@@ -58,9 +61,11 @@ class NoRootCheck(FMFAbstractCheck, ImageAbstractCheck):
         metadata = target.config_metadata
         root_present = "User" in metadata and metadata["User"] in ["", "0", "root"]
 
-        return CheckResult(ok=not root_present,
-                           description=self.description,
-                           message=self.message,
-                           reference_url=self.reference_url,
-                           check_name=self.name,
-                           logs=[])
+        return CheckResult(
+            ok=not root_present,
+            description=self.description,
+            message=self.message,
+            reference_url=self.reference_url,
+            check_name=self.name,
+            logs=[],
+        )

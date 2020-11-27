@@ -6,27 +6,17 @@
   "checks": [
     {
       "name": "maintainer_label",
-      "additional_tags": [
-        "required"
-      ]
+      "additional_tags": ["required"]
     },
     {
       "name": "from_tag_not_latest",
-      "additional_tags": [
-        "required"
-      ],
-      "usable_targets": [
-        "dockerfile"
-      ]
+      "additional_tags": ["required"],
+      "usable_targets": ["dockerfile"]
     },
     {
       "name": "maintainer_deprecated",
-      "additional_tags": [
-        "required"
-      ],
-      "usable_targets": [
-        "dockerfile"
-      ]
+      "additional_tags": ["required"],
+      "usable_targets": ["dockerfile"]
     }
   ]
 }

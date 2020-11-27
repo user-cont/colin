@@ -20,12 +20,11 @@ from xml.dom import minidom
 
 import six
 
-from .constant import (COLOURS, ERROR, FAILED, OUTPUT_CHARS, PASSED)
+from .constant import COLOURS, ERROR, FAILED, OUTPUT_CHARS, PASSED
 from ..utils.caching_iterable import CachingIterable
 
 
 class CheckResult(object):
-
     def __init__(self, ok, description, message, reference_url, check_name, logs):
         self.ok = ok
         self.description = description
@@ -39,22 +38,28 @@ class CheckResult(object):
         return PASSED if self.ok else FAILED
 
     def __str__(self):
-        return "{}:{}".format(self.status,
-                              self.message)
+        return "{}:{}".format(self.status, self.message)
 
 
 class DockerfileCheckResult(CheckResult):
-
-    def __init__(self, ok, description, message, reference_url, check_name, lines=None,
-                 correction_diff=None):
-        super(DockerfileCheckResult, self) \
-            .__init__(ok, description, message, reference_url, check_name)
+    def __init__(
+        self,
+        ok,
+        description,
+        message,
+        reference_url,
+        check_name,
+        lines=None,
+        correction_diff=None,
+    ):
+        super(DockerfileCheckResult, self).__init__(
+            ok, description, message, reference_url, check_name
+        )
         self.lines = lines
         self.correction_diff = correction_diff
 
 
 class CheckResults(object):
-
     def __init__(self, results):
         self.results = CachingIterable(results)
 
@@ -73,15 +78,17 @@ class CheckResults(object):
 
         result_list = []
         for r in self.results:
-            result_list.append({
-                'name': r.check_name,
-                'ok': r.ok,
-                'status': r.status,
-                'description': r.description,
-                'message': r.message,
-                'reference_url': r.reference_url,
-                'logs': r.logs,
-            })
+            result_list.append(
+                {
+                    "name": r.check_name,
+                    "ok": r.ok,
+                    "status": r.status,
+                    "description": r.description,
+                    "message": r.message,
+                    "reference_url": r.reference_url,
+                    "logs": r.logs,
+                }
+            )
         result_json["checks"] = result_list
         return result_json
 
@@ -95,9 +102,7 @@ class CheckResults(object):
         return json.dumps(self._dict_of_results, indent=4)
 
     def save_json_to_file(self, file):
-        json.dump(obj=self._dict_of_results,
-                  fp=file,
-                  indent=4)
+        json.dump(obj=self._dict_of_results, fp=file, indent=4)
 
     @property
     def xunit(self):
@@ -112,24 +117,31 @@ class CheckResults(object):
         testsuite = SubElement(top, "testsuite")
 
         for r in self.results:
-            testcase = SubElement(testsuite, "testcase", {
-                'name': r.check_name,
-                # Can't use PASSED or FAILED global variables because their values are PASS
-                # and FAIL respectively and xunit wants them suffixed with -ED.
-                'status': "PASSED" if r.ok else "FAILED",
-                'url': r.reference_url
-            })
+            testcase = SubElement(
+                testsuite,
+                "testcase",
+                {
+                    "name": r.check_name,
+                    # Can't use PASSED or FAILED global variables because their values are PASS
+                    # and FAIL respectively and xunit wants them suffixed with -ED.
+                    "status": "PASSED" if r.ok else "FAILED",
+                    "url": r.reference_url,
+                },
+            )
             if r.logs:
                 logs = SubElement(testcase, "logs")
                 for log in r.logs:
-                    log = SubElement(logs, "log", {
-                        'message': log,
-                        'result': 'INFO',
-                        'waiver_authorization': 'Not Waivable'
-                    })
+                    log = SubElement(
+                        logs,
+                        "log",
+                        {
+                            "message": log,
+                            "result": "INFO",
+                            "waiver_authorization": "Not Waivable",
+                        },
+                    )
 
-
-        rough_string = tostring(top, 'utf-8')
+        rough_string = tostring(top, "utf-8")
         reparsed = minidom.parseString(rough_string)
         return reparsed.toprettyxml(indent="  ")
 
@@ -187,22 +199,20 @@ class CheckResults(object):
         for r in self.results:
             has_check = True
             if stat:
-                output_function(OUTPUT_CHARS[r.status],
-                                fg=COLOURS[r.status],
-                                nl=False)
+                output_function(OUTPUT_CHARS[r.status], fg=COLOURS[r.status], nl=False)
             else:
                 output_function(str(r), fg=COLOURS[r.status])
                 if verbose:
-                    output_function("  -> {}\n"
-                                    "  -> {}".format(r.description,
-                                                     r.reference_url),
-                                    fg=COLOURS[r.status])
+                    output_function(
+                        "  -> {}\n" "  -> {}".format(r.description, r.reference_url),
+                        fg=COLOURS[r.status],
+                    )
                     if logs and r.logs:
-                        output_function("  -> logs:",
-                                        fg=COLOURS[r.status])
-                        for l in r.logs:
-                            output_function("    -> {}".format(l),
-                                            fg=COLOURS[r.status])
+                        output_function("  -> logs:", fg=COLOURS[r.status])
+                        for line in r.logs:
+                            output_function(
+                                "    -> {}".format(line), fg=COLOURS[r.status]
+                            )
 
         if not has_check:
             output_function("No check found.")
@@ -223,23 +233,22 @@ class CheckResults(object):
         :return: str
         """
         pretty_output = _PrettyOutputToStr()
-        self.generate_pretty_output(stat=stat,
-                                    verbose=verbose,
-                                    output_function=pretty_output.save_output)
+        self.generate_pretty_output(
+            stat=stat, verbose=verbose, output_function=pretty_output.save_output
+        )
         return pretty_output.result
 
 
 class FailedCheckResult(CheckResult):
-
     def __init__(self, check, logs=None):
-        super(FailedCheckResult, self) \
-            .__init__(ok=False,
-                      message=check.message,
-                      description=check.description,
-                      reference_url=check.reference_url,
-                      check_name=check.name,
-                      logs=logs or []
-                      )
+        super(FailedCheckResult, self).__init__(
+            ok=False,
+            message=check.message,
+            description=check.description,
+            reference_url=check.reference_url,
+            check_name=check.name,
+            logs=logs or [],
+        )
 
     @property
     def status(self):
@@ -247,7 +256,6 @@ class FailedCheckResult(CheckResult):
 
 
 class _PrettyOutputToStr(object):
-
     def __init__(self):
         self.result = ""
 

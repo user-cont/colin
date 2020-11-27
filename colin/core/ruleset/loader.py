@@ -64,22 +64,27 @@ def nicer_get(di, required, *path):
             r = r[p]
         except KeyError:
             if required:
-                logger.error("can't locate %s in ruleset dict, keys present: %s",
-                             p, list(r.keys()))
+                logger.error(
+                    "can't locate %s in ruleset dict, keys present: %s",
+                    p,
+                    list(r.keys()),
+                )
                 logger.debug("full dict = %s", r)
-                raise ColinRulesetException("Validation error: can't locate %s in ruleset." % p)
+                raise ColinRulesetException(
+                    "Validation error: can't locate %s in ruleset." % p
+                )
             return
     return r
 
 
 class CheckStruct(object):
     """
-      {
-        "name": "label_name",
-        "tags": ["foo", "bar"],
-        "additional_tags": ["baz"],
-        "usable_targets": ["image", "dockerfile"],
-      }
+    {
+      "name": "label_name",
+      "tags": ["foo", "bar"],
+      "additional_tags": ["baz"],
+      "usable_targets": ["image", "dockerfile"],
+    }
     """
 
     def __init__(self, check_dict):
@@ -117,8 +122,11 @@ class CheckStruct(object):
     @property
     def other_attributes(self):
         """ return dict with all other data except for the described above"""
-        return {k: v for k, v in self.c.items() if
-                k not in ["name", "names", "tags", "additional_tags", "usable_targets"]}
+        return {
+            k: v
+            for k, v in self.c.items()
+            if k not in ["name", "names", "tags", "additional_tags", "usable_targets"]
+        }
 
 
 class RulesetStruct(object):

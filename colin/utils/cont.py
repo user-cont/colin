@@ -11,7 +11,9 @@ logger = logging.getLogger(__name__)
 class ImageName(object):
     """ parse image references and access their components easily """
 
-    def __init__(self, registry=None, namespace=None, repository=None, tag=None, digest=None):
+    def __init__(
+        self, registry=None, namespace=None, repository=None, tag=None, digest=None
+    ):
         self.registry = registry
         self.namespace = namespace
         self.repository = repository
@@ -29,10 +31,10 @@ class ImageName(object):
         result = cls()
 
         # registry.org/namespace/repo:tag
-        s = image_name.split('/', 2)
+        s = image_name.split("/", 2)
 
         if len(s) == 2:
-            if '.' in s[0] or ':' in s[0]:
+            if "." in s[0] or ":" in s[0]:
                 result.registry = s[0]
             else:
                 result.namespace = s[0]
@@ -52,12 +54,12 @@ class ImageName(object):
         return result
 
     def __str__(self):
-        return "Image: registry='{}' namespace='{}' " \
-               "repository='{}' tag='{}' digest='{}'".format(self.registry,
-                                                             self.namespace,
-                                                             self.repository,
-                                                             self.tag,
-                                                             self.digest)
+        return (
+            "Image: registry='{}' namespace='{}' "
+            "repository='{}' tag='{}' digest='{}'".format(
+                self.registry, self.namespace, self.repository, self.tag, self.digest
+            )
+        )
 
     @property
     def name(self):

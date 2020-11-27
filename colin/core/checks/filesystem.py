@@ -24,9 +24,10 @@ logger = logging.getLogger(__name__)
 class FileCheck(ImageAbstractCheck):
     """ Check presence of files; w/o mounting the whole FS """
 
-    def __init__(self, message, description, reference_url, tags, files, all_must_be_present):
-        super(FileCheck, self) \
-            .__init__(message, description, reference_url, tags)
+    def __init__(
+        self, message, description, reference_url, tags, files, all_must_be_present
+    ):
+        super(FileCheck, self).__init__(message, description, reference_url, tags)
         self.files = files
         self.all_must_be_present = all_must_be_present
 
@@ -37,8 +38,9 @@ class FileCheck(ImageAbstractCheck):
         for f in self.files:
             try:
                 f_present = target.file_is_present(f)
-                logs.append("File '{}' is {}present."
-                            .format(f, "" if f_present else "not "))
+                logs.append(
+                    "File '{}' is {}present.".format(f, "" if f_present else "not ")
+                )
             except IOError as ex:
                 logger.info("File %s is not present, ex: %s", f, ex)
                 f_present = False
@@ -51,12 +53,14 @@ class FileCheck(ImageAbstractCheck):
         for log in logs:
             logger.debug(log)
 
-        return CheckResult(ok=passed,
-                           description=self.description,
-                           message=self.message,
-                           reference_url=self.reference_url,
-                           check_name=self.name,
-                           logs=logs)
+        return CheckResult(
+            ok=passed,
+            description=self.description,
+            message=self.message,
+            reference_url=self.reference_url,
+            check_name=self.name,
+            logs=logs,
+        )
 
     def _handle_container(self, target):
         passed = self.all_must_be_present
@@ -67,8 +71,9 @@ class FileCheck(ImageAbstractCheck):
             cmd = ["/bin/ls", "-1", f]
             try:
                 f_present = cont.execute(cmd)
-                logs.append("File '{}' is {}present."
-                            .format(f, "" if f_present else "not "))
+                logs.append(
+                    "File '{}' is {}present.".format(f, "" if f_present else "not ")
+                )
             except Exception as ex:
                 logger.info("File %s is not present, ex: %s", f, ex)
                 f_present = False
@@ -78,15 +83,18 @@ class FileCheck(ImageAbstractCheck):
             else:
                 passed = f_present or passed
 
-        return CheckResult(ok=passed,
-                           description=self.description,
-                           message=self.message,
-                           reference_url=self.reference_url,
-                           check_name=self.name,
-                           logs=logs)
+        return CheckResult(
+            ok=passed,
+            description=self.description,
+            message=self.message,
+            reference_url=self.reference_url,
+            check_name=self.name,
+            logs=logs,
+        )
 
     def check(self, target):
         return self._handle_image(target)
+
 
 # class FileSystemCheck(ImageAbstractCheck):
 #     """ check for presence of files using `docker save` """

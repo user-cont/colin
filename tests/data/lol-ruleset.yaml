@@ -1,8 +1,8 @@
 checks:
-- additional_tags: [fuj, bar]
-  name: name_label
-  usable_targets: [image, dockerfile]
+  - additional_tags: [fuj, bar]
+    name: name_label
+    usable_targets: [image, dockerfile]
 contact_email: forgot-to-reply@example.nope
 description: This set of checks is required to pass because we said it
 name: Laughing out loud ruleset
-version: '1'
+version: "1"
