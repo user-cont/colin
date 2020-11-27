@@ -32,22 +32,23 @@ def ruleset_from_tag_not_latest():
         "description": "This set of checks is required to pass because we said it",
         "contact_email": "forgot-to-reply@example.nope",
         "checks": [
-            {
-                "name": "from_tag_not_latest"
-            },
-        ]
+            {"name": "from_tag_not_latest"},
+        ],
     }
 
 
-def test_missing_from(dockerfile_with_missing_from,
-                      ruleset_from_tag_not_latest):
-    result = colin.run(target=dockerfile_with_missing_from,
-                       target_type="dockerfile",
-                       ruleset=ruleset_from_tag_not_latest)
+def test_missing_from(dockerfile_with_missing_from, ruleset_from_tag_not_latest):
+    result = colin.run(
+        target=dockerfile_with_missing_from,
+        target_type="dockerfile",
+        ruleset=ruleset_from_tag_not_latest,
+    )
     assert result
     assert not result.ok
-    assert result.results_per_check['from_tag_not_latest']
-    assert not result.results_per_check['from_tag_not_latest'].ok
-    assert result.results_per_check['from_tag_not_latest'].status == 'ERROR'
-    assert result.results_per_check['from_tag_not_latest'].logs[
-               0] == 'Cannot find FROM instruction.'
+    assert result.results_per_check["from_tag_not_latest"]
+    assert not result.results_per_check["from_tag_not_latest"].ok
+    assert result.results_per_check["from_tag_not_latest"].status == "ERROR"
+    assert (
+        result.results_per_check["from_tag_not_latest"].logs[0]
+        == "Cannot find FROM instruction."
+    )

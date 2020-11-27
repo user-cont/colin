@@ -21,11 +21,20 @@ from ..result import CheckResult, FailedCheckResult
 
 
 class CmdAbstractCheck(ImageAbstractCheck):
-
-    def __init__(self, message, description, reference_url, tags, cmd, expected_output=None,
-                 expected_regex=None,
-                 substring=None):
-        super(CmdAbstractCheck, self).__init__(message, description, reference_url, tags)
+    def __init__(
+        self,
+        message,
+        description,
+        reference_url,
+        tags,
+        cmd,
+        expected_output=None,
+        expected_regex=None,
+        substring=None,
+    ):
+        super(CmdAbstractCheck, self).__init__(
+            message, description, reference_url, tags
+        )
         self.cmd = cmd
         self.expected_output = expected_output
         self.expected_regex = expected_regex
@@ -50,46 +59,59 @@ class CmdAbstractCheck(ImageAbstractCheck):
                                          logs=[str(ex)])
             """
         except ColinException as ex:
-            return FailedCheckResult(check=self,
-                                     logs=[str(ex)])
+            return FailedCheckResult(check=self, logs=[str(ex)])
         passed = True
         logs = ["Output:\n{}".format(output)]
         if self.substring is not None:
             substring_present = self.substring in output
             passed = passed and substring_present
-            logs.append("{}: Substring '{}' is {}present in the output of the command '{}'." \
-                        .format("ok" if substring_present else "nok",
-                                self.substring,
-                                "" if substring_present else "not ",
-                                self.cmd))
+            logs.append(
+                "{}: Substring '{}' is {}present in the output of the command '{}'.".format(
+                    "ok" if substring_present else "nok",
+                    self.substring,
+                    "" if substring_present else "not ",
+                    self.cmd,
+                )
+            )
 
         if self.expected_output is not None:
             expected_output = self.expected_output == output
             if expected_output:
-                logs.append("ok: Output of the command '{}' "
-                            "was as expected.".format(self.cmd))
+                logs.append(
+                    "ok: Output of the command '{}' "
+                    "was as expected.".format(self.cmd)
+                )
             else:
-                logs.append("nok: Output of the command '{}' "
-                            "does not match the expected one: '{}'.".format(self.cmd,
-                                                                            self.expected_output))
+                logs.append(
+                    "nok: Output of the command '{}' "
+                    "does not match the expected one: '{}'.".format(
+                        self.cmd, self.expected_output
+                    )
+                )
 
                 passed = False
 
         if self.expected_regex is not None:
             pattern = re.compile(self.expected_regex)
             if pattern.match(output):
-                logs.append("ok: Output of the command '{}' match the regex '{}'." \
-                            .format(self.cmd, self.expected_regex))
+                logs.append(
+                    "ok: Output of the command '{}' match the regex '{}'.".format(
+                        self.cmd, self.expected_regex
+                    )
+                )
             else:
                 logs.append(
                     "nok: Output of the command '{}' does not match"
-                    " the expected regex: '{}'.".format(self.cmd, self.expected_regex))
+                    " the expected regex: '{}'.".format(self.cmd, self.expected_regex)
+                )
 
                 passed = False
 
-        return CheckResult(ok=passed,
-                           description=self.description,
-                           message=self.message,
-                           reference_url=self.reference_url,
-                           check_name=self.name,
-                           logs=logs)
+        return CheckResult(
+            ok=passed,
+            description=self.description,
+            message=self.message,
+            reference_url=self.reference_url,
+            check_name=self.name,
+            logs=logs,
+        )

@@ -79,8 +79,10 @@ maintainer_deprecated
 """
     assert result.exit_code == 0
     assert result.output == expected_output
-    assert _call_colin(list_checks, parameters=["-r", "default"]).output == \
-           _call_colin(list_checks).output
+    assert (
+        _call_colin(list_checks, parameters=["-r", "default"]).output
+        == _call_colin(list_checks).output
+    )
 
 
 def test_list_checks_help_command():

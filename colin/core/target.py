@@ -106,13 +106,16 @@ class Target(object):
             try:
                 return cls(**kwargs)
             except Exception:
-                logger.error("Please make sure that you picked the correct target type: "
-                             "--target-type CLI option.")
+                logger.error(
+                    "Please make sure that you picked the correct target type: "
+                    "--target-type CLI option."
+                )
                 raise
 
         raise ColinException(
             "Unknown target type '{}'. Please make sure that you picked the correct target type: "
-            "--target-type CLI option.".format(target_type))
+            "--target-type CLI option.".format(target_type)
+        )
 
 
 class DockerfileTarget(Target):
@@ -180,7 +183,8 @@ class AbstractImageTarget(Target):
         except IOError as ex:
             logger.error("error while accessing file %s: %r", file_path, ex)
             raise ColinException(
-                "There was an error while accessing file %s: %r" % (file_path, ex))
+                "There was an error while accessing file %s: %r" % (file_path, ex)
+            )
 
     def get_file(self, file_path, mode="r"):
         """
@@ -227,6 +231,7 @@ class ImageTarget(AbstractImageTarget):
     """
     Represents the podman image as a target.
     """
+
     target_type = "image"
 
     def __init__(self, target, pull, parent_target=None, insecure=False, **_):
@@ -267,7 +272,9 @@ class ImageTarget(AbstractImageTarget):
         """ podman mount -- real filesystem """
         if self._mount_point is None:
             cmd_create = ["podman", "create", self.target_name, "some-cmd"]
-            self._mounted_container_id = subprocess.check_output(cmd_create).decode().rstrip()
+            self._mounted_container_id = (
+                subprocess.check_output(cmd_create).decode().rstrip()
+            )
             cmd_mount = ["podman", "mount", self._mounted_container_id]
             self._mount_point = subprocess.check_output(cmd_mount).decode().rstrip()
         return self._mount_point
@@ -275,9 +282,7 @@ class ImageTarget(AbstractImageTarget):
     def _try_image(self):
         logger.debug("Trying to find an image.")
         cmd = ["podman", "images", "--quiet", self.target_name]
-        result = subprocess.run(cmd,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if result.returncode == 0:
             self.image_id = result.stdout.decode().rstrip()
             logger.debug("Image found with id: '{}'.".format(self.image_id))
@@ -286,18 +291,23 @@ class ImageTarget(AbstractImageTarget):
                 if self.pull:
                     logger.debug("Pulling an image.")
                     cmd_pull = ["podman", "pull", "--quiet", self.target_name]
-                    result_pull = subprocess.run(cmd_pull,
-                                                 stdout=subprocess.PIPE,
-                                                 stderr=subprocess.PIPE)
+                    result_pull = subprocess.run(
+                        cmd_pull, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                    )
                     if result_pull.returncode == 0:
                         self.image_id = result_pull.stdout.decode().rstrip()
-                        logger.debug("Image pulled with id: '{}'.".format(self.image_id))
+                        logger.debug(
+                            "Image pulled with id: '{}'.".format(self.image_id)
+                        )
                     else:
                         raise ColinException(
-                            "Cannot pull an image: '{}'.".format(self.target_name))
+                            "Cannot pull an image: '{}'.".format(self.target_name)
+                        )
 
                 else:
-                    raise ColinException("Image '{}' not found.".format(self.target_name))
+                    raise ColinException(
+                        "Image '{}' not found.".format(self.target_name)
+                    )
             else:
                 raise ColinException("Podman error: {}".format(result.stderr))
 
@@ -319,6 +329,7 @@ class OstreeTarget(AbstractImageTarget):
     """
     Represents the ostree repository as an image target.
     """
+
     target_type = "ostree"
 
     def __init__(self, target, parent_target=None, **_):
@@ -373,8 +384,16 @@ class OstreeTarget(AbstractImageTarget):
         """ ostree repository -- content """
         if self._ostree_path is None:
             self._ostree_path = os.path.join(self.tmpdir, "ostree-repo")
-            subprocess.check_call(["ostree", "init", "--mode", "bare-user-only",
-                                   "--repo", self._ostree_path])
+            subprocess.check_call(
+                [
+                    "ostree",
+                    "init",
+                    "--mode",
+                    "bare-user-only",
+                    "--repo",
+                    self._ostree_path,
+                ]
+            )
         return self._ostree_path
 
     @property
@@ -396,10 +415,18 @@ class OstreeTarget(AbstractImageTarget):
 
     def _checkout(self):
         """ check out the image filesystem on self.mount_point """
-        cmd = ["atomic", "mount", "--storage", "ostree", self.ref_image_name, self.mount_point]
+        cmd = [
+            "atomic",
+            "mount",
+            "--storage",
+            "ostree",
+            self.ref_image_name,
+            self.mount_point,
+        ]
         # self.mount_point has to be created by us
-        self._run_and_log(cmd, self.ostree_path,
-                          "Failed to mount selected image as an ostree repo.")
+        self._run_and_log(
+            cmd, self.ostree_path, "Failed to mount selected image as an ostree repo."
+        )
 
     @staticmethod
     def _run_and_log(cmd, ostree_repo_path, error_msg, wd=None):
@@ -435,6 +462,7 @@ class OciTarget(AbstractImageTarget):
     """
     Represents the oci repository as an image target.
     """
+
     target_type = "oci"
 
     def __init__(self, target, parent_target=None, **_):
@@ -510,8 +538,14 @@ class OciTarget(AbstractImageTarget):
 
     def _checkout(self, checkout_dir):
         """ check out the image filesystem on self.mount_point """
-        cmd = ["umoci", "unpack", "--rootless", "--image",
-               "{}:{}".format(self.oci_path, self.ref_image_name), checkout_dir]
+        cmd = [
+            "umoci",
+            "unpack",
+            "--rootless",
+            "--image",
+            "{}:{}".format(self.oci_path, self.ref_image_name),
+            checkout_dir,
+        ]
         self._run_and_log(cmd, "Failed to mount selected image as an oci repo.")
 
     @staticmethod

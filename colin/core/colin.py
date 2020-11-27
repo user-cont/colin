@@ -62,7 +62,7 @@ def run(
     logger.debug("Checking started.")
 
     parent = None
-    if parent_target is not None and target_type != 'dockerfile':
+    if parent_target is not None and target_type != "dockerfile":
         parent = Target.get_instance(
             target=parent_target,
             logging_level=logging_level,
@@ -148,12 +148,13 @@ def _get_checks(
 
 
 def _set_logging(
-        logger_name="colin",
-        level=logging.INFO,
-        handler_class=logging.StreamHandler,
-        handler_kwargs=None,
-        format='%(asctime)s.%(msecs).03d %(filename)-17s %(levelname)-6s %(message)s',
-        date_format='%H:%M:%S'):
+    logger_name="colin",
+    level=logging.INFO,
+    handler_class=logging.StreamHandler,
+    handler_kwargs=None,
+    format="%(asctime)s.%(msecs).03d %(filename)-17s %(levelname)-6s %(message)s",
+    date_format="%H:%M:%S",
+):
     """
     Set personal logger for this library.
 

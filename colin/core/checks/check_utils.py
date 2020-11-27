@@ -15,7 +15,9 @@ def check_label(labels, required, value_regex, target_labels):
     :return: bool (required==True: True if the label is present and match the regex if specified)
                     (required==False: True if the label is not present)
     """
-    present = target_labels is not None and not set(labels).isdisjoint(set(target_labels))
+    present = target_labels is not None and not set(labels).isdisjoint(
+        set(target_labels)
+    )
 
     if present:
         if required and not value_regex:
@@ -35,14 +37,14 @@ def check_label(labels, required, value_regex, target_labels):
 
 
 class NotLoadedCheck(DockerfileAbstractCheck, ImageAbstractCheck):
-
     def __init__(self, check_name, reason):
         self.name = check_name
         super(NotLoadedCheck, self).__init__(
             message="Check code '{}' {}.".format(check_name, reason),
             description="Did you set the right name in the ruleset file?",
             reference_url="",
-            tags=[])
+            tags=[],
+        )
 
     def check(self, target):
         raise ColinException(self.message)

@@ -42,15 +42,7 @@ def test_ruleset_json():
 
 def test_ruleset_tags():
     tags = ["a", "banana"]
-    r = {
-        "version": "1",
-        "checks": [
-            {
-                "name": "name_label",
-                "tags": tags[:]
-            }
-        ]
-    }
+    r = {"version": "1", "checks": [{"name": "name_label", "tags": tags[:]}]}
     r = Ruleset(ruleset=r)
     checks = r.get_checks(None)
     assert len(checks) == 1
@@ -59,34 +51,18 @@ def test_ruleset_tags():
 
 def test_ruleset_additional_tags():
     tags = ["a"]
-    r = {
-        "version": "1",
-        "checks": [
-            {
-                "name": "name_label",
-                "additional_tags": tags[:]
-            }
-        ]
-    }
+    r = {"version": "1", "checks": [{"name": "name_label", "additional_tags": tags[:]}]}
     r = Ruleset(ruleset=r)
     checks = r.get_checks(None)
     assert len(checks) == 1
     assert list(set(tags).intersection(set(checks[0].tags))) == tags
 
 
-@pytest.mark.parametrize("tags,expected_check_name", [
-    (["banana"], None),
-    (["name"], "name_label")
-])
+@pytest.mark.parametrize(
+    "tags,expected_check_name", [(["banana"], None), (["name"], "name_label")]
+)
 def test_ruleset_tags_filtering(tags, expected_check_name):
-    r = {
-        "version": "1",
-        "checks": [
-            {
-                "name": "name_label"
-            }
-        ]
-    }
+    r = {"version": "1", "checks": [{"name": "name_label"}]}
     r = Ruleset(ruleset=r)
     checks = r.get_checks(None, tags=tags)
     if expected_check_name:
@@ -97,14 +73,17 @@ def test_ruleset_tags_filtering(tags, expected_check_name):
 
 
 # version in ruleset, should this case raise an exception?
-@pytest.mark.parametrize("version,should_raise", [
-    (1, False),
-    ("1", False),
-    ("banana", True),
-    (None, True),
-    ("", True),
-    ("<blank>", True),
-])
+@pytest.mark.parametrize(
+    "version,should_raise",
+    [
+        (1, False),
+        ("1", False),
+        ("banana", True),
+        (None, True),
+        ("", True),
+        ("<blank>", True),
+    ],
+)
 def test_ruleset_version(version, should_raise):
     if version == "<blank>":
         r = {"banana": 123}
@@ -122,13 +101,8 @@ def test_ruleset_override():
     r = {
         "version": "1",
         "checks": [
-            {
-                "name": "name_label",
-                "tags": ["a", "b"],
-                "just": "testing",
-                "message": m
-            }
-        ]
+            {"name": "name_label", "tags": ["a", "b"], "just": "testing", "message": m}
+        ],
     }
     r = Ruleset(ruleset=r)
     checks = r.get_checks(None)

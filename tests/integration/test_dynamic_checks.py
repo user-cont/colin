@@ -23,12 +23,9 @@ def ruleset():
         "name": "Laughing out loud ruleset",
         "description": "This set of checks is required to pass because we said it",
         "contact_email": "forgot-to-reply@example.nope",
-        "checks": [
-            {
-                "name": "shell_runnable"
-            }
-        ]
+        "checks": [{"name": "shell_runnable"}],
     }
+
 
 # def test_dynamic_check_ls(ruleset):
 #     results = colin.run(target=LS_IMAGE, ruleset=ruleset, logging_level=10)

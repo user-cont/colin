@@ -18,7 +18,9 @@ from colin.core.checks.labels import DeprecatedLabelAbstractCheck
 from colin.core.checks.fmf_check import FMFAbstractCheck
 
 
-class ArchitectureLabelCapitalDeprecatedCheck(FMFAbstractCheck, DeprecatedLabelAbstractCheck):
+class ArchitectureLabelCapitalDeprecatedCheck(
+    FMFAbstractCheck, DeprecatedLabelAbstractCheck
+):
     name = "architecture_label_capital_deprecated"
 
 
@@ -26,7 +28,9 @@ class BZComponentDeprecatedCheck(FMFAbstractCheck, DeprecatedLabelAbstractCheck)
     name = "bzcomponent_deprecated"
 
 
-class InstallLabelCapitalDeprecatedCheck(FMFAbstractCheck, DeprecatedLabelAbstractCheck):
+class InstallLabelCapitalDeprecatedCheck(
+    FMFAbstractCheck, DeprecatedLabelAbstractCheck
+):
     name = "install_label_capital_deprecated"
 
 
@@ -34,13 +38,19 @@ class NameLabelCapitalDeprecatedCheck(FMFAbstractCheck, DeprecatedLabelAbstractC
     name = "name_label_capital_deprecated"
 
 
-class ReleaseLabelCapitalDeprecatedCheck(FMFAbstractCheck, DeprecatedLabelAbstractCheck):
+class ReleaseLabelCapitalDeprecatedCheck(
+    FMFAbstractCheck, DeprecatedLabelAbstractCheck
+):
     name = "release_label_capital_deprecated"
 
 
-class UninstallLabelCapitalDeprecatedCheck(FMFAbstractCheck, DeprecatedLabelAbstractCheck):
+class UninstallLabelCapitalDeprecatedCheck(
+    FMFAbstractCheck, DeprecatedLabelAbstractCheck
+):
     name = "uninstall_label_capital_deprecated"
 
 
-class VersionLabelCapitalDeprecatedCheck(FMFAbstractCheck, DeprecatedLabelAbstractCheck):
+class VersionLabelCapitalDeprecatedCheck(
+    FMFAbstractCheck, DeprecatedLabelAbstractCheck
+):
     name = "version_label_capital_deprecated"

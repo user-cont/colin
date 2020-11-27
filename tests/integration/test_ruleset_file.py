@@ -33,19 +33,11 @@ def ruleset():
         "description": "This set of checks is required to pass because we said it",
         "contact_email": "forgot-to-reply@example.nope",
         "checks": [
-            {
-                "name": "maintainer_label"
-            },
-            {
-                "name": "name_label"
-            },
-            {
-                "name": "com.redhat.component_label"
-            },
-            {
-                "name": "help_label"
-            }
-        ]
+            {"name": "maintainer_label"},
+            {"name": "name_label"},
+            {"name": "com.redhat.component_label"},
+            {"name": "help_label"},
+        ],
     }
 
 
@@ -56,14 +48,7 @@ def ruleset_unknown_check():
         "name": "Laughing out loud ruleset",
         "description": "This set of checks is required to pass because we said it",
         "contact_email": "forgot-to-reply@example.nope",
-        "checks": [
-            {
-                "name": "maintainer_label"
-            },
-            {
-                "name": "i_forgot_the_name"
-            }
-        ]
+        "checks": [{"name": "maintainer_label"}, {"name": "i_forgot_the_name"}],
     }
 
 
@@ -76,38 +61,46 @@ def ruleset_coupled():
         "contact_email": "forgot-to-reply@example.nope",
         "checks": [
             {
-                "names": ["maintainer_label", "name_label", "com.redhat.component_label"],
-                "additional_tags": [
-                    "required"
-                ]
+                "names": [
+                    "maintainer_label",
+                    "name_label",
+                    "com.redhat.component_label",
+                ],
+                "additional_tags": ["required"],
             }
-        ]
+        ],
     }
 
 
 @pytest.fixture()
 def expected_dict():
-    return {"maintainer_label": "PASS",
-            "name_label": "PASS",
-            "com.redhat.component_label": "PASS",
-            "help_label": "FAIL",
-            }
+    return {
+        "maintainer_label": "PASS",
+        "name_label": "PASS",
+        "com.redhat.component_label": "PASS",
+        "help_label": "FAIL",
+    }
 
 
-def get_results_from_colin_labels_image(image, ruleset_name=None, ruleset_file=None, ruleset=None):
-    return colin.run(image.target_name, image.target_type, ruleset_name=ruleset_name,
-                     ruleset_file=ruleset_file, ruleset=ruleset)
+def get_results_from_colin_labels_image(
+    image, ruleset_name=None, ruleset_file=None, ruleset=None
+):
+    return colin.run(
+        image.target_name,
+        image.target_type,
+        ruleset_name=ruleset_name,
+        ruleset_file=ruleset_file,
+        ruleset=ruleset,
+    )
 
 
-def test_specific_ruleset_as_fileobj(tmpdir, ruleset, expected_dict,
-                                     target_label):
+def test_specific_ruleset_as_fileobj(tmpdir, ruleset, expected_dict, target_label):
     (_, t) = tempfile.mkstemp(dir=str(tmpdir))
 
     with open(t, "w") as f:
         yaml.dump(ruleset, f)
     with open(t, "r") as f:
-        result = get_results_from_colin_labels_image(image=target_label,
-                                                     ruleset_file=f)
+        result = get_results_from_colin_labels_image(image=target_label, ruleset_file=f)
     assert result
     labels_dict = {}
     for res in result.results:
@@ -117,8 +110,7 @@ def test_specific_ruleset_as_fileobj(tmpdir, ruleset, expected_dict,
 
 
 def test_specific_ruleset_directly(ruleset, expected_dict, target_label):
-    result = get_results_from_colin_labels_image(image=target_label,
-                                                 ruleset=ruleset)
+    result = get_results_from_colin_labels_image(image=target_label, ruleset=ruleset)
     assert result
     labels_dict = {}
     for res in result.results:
@@ -143,7 +135,9 @@ def test_coupled_ruleset(ruleset_coupled):
 def test_unknown_check(ruleset_unknown_check):
     with pytest.raises(ColinRulesetException) as ex:
         colin.get_checks(ruleset=ruleset_unknown_check)
-    assert str(ex.value) == "Check i_forgot_the_name can't be loaded, we couldn't find it."
+    assert (
+        str(ex.value) == "Check i_forgot_the_name can't be loaded, we couldn't find it."
+    )
 
 
 def test_skip(ruleset):

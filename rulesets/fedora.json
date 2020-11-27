@@ -43,9 +43,7 @@
         "summary_label",
         "version_label"
       ],
-      "additional_tags": [
-        "required"
-      ]
+      "additional_tags": ["required"]
     },
     {
       "names": [
@@ -53,30 +51,16 @@
         "maintainer_deprecated",
         "description_or_io.k8s.description_label"
       ],
-      "additional_tags": [
-        "required"
-      ],
-      "usable_targets": [
-        "dockerfile"
-      ]
+      "additional_tags": ["required"],
+      "usable_targets": ["dockerfile"]
     },
     {
-      "names": [
-        "help_file_or_readme",
-        "run_or_usage_label"
-      ],
-      "additional_tags": [
-        "required"
-      ],
-      "usable_targets": [
-        "image",
-        "container"
-      ]
+      "names": ["help_file_or_readme", "run_or_usage_label"],
+      "additional_tags": ["required"],
+      "usable_targets": ["image", "container"]
     },
     {
-      "names": [
-        "inherited_labels"
-      ],
+      "names": ["inherited_labels"],
       "labels_list": [
         "summary",
         "description",
@@ -84,12 +68,8 @@
         "io.k8s.display-name",
         "io.openshift.tags"
       ],
-      "additional_tags": [
-        "required"
-      ],
-      "usable_targets": [
-        "image"
-      ]
+      "additional_tags": ["required"],
+      "usable_targets": ["image"]
     }
   ]
 }

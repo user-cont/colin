@@ -34,13 +34,16 @@ def get_version_of_the_python_package(module):
     :param module: module to show info about
     :return: str 'name version path'
     """
-    return "{} {} {}".format(getattr(module, "__name__", None),
-                             getattr(module, "__version__", None),
-                             getattr(module, "__path__", [None])[0])
+    return "{} {} {}".format(
+        getattr(module, "__name__", None),
+        getattr(module, "__version__", None),
+        getattr(module, "__path__", [None])[0],
+    )
 
 
-def get_version_msg_from_the_cmd(package_name, cmd=None, use_rpm=None,
-                                 max_lines_of_the_output=None):
+def get_version_msg_from_the_cmd(
+    package_name, cmd=None, use_rpm=None, max_lines_of_the_output=None
+):
     """
     Get str with the version (or string representation of the error).
 
@@ -59,13 +62,15 @@ def get_version_msg_from_the_cmd(package_name, cmd=None, use_rpm=None,
 
     try:
         cmd = cmd or [package_name, "--version"]
-        version_result = subprocess.run(cmd,
-                                        stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
+        version_result = subprocess.run(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
         if version_result.returncode == 0:
             version_output = version_result.stdout.decode().rstrip()
             if max_lines_of_the_output:
-                version_output = " ".join(version_output.split('\n')[:max_lines_of_the_output])
+                version_output = " ".join(
+                    version_output.split("\n")[:max_lines_of_the_output]
+                )
             return version_output
 
         else:
@@ -76,9 +81,9 @@ def get_version_msg_from_the_cmd(package_name, cmd=None, use_rpm=None,
 
 def get_rpm_version(package_name):
     """Get a version of the package with 'rpm -q' command."""
-    version_result = subprocess.run(["rpm", "-q", package_name],
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE)
+    version_result = subprocess.run(
+        ["rpm", "-q", package_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
     if version_result.returncode == 0:
         return version_result.stdout.decode().rstrip()
     else:
@@ -88,9 +93,9 @@ def get_rpm_version(package_name):
 def is_rpm_installed():
     """Tests if the rpm command is present."""
     try:
-        version_result = subprocess.run(["rpm", "--usage"],
-                                        stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
+        version_result = subprocess.run(
+            ["rpm", "--usage"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
         rpm_installed = not version_result.returncode
     except FileNotFoundError:
         rpm_installed = False
@@ -114,7 +119,9 @@ def exit_after(s):
             try:
                 result = fn(*args, **kwargs)
             except KeyboardInterrupt:
-                raise TimeoutError("Function '{}' hit the timeout ({}s).".format(fn.__name__, s))
+                raise TimeoutError(
+                    "Function '{}' hit the timeout ({}s).".format(fn.__name__, s)
+                )
             finally:
                 timer.cancel()
             return result
@@ -147,5 +154,7 @@ def retry(retry_count=5, delay=2):
                     if i <= 1:
                         raise
                 time.sleep(delay)
+
         return wrapper
+
     return decorator

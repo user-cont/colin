@@ -75,11 +75,15 @@ def load_check_classes_from_file(path):
     for _, obj in inspect.getmembers(m, inspect.isclass):
         if should_we_load(obj):
             if issubclass(obj, FMFAbstractCheck):
-                node_metadata = receive_fmf_metadata(name=obj.name, path=os.path.dirname(path))
+                node_metadata = receive_fmf_metadata(
+                    name=obj.name, path=os.path.dirname(path)
+                )
                 obj.metadata = node_metadata
             check_classes.append(obj)
             # Uncomment when debugging this code.
-            logger.debug("Check class '%s' loaded, module: '%s'", obj.__name__, obj.__module__)
+            logger.debug(
+                "Check class '%s' loaded, module: '%s'", obj.__name__, obj.__module__
+            )
     return check_classes
 
 
@@ -109,8 +113,9 @@ class CheckLoader(object):
                     if not fi.endswith(".py"):
                         continue
                     path = os.path.join(root, fi)
-                    check_classes = check_classes.union(set(
-                        load_check_classes_from_file(path)))
+                    check_classes = check_classes.union(
+                        set(load_check_classes_from_file(path))
+                    )
         return list(check_classes)
 
     def import_class(self, import_name):

@@ -16,23 +16,15 @@
 
 RULESET_DIRECTORY_NAME = "rulesets"
 RULESET_DIRECTORY = "share/colin/" + RULESET_DIRECTORY_NAME
-EXTS = [".yaml", '.yml', ".json"]
+EXTS = [".yaml", ".yml", ".json"]
 
 PASSED = "PASS"
 FAILED = "FAIL"
 ERROR = "ERROR"
 
-COLOURS = {
-    PASSED: "green",
-    FAILED: "red",
-    ERROR: "red"
-}
+COLOURS = {PASSED: "green", FAILED: "red", ERROR: "red"}
 
-OUTPUT_CHARS = {
-    PASSED: ".",
-    FAILED: "x",
-    ERROR: "#"
-}
+OUTPUT_CHARS = {PASSED: ".", FAILED: "x", ERROR: "#"}
 
 COLIN_CHECKS_PATH = "CHECKS_PATH"
 

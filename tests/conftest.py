@@ -17,18 +17,10 @@ BUSYBOX_IMAGE = "busybox:latest"
 LABELS_IMAGE = "colin-labels"
 LABELS_IMAGE_PARENT = "colin-labels-parent"
 IMAGES = {
-    BASH_IMAGE: {
-        "dockerfile_path": "Dockerfile-bash"
-    },
-    LS_IMAGE: {
-        "dockerfile_path": "Dockerfile-ls"
-    },
-    LABELS_IMAGE: {
-        "dockerfile_path": "Dockerfile"
-    },
-    LABELS_IMAGE_PARENT: {
-        "dockerfile_path": "Dockerfile-parent"
-    }
+    BASH_IMAGE: {"dockerfile_path": "Dockerfile-bash"},
+    LS_IMAGE: {"dockerfile_path": "Dockerfile-ls"},
+    LABELS_IMAGE: {"dockerfile_path": "Dockerfile"},
+    LABELS_IMAGE_PARENT: {"dockerfile_path": "Dockerfile-parent"},
 }
 
 
@@ -40,7 +32,15 @@ def build_image_if_not_exists(image_name):
         data_dir = os.path.join(this_dir, "data")
 
         dockerfile_path = IMAGES[image_name]["dockerfile_path"]
-        cmd_create = ["podman", "build", "-t", image_name, "-f", dockerfile_path, data_dir]
+        cmd_create = [
+            "podman",
+            "build",
+            "-t",
+            image_name,
+            "-f",
+            dockerfile_path,
+            data_dir,
+        ]
         subprocess.check_call(cmd_create)
 
 
@@ -58,8 +58,9 @@ def convert_image_to_ostree(image_name):
     os.makedirs(ostree_path)
     skopeo_target = get_skopeo_path(image_name=image_name, ostree_path=ostree_path)
 
-    subprocess.check_call(["ostree", "init", "--mode", "bare-user-only",
-                           "--repo", ostree_path])
+    subprocess.check_call(
+        ["ostree", "init", "--mode", "bare-user-only", "--repo", ostree_path]
+    )
 
     cmd = ["podman", "push", image_name, skopeo_target]
     subprocess.check_call(cmd)
@@ -80,16 +81,14 @@ def convert_image_to_oci(image_name):
 def get_target(name, type):
     if type == "image":
 
-        target = ImageTarget(target=name,
-                             pull=False)
+        target = ImageTarget(target=name, pull=False)
         yield target
         target.clean_up()
 
     elif type == "ostree":
 
         ostree_path = convert_image_to_ostree(name)
-        skopeo_target = get_skopeo_path(image_name=name,
-                                        ostree_path=ostree_path)
+        skopeo_target = get_skopeo_path(image_name=name, ostree_path=ostree_path)
 
         ostree_target = OstreeTarget(target=skopeo_target)
         yield ostree_target
@@ -99,8 +98,7 @@ def get_target(name, type):
     elif type == "oci":
 
         oci_path = convert_image_to_oci(name)
-        skopeo_target = get_skopeo_oci_target(image_name=name,
-                                              oci_path=oci_path)
+        skopeo_target = get_skopeo_oci_target(image_name=name, oci_path=oci_path)
 
         oci_target = OciTarget(target=skopeo_target)
         yield oci_target
@@ -129,19 +127,15 @@ def label_image():
     build_image_if_not_exists(LABELS_IMAGE)
 
 
-@pytest.fixture(scope="session",
-                params=["image", "ostree", "oci", "dockerfile"])
+@pytest.fixture(scope="session", params=["image", "ostree", "oci", "dockerfile"])
 def target_label(request, label_image):
-    for t in get_target(name=LABELS_IMAGE,
-                        type=request.param):
+    for t in get_target(name=LABELS_IMAGE, type=request.param):
         yield t
 
 
-@pytest.fixture(scope="session",
-                params=["image", "ostree", "oci", "dockerfile"])
+@pytest.fixture(scope="session", params=["image", "ostree", "oci", "dockerfile"])
 def target_label_image_and_dockerfile(request, label_image):
-    for t in get_target(name=LABELS_IMAGE,
-                        type=request.param):
+    for t in get_target(name=LABELS_IMAGE, type=request.param):
         yield t
 
 
@@ -150,11 +144,9 @@ def target_bash_image():
     build_image_if_not_exists(BASH_IMAGE)
 
 
-@pytest.fixture(scope="session",
-                params=["image", "ostree", "oci"])
+@pytest.fixture(scope="session", params=["image", "ostree", "oci"])
 def target_bash(request, target_bash_image):
-    for t in get_target(name=BASH_IMAGE,
-                        type=request.param):
+    for t in get_target(name=BASH_IMAGE, type=request.param):
         yield t
 
 
@@ -163,16 +155,13 @@ def target_ls_image():
     build_image_if_not_exists(LS_IMAGE)
 
 
-@pytest.fixture(scope="session",
-                params=["image", "ostree", "oci"])
+@pytest.fixture(scope="session", params=["image", "ostree", "oci"])
 def target_ls(request, target_ls_image):
-    for t in get_target(name=LS_IMAGE,
-                        type=request.param):
+    for t in get_target(name=LS_IMAGE, type=request.param):
         yield t
 
 
-@pytest.fixture(scope="session",
-                params=[LS_IMAGE, BASH_IMAGE])
+@pytest.fixture(scope="session", params=[LS_IMAGE, BASH_IMAGE])
 def target_help_file(request, target_ls, target_bash):
     if request.param == LS_IMAGE:
         return target_ls, False
@@ -185,9 +174,7 @@ def target_busybox_image():
     pull_image_if_not_exists(image_name=BUSYBOX_IMAGE)
 
 
-@pytest.fixture(scope="session",
-                params=["image", "ostree", "oci"])
+@pytest.fixture(scope="session", params=["image", "ostree", "oci"])
 def target_busybox(request, target_busybox_image):
-    for t in get_target(name=BUSYBOX_IMAGE,
-                        type=request.param):
+    for t in get_target(name=BUSYBOX_IMAGE, type=request.param):
         yield t

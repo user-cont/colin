@@ -4,7 +4,7 @@
 ![PyPI - License](https://img.shields.io/pypi/l/colin.svg)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/colin.svg)
 ![PyPI - Status](https://img.shields.io/pypi/status/colin.svg)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/427eb0c5dfc040cea798b23575dba025)](https://www.codacy.com/app/user-cont/colin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=user-cont/colin&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/427eb0c5dfc040cea798b23575dba025)](https://www.codacy.com/app/user-cont/colin?utm_source=github.com&utm_medium=referral&utm_content=user-cont/colin&utm_campaign=Badge_Grade)
 [![Build Status](https://ci.centos.org/job/user-cont-colin-master/badge/icon)](https://ci.centos.org/job/user-cont-colin-master/)
 
 Tool to check generic rules and best-practices for container images and dockerfiles.
@@ -13,20 +13,17 @@ For more information, please check our [documentation on colin.readthedocs.io](h
 
 ![example](./docs/example.gif)
 
-
 # Features
 
-* Validate a selected artifact against a ruleset.
-* Artifacts can be container images and dockerfiles.
-* We provide a default ruleset we believe every container image should satisfy.
-* There is a ruleset to validate an artifact whether it complies to [Fedora Container Guidelines](https://fedoraproject.org/wiki/Container:Guidelines)
-* Colin can list available rulesets and list checks in a ruleset.
-* There is a python API available
-* Colin can be integrated into your workflow easily - it can provide results in json format.
-
+- Validate a selected artifact against a ruleset.
+- Artifacts can be container images and dockerfiles.
+- We provide a default ruleset we believe every container image should satisfy.
+- There is a ruleset to validate an artifact whether it complies to [Fedora Container Guidelines](https://fedoraproject.org/wiki/Container:Guidelines)
+- Colin can list available rulesets and list checks in a ruleset.
+- There is a python API available
+- Colin can be integrated into your workflow easily - it can provide results in json format.
 
 ## Installation
-
 
 ### Via `pip`
 
@@ -42,6 +39,7 @@ $ pip3 install --user colin
 ### On Fedora distribution
 
 colin is packaged in official Fedora repositories:
+
 ```
 $ dnf install -y colin
 ```
@@ -51,9 +49,9 @@ $ dnf install -y colin
 - For checking `image` target-type, you have to install [podman](https://github.com/containers/libpod/blob/master/docs/tutorials/podman_tutorial.md). If you need to check local docker images, you need to prefix your images with `docker-daemon` (e.g. `colin check docker-daemon:docker.io/openshift/origin-web-console:v3.11`).
 
 - If you want to use `ostree` target, you need to install following tools:
-    - [ostree](https://github.com/ostreedev/ostree)
-    - [atomic](https://github.com/projectatomic/atomic#atomic-usrbinatomic)
-    - [skopeo](https://github.com/containers/skopeo#skopeo-)
+  - [ostree](https://github.com/ostreedev/ostree)
+  - [atomic](https://github.com/projectatomic/atomic#atomic-usrbinatomic)
+  - [skopeo](https://github.com/containers/skopeo#skopeo-)
 
 ## Usage
 
@@ -108,6 +106,7 @@ Options:
 ```
 
 Let's give it a shot:
+
 ```
 $ colin -f ./rulesets/fedora.json registry.fedoraproject.org/f29/cockpit
 PASS:Label 'architecture' has to be specified.
@@ -118,7 +117,6 @@ PASS:Label 'distribution-scope' has to be specified.
 :
 PASS:10 FAIL:8
 ```
-
 
 ### Directly from git
 

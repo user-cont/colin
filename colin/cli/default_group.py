@@ -22,10 +22,11 @@ class DefaultGroup(click.Group):
     """
     Allow to set default command for the group.
     """
+
     ignore_unknown_options = True
 
     def __init__(self, *args, **kwargs):
-        default_command = kwargs.pop('default_command', None)
+        default_command = kwargs.pop("default_command", None)
         super(DefaultGroup, self).__init__(*args, **kwargs)
         self.default_cmd_name = None
         if default_command is not None:
@@ -52,7 +53,7 @@ class DefaultGroup(click.Group):
 
     def resolve_command(self, ctx, args):
         cmd_name, cmd, args = super(DefaultGroup, self).resolve_command(ctx, args)
-        args0 = getattr(ctx, 'args0', None)
+        args0 = getattr(ctx, "args0", None)
         if args0 is not None:
             args.insert(0, args0)
         return cmd_name, cmd, args

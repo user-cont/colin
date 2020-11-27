@@ -23,7 +23,7 @@ class ExtendedTree(Tree):
         """
         for node in self.climb(whole=whole):
             for key in sorted(node.data.keys()):
-                if key.endswith('+'):
+                if key.endswith("+"):
                     del node.data[key]
 
     def references(self, datatrees, whole=False):
@@ -67,12 +67,16 @@ class ExtendedTree(Tree):
                 if reference_node is not None:
                     break
             if not reference_node:
-                raise ValueError("Unable to find reference for node: %s via name search: %s" %
-                                 (node.name, ref_item_name))
-            logger.debug("MERGING: %s @ %s from %s",
-                         node.name,
-                         reference_node.name,
-                         reference_node.root)
+                raise ValueError(
+                    "Unable to find reference for node: %s via name search: %s"
+                    % (node.name, ref_item_name)
+                )
+            logger.debug(
+                "MERGING: %s @ %s from %s",
+                node.name,
+                reference_node.name,
+                reference_node.root,
+            )
             node.merge(parent=reference_node)
 
         self.__remove_append_items(whole=whole)

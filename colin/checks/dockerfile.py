@@ -31,12 +31,14 @@ class FromTagNotLatestCheck(FMFAbstractCheck, DockerfileAbstractCheck):
 
         im = ImageName.parse(target.instance.baseimage)
         passed = im.tag and im.tag != "latest"
-        return CheckResult(ok=passed,
-                           description=self.description,
-                           message=self.message,
-                           reference_url=self.reference_url,
-                           check_name=self.name,
-                           logs=[])
+        return CheckResult(
+            ok=passed,
+            description=self.description,
+            message=self.message,
+            reference_url=self.reference_url,
+            check_name=self.name,
+            logs=[],
+        )
 
 
 class MaintainerDeprecatedCheck(FMFAbstractCheck, InstructionCountAbstractCheck):

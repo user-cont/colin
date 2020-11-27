@@ -25,7 +25,7 @@ class FunkyCheck(AbstractCheck):
             message="yes!",
             description="no",
             reference_url="https://nope.example.com/",
-            tags=["yes", "and", "no"]
+            tags=["yes", "and", "no"],
         )
 
 
@@ -37,7 +37,7 @@ class ThisIsNotAChekk(AbstractCheck):
             message="yes!",
             description="no",
             reference_url="https://nope.example.com/",
-            tags=["yes", "and", "no"]
+            tags=["yes", "and", "no"],
         )
 
 
@@ -49,5 +49,5 @@ class ThisIsAlsoNotAChekk(object):
             message="yes!",
             description="no",
             reference_url="https://nope.example.com/",
-            tags=["yes", "and", "no"]
+            tags=["yes", "and", "no"],
         )

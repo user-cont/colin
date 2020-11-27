@@ -8,17 +8,19 @@ Use your best judgement, and feel free to propose changes to this document in a 
 By contributing to this project you agree to the Developer Certificate of Origin (DCO). This document is a simple statement that you, as a contributor, have the legal right to submit the contribution. See the [DCO](DCO) file for details.
 
 ## Reporting Bugs
+
 Before creating bug reports, please check a [list of known issues](https://github.com/user-cont/colin/issues) to see
 if the problem has already been reported (or fixed in a master branch).
 
 If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/user-cont/colin/issues/new).
 Be sure to include a **descriptive title and a clear description**. Ideally, please provide:
- * version of colin you are using (`rpm -q colin` or `pip3 freeze | grep colin`)
- * version of [conu](https://github.com/user-cont/conu) library (`rpm -q python3-conu` or `pip3 freeze | grep conu`)
- * version of [dockerfile-parse](https://github.com/DBuildService/dockerfile-parse) library (`rpm -q python3-dockerfile-parse` or `pip3 freeze | grep dockerfile-parse`)
- * version of container runtime you are using (`rpm -qa | grep docker`)
- * the command you executed, output and ideally please describe the image, container or dockerfile you are validating
-   * invoke colin in debug mode (`--debug`)
+
+- version of colin you are using (`rpm -q colin` or `pip3 freeze | grep colin`)
+- version of [conu](https://github.com/user-cont/conu) library (`rpm -q python3-conu` or `pip3 freeze | grep conu`)
+- version of [dockerfile-parse](https://github.com/DBuildService/dockerfile-parse) library (`rpm -q python3-dockerfile-parse` or `pip3 freeze | grep dockerfile-parse`)
+- version of container runtime you are using (`rpm -qa | grep docker`)
+- the command you executed, output and ideally please describe the image, container or dockerfile you are validating
+  - invoke colin in debug mode (`--debug`)
 
 If possible, add a **code sample** or an **executable test case** demonstrating the expected behavior that is not occurring.
 
@@ -33,24 +35,27 @@ in as many details as possible.
 
 ## How to contribute code to colin
 
-* Please make sure that your code complies with [PEP8](https://www.python.org/dev/peps/pep-0008/).
-* One line should not contain more than 100 characters.
-* Make sure that new code is covered by a test case (new or existing one).
-* We don't like [spaghetti code](https://en.wikipedia.org/wiki/Spaghetti_code).
-* The tests have to pass.
+- Please make sure that your code complies with [PEP8](https://www.python.org/dev/peps/pep-0008/).
+- One line should not contain more than 100 characters.
+- Make sure that new code is covered by a test case (new or existing one).
+- We don't like [spaghetti code](https://en.wikipedia.org/wiki/Spaghetti_code).
+- The tests have to pass.
 
 # How to write the new check to colin
+
 All checks are stored in the directory
 [checks](https://github.com/user-cont/colin/tree/master/colin/checks).
 [Loader](https://github.com/user-cont/colin/tree/master/colin/core/loader.py)
 obtains checks from there, and here's how:
- * classes which end with `AbstractCheck` are NOT loaded
- * only classes which with `Check` are loaded
- * the check class needs to be a child of a `AbstractCheck`
+
+- classes which end with `AbstractCheck` are NOT loaded
+- only classes which with `Check` are loaded
+- the check class needs to be a child of a `AbstractCheck`
 
 Here's a simple template how you can create a new check:
 
 ## Label check example
+
 ```python
 from colin.core.checks.labels import LabelAbstractCheck
 
@@ -81,6 +86,7 @@ Let's go through the list of keyword arguments:
 - `required` — keyword specific to `LabelCheck` class. If the check fails and this is true, the check is marked as failed. If this is false and the check fails, it is a warning.
 
 ## File system check example
+
 ```python
 from colin.core.checks.filesystem import FileCheck
 
@@ -100,12 +106,14 @@ class FooBarFileCheck(FileCheck):
 ```
 
 We only need to describe one argument here:
+
 - `files` is specific to `FileSystemCheck` class and indicates on what files we want to operate on.
 
 ## Add the new check into a ruleset
+
 Once code for your check is complete, here's how you can run it.
 
-Create a new ruleset file with your locally created check(s):  
+Create a new ruleset file with your locally created check(s):
 
 ```bash
 $ cat foobar.yaml
@@ -115,8 +123,9 @@ checks:
 - {name: foobar_file_required}
 
 ```
-__NOTE__: _Colin_ accepts `YAML` formatted ruleset files. As `JSON` is a subset of the `YAML` standard, `JSON` formatted
-rulesets are also supported, but `YAML` is recommended.  
+
+**NOTE**: _Colin_ accepts `YAML` formatted ruleset files. As `JSON` is a subset of the `YAML` standard, `JSON` formatted
+rulesets are also supported, but `YAML` is recommended.
 
 Then run it with colin using command:
 
@@ -127,6 +136,7 @@ $ python3 -m colin.cli.colin -f ./foobar.yaml <IMAGE-OR-DOCKERFILE>
 The command above implies that your check lives happily with other checks in this upstream repo. It's possible to have checks stored externally and point colin to them.
 
 Let's move one of the checks mentioned above to `/tmp/external_checks/checks.py`:
+
 ```
 $ cat /tmp/external_checks/checks.py
 from colin.core.checks.filesystem import FileCheck
@@ -147,6 +157,7 @@ class FooBarFileCheck(FileCheck):
 ```
 
 This would be our simple ruleset:
+
 ```bash
 $ cat foobar.json
 {
@@ -158,6 +169,7 @@ $ cat foobar.json
 ```
 
 And we would just call colin and point it to the directory containing python files with checks:
+
 ```
 $ python3 -m colin.cli.colin -f ./foobar.json --checks-path /tmp/external_checks/ fedora:28
 10:43:38.165 loader.py         DEBUG  Getting check(s) from the file '/tmp/external_checks/checks.py'.
@@ -188,18 +200,17 @@ directory](https://github.com/user-cont/colin/tree/master/rulesets).
 
 If your check is generic enough, it may make sense to add it to [default ruleset](https://github.com/user-cont/colin/blob/master/rulesets/default.json).
 
-
 ## Changelog
 
 When you are contributing to changelog, please follow these suggestions:
 
-* The changelog is meant to be read by everyone. Imagine that an average user
+- The changelog is meant to be read by everyone. Imagine that an average user
   will read it and should understand the changes. `Add check timeouts` is
   completely undescriptive.
-* Every line should be a complete sentence. Either tell what is the change that the tool is doing or describe it precisely:
-  * Bad: `Use search method in label regex`
-  * Good: `Colin now uses search method when...`
-* And finally, with the changelogs we are essentially selling our projects:
+- Every line should be a complete sentence. Either tell what is the change that the tool is doing or describe it precisely:
+  - Bad: `Use search method in label regex`
+  - Good: `Colin now uses search method when...`
+- And finally, with the changelogs we are essentially selling our projects:
   think about a situation that you met someone at a conference and you are
   trying to convince the person to use the project and that the changelog
   should help with that.
