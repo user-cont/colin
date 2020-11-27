@@ -334,7 +334,7 @@ cli.add_command(check)
 cli.add_command(list_checks)
 cli.add_command(list_rulesets)
 cli.add_command(info)
-cli.set_default_command(check)
+cli.set_default_command(check)  # type: ignore
 
 
 def _print_results(results, stat=False, verbose=False):

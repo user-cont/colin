@@ -5,6 +5,7 @@ Module with FMF abstract check class
 import logging
 import inspect
 import os
+from typing import Optional
 
 from .abstract_check import AbstractCheck
 from ..fmf_extension import ExtendedTree
@@ -49,7 +50,7 @@ class FMFAbstractCheck(AbstractCheck):
     """
 
     metadata = None
-    name = None
+    name: Optional[str] = None
     fmf_metadata_path = None
 
     def __init__(self):
