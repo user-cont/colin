@@ -91,7 +91,7 @@ def cli():
     type=click.Path(exists=True, dir_okay=True, file_okay=False),
     multiple=True,
     envvar=COLIN_CHECKS_PATH,
-    help="Path to directory containing checks (default {}).".format(get_checks_paths()),
+    help=f"Path to directory containing checks (default {get_checks_paths()}).",
 )
 @click.option("--pull", is_flag=True, help="Pull the image from registry.")
 @click.option(
@@ -233,7 +233,7 @@ def check(
     type=click.Path(exists=True, dir_okay=True, file_okay=False),
     multiple=True,
     envvar=COLIN_CHECKS_PATH,
-    help="Path to directory containing checks (default {}).".format(get_checks_paths()),
+    help=f"Path to directory containing checks (default {get_checks_paths()}).",
 )
 def list_checks(ruleset, ruleset_file, debug, json, skip, tag, verbose, checks_paths):
     """
@@ -308,8 +308,8 @@ def info():
         os.path.join(os.path.dirname(__file__), os.path.pardir)
     )
 
-    click.echo("colin {} {}".format(__version__, installation_path))
-    click.echo("colin-cli {}\n".format(os.path.realpath(__file__)))
+    click.echo(f"colin {__version__} {installation_path}")
+    click.echo(f"colin-cli {os.path.realpath(__file__)}\n")
 
     # click.echo(get_version_of_the_python_package(module=conu))
 

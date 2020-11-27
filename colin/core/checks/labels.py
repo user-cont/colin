@@ -121,7 +121,7 @@ class InheritedOptionalLabelAbstractCheck(ImageAbstractCheck):
             for label in labels_to_check:
                 if target.labels[label] == target.parent_target.labels[label]:
                     passed = False
-                    log = "optional label inherited: {}".format(label)
+                    log = f"optional label inherited: {label}"
                     logs.append(log)
                     logger.debug(log)
 

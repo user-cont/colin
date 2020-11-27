@@ -190,7 +190,7 @@ def get_ruleset_file(ruleset=None):
         )
     )
     raise ColinRulesetException(
-        "Ruleset with the name '{}' cannot be found.".format(ruleset)
+        f"Ruleset with the name '{ruleset}' cannot be found."
     )
 
 

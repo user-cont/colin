@@ -27,10 +27,10 @@ logger = logging.getLogger(__name__)
 
 def get_ruleset_struct_from_fileobj(fileobj):
     try:
-        logger.debug("Loading ruleset from file '{}'.".format(fileobj.name))
+        logger.debug(f"Loading ruleset from file '{fileobj.name}'.")
         return RulesetStruct(yaml.safe_load(fileobj))
     except Exception as ex:
-        msg = "Ruleset file '{}' cannot be loaded: {}".format(fileobj.name, ex)
+        msg = f"Ruleset file '{fileobj.name}' cannot be loaded: {ex}"
         logger.error(msg)
         raise ColinRulesetException(msg)
 
@@ -42,7 +42,7 @@ def get_ruleset_struct_from_file(file_path):
     except ColinRulesetException as ex:
         raise ex
     except Exception as ex:
-        msg = "Ruleset '{}' cannot be loaded: {}".format(file_path, ex)
+        msg = f"Ruleset '{file_path}' cannot be loaded: {ex}"
 
         logger.error(msg)
         raise ColinRulesetException(msg)
@@ -71,7 +71,7 @@ def nicer_get(di, required, *path):
                 )
                 logger.debug("full dict = %s", r)
                 raise ColinRulesetException(
-                    "Validation error: can't locate %s in ruleset." % p
+                    f"Validation error: can't locate {p} in ruleset."
                 )
             return
     return r
@@ -96,7 +96,7 @@ class CheckStruct(object):
         return nicer_get(self.c, required, *path)
 
     def __str__(self):
-        return "%s" % self.name
+        return f"{self.name}"
 
     @property
     def import_name(self):
@@ -154,7 +154,7 @@ class RulesetStruct(object):
         return nicer_get(self.d, True, *path)
 
     def __str__(self):
-        return "%s" % self.name
+        return f"{self.name}"
 
     @property
     def version(self):

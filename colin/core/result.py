@@ -38,7 +38,7 @@ class CheckResult(object):
         return PASSED if self.ok else FAILED
 
     def __str__(self):
-        return "{}:{}".format(self.status, self.message)
+        return f"{self.status}:{self.message}"
 
 
 class DockerfileCheckResult(CheckResult):
@@ -204,14 +204,14 @@ class CheckResults(object):
                 output_function(str(r), fg=COLOURS[r.status])
                 if verbose:
                     output_function(
-                        "  -> {}\n" "  -> {}".format(r.description, r.reference_url),
+                        f"  -> {r.description}\n  -> {r.reference_url}",
                         fg=COLOURS[r.status],
                     )
                     if logs and r.logs:
                         output_function("  -> logs:", fg=COLOURS[r.status])
                         for line in r.logs:
                             output_function(
-                                "    -> {}".format(line), fg=COLOURS[r.status]
+                                f"    -> {line}", fg=COLOURS[r.status]
                             )
 
         if not has_check:
@@ -221,7 +221,7 @@ class CheckResults(object):
         else:
             output_function("")
             for status, count in six.iteritems(self.statistics):
-                output_function("{}:{} ".format(status, count), nl=False)
+                output_function(f"{status}:{count} ", nl=False)
             output_function("")
 
     def get_pretty_string(self, stat, verbose):

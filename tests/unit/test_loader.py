@@ -78,5 +78,5 @@ def test_loading_custom_check(tmpdir):
 def test_import_class():
     check_loader = CheckLoader([])
     check_name = "ArchitectureLabelCheck"
-    imported_class = check_loader.import_class("colin.checks.labels.%s" % check_name)
+    imported_class = check_loader.import_class(f"colin.checks.labels.{check_name}")
     assert imported_class.name == "architecture_label"

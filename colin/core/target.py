@@ -183,7 +183,7 @@ class AbstractImageTarget(Target):
         except IOError as ex:
             logger.error("error while accessing file %s: %r", file_path, ex)
             raise ColinException(
-                "There was an error while accessing file %s: %r" % (file_path, ex)
+                f"There was an error while accessing file {file_path}: {ex!r}"
             )
 
     def get_file(self, file_path, mode="r"):
@@ -206,7 +206,7 @@ class AbstractImageTarget(Target):
         if not os.path.exists(real_path):
             return False
         if not os.path.isfile(real_path):
-            raise IOError("%s is not a file" % file_path)
+            raise IOError(f"{file_path} is not a file")
         return True
 
     def cont_path(self, path):
@@ -301,15 +301,15 @@ class ImageTarget(AbstractImageTarget):
                         )
                     else:
                         raise ColinException(
-                            "Cannot pull an image: '{}'.".format(self.target_name)
+                            f"Cannot pull an image: '{self.target_name}'."
                         )
 
                 else:
                     raise ColinException(
-                        "Image '{}' not found.".format(self.target_name)
+                        f"Image '{self.target_name}' not found."
                     )
             else:
-                raise ColinException("Podman error: {}".format(result.stderr))
+                raise ColinException(f"Podman error: {result.stderr}")
 
     def clean_up(self):
         if self._mount_point:
@@ -399,7 +399,7 @@ class OstreeTarget(AbstractImageTarget):
     @property
     def skopeo_target(self):
         """ Skopeo format for the ostree repository. """
-        return "ostree:{}@{}".format(self.ref_image_name, self.ostree_path)
+        return f"ostree:{self.ref_image_name}@{self.ostree_path}"
 
     @property
     def tmpdir(self):
@@ -524,7 +524,7 @@ class OciTarget(AbstractImageTarget):
     @property
     def skopeo_target(self):
         """ Skopeo format for the oci repository. """
-        return "oci:{}:{}".format(self.oci_path, self.ref_image_name)
+        return f"oci:{self.oci_path}:{self.ref_image_name}"
 
     @property
     def tmpdir(self):
@@ -543,7 +543,7 @@ class OciTarget(AbstractImageTarget):
             "unpack",
             "--rootless",
             "--image",
-            "{}:{}".format(self.oci_path, self.ref_image_name),
+            f"{self.oci_path}:{self.ref_image_name}",
             checkout_dir,
         ]
         self._run_and_log(cmd, "Failed to mount selected image as an oci repo.")

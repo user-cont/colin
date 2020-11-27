@@ -81,8 +81,8 @@ class ImageName(object):
         name = "/".join(name_parts)
 
         if self.digest:
-            name += "@{}".format(self.digest)
+            name += f"@{self.digest}"
         elif self.tag:
-            name += ":{}".format(self.tag)
+            name += f":{self.tag}"
 
         return name

@@ -30,7 +30,7 @@ class CmdOrEntrypointCheck(FMFAbstractCheck, ImageAbstractCheck):
     def check(self, target):
         metadata = target.config_metadata["ContainerConfig"]
         cmd_present = "Cmd" in metadata and metadata["Cmd"]
-        msg_cmd_present = "Cmd {}specified.".format("" if cmd_present else "not ")
+        msg_cmd_present = f"Cmd {'' if cmd_present else 'not '}specified."
         logger.debug(msg_cmd_present)
 
         entrypoint_present = "Entrypoint" in metadata and metadata["Entrypoint"]
