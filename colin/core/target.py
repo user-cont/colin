@@ -113,8 +113,9 @@ class Target(object):
                 raise
 
         raise ColinException(
-            "Unknown target type '{}'. Please make sure that you picked the correct target type: "
-            "--target-type CLI option.".format(target_type)
+            f"Unknown target type '{target_type}'. "
+            "Please make sure that you picked the correct target type: "
+            "--target-type CLI option."
         )
 
 

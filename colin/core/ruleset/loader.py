@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 def get_ruleset_struct_from_fileobj(fileobj):
     try:
-        logger.debug(f"Loading ruleset from file '{fileobj.name}'.")
+        logger.debug("Loading ruleset from file '%s'.", fileobj.name)
         return RulesetStruct(yaml.safe_load(fileobj))
     except Exception as ex:
         msg = f"Ruleset file '{fileobj.name}' cannot be loaded: {ex}"

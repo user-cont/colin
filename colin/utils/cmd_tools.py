@@ -34,10 +34,10 @@ def get_version_of_the_python_package(module):
     :param module: module to show info about
     :return: str 'name version path'
     """
-    return "{} {} {}".format(
-        getattr(module, "__name__", None),
-        getattr(module, "__version__", None),
-        getattr(module, "__path__", [None])[0],
+    return (
+        f"{getattr(module, '__name__', None)} "
+        f"{getattr(module, '__version__', None)} "
+        f"{getattr(module, '__path__', [None])[0]}"
     )
 
 

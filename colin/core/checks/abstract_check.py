@@ -35,17 +35,11 @@ class AbstractCheck:
 
     def __str__(self):
         return (
-            "{}\n"
-            "   -> {}\n"
-            "   -> {}\n"
-            "   -> {}\n"
-            "   -> {}\n".format(
-                self.name,
-                self.message,
-                self.description,
-                self.reference_url,
-                ", ".join(self.tags),
-            )
+            f"{self.name}\n"
+            f"   -> {self.message}\n"
+            f"   -> {self.description}\n"
+            f"   -> {self.reference_url}\n"
+            f"   -> {', '.join(self.tags)}\n"
         )
 
     @property

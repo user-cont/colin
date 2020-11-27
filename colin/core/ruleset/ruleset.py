@@ -96,9 +96,7 @@ class Ruleset(object):
                         check_struct.name,
                     )
                     raise ColinRulesetException(
-                        "Check {} can't be loaded, we couldn't find it.".format(
-                            check_struct.name
-                        )
+                        f"Check {check_struct.name} can't be loaded, we couldn't find it."
                     )
             check_instance = check_class()
 
@@ -117,16 +115,13 @@ class Ruleset(object):
                 target_type=target_type, check_instance=check_instance
             ):
                 logger.error(
-                    "Check '{}' not compatible with the target type: {}".format(
-                        check_instance.name,
-                        target_type.get_compatible_check_class().check_type,
-                    )
+                    "Check '%s' not compatible with the target type: %s",
+                    check_instance.name,
+                    target_type.get_compatible_check_class().check_type,
                 )
                 raise ColinRulesetException(
-                    "Check {} can't be used for target type {}".format(
-                        check_instance,
-                        target_type.get_compatible_check_class().check_type,
-                    )
+                    f"Check {check_instance} can't be used for target type "
+                    f"{target_type.get_compatible_check_class().check_type}"
                 )
 
             if tags:
