@@ -34,10 +34,10 @@ def get_version_of_the_python_package(module):
     :param module: module to show info about
     :return: str 'name version path'
     """
-    return "{} {} {}".format(
-        getattr(module, "__name__", None),
-        getattr(module, "__version__", None),
-        getattr(module, "__path__", [None])[0],
+    return (
+        f"{getattr(module, '__name__', None)} "
+        f"{getattr(module, '__version__', None)} "
+        f"{getattr(module, '__path__', [None])[0]}"
     )
 
 
@@ -58,7 +58,7 @@ def get_version_msg_from_the_cmd(
     if use_rpm:
         rpm_version = get_rpm_version(package_name=package_name)
         if rpm_version:
-            return "{} (rpm)".format(rpm_version)
+            return f"{rpm_version} (rpm)"
 
     try:
         cmd = cmd or [package_name, "--version"]
@@ -74,9 +74,9 @@ def get_version_msg_from_the_cmd(
             return version_output
 
         else:
-            return "{}: cannot get version with {}".format(package_name, cmd)
+            return f"{package_name}: cannot get version with {cmd}"
     except FileNotFoundError:
-        return "{} not accessible!".format(package_name)
+        return f"{package_name} not accessible!"
 
 
 def get_rpm_version(package_name):
@@ -119,9 +119,7 @@ def exit_after(s):
             try:
                 result = fn(*args, **kwargs)
             except KeyboardInterrupt:
-                raise TimeoutError(
-                    "Function '{}' hit the timeout ({}s).".format(fn.__name__, s)
-                )
+                raise TimeoutError(f"Function '{fn.__name__}' hit the timeout ({s}s).")
             finally:
                 timer.cancel()
             return result

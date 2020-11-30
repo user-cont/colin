@@ -68,7 +68,7 @@ def should_we_load(kls):
 
 
 def load_check_classes_from_file(path):
-    logger.debug("Getting check(s) from the file '{}'.".format(path))
+    logger.debug("Getting check(s) from the file '%s'.", path)
     m = _load_module(path)
 
     check_classes = []
@@ -99,7 +99,7 @@ class CheckLoader(object):
         logger.debug("Will load checks from paths '%s'.", checks_paths)
         for p in checks_paths:
             if os.path.isfile(p):
-                raise RuntimeError("Provided path %s is not a directory." % p)
+                raise RuntimeError(f"Provided path {p} is not a directory.")
         self._check_classes = None
         self._mapping = None
         self.paths = checks_paths

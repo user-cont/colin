@@ -63,7 +63,7 @@ class CmdAbstractCheck(ImageAbstractCheck):
         except ColinException as ex:
             return FailedCheckResult(check=self, logs=[str(ex)])
         passed = True
-        logs = ["Output:\n{}".format(output)]
+        logs = [f"Output:\n{output}"]
         if self.substring is not None:
             substring_present = self.substring in output
             passed = passed and substring_present
@@ -79,16 +79,11 @@ class CmdAbstractCheck(ImageAbstractCheck):
         if self.expected_output is not None:
             expected_output = self.expected_output == output
             if expected_output:
-                logs.append(
-                    "ok: Output of the command '{}' "
-                    "was as expected.".format(self.cmd)
-                )
+                logs.append(f"ok: Output of the command '{self.cmd}' was as expected.")
             else:
                 logs.append(
-                    "nok: Output of the command '{}' "
-                    "does not match the expected one: '{}'.".format(
-                        self.cmd, self.expected_output
-                    )
+                    f"nok: Output of the command '{self.cmd}' "
+                    f"does not match the expected one: '{self.expected_output}'."
                 )
 
                 passed = False
@@ -97,14 +92,13 @@ class CmdAbstractCheck(ImageAbstractCheck):
             pattern = re.compile(self.expected_regex)
             if pattern.match(output):
                 logs.append(
-                    "ok: Output of the command '{}' match the regex '{}'.".format(
-                        self.cmd, self.expected_regex
-                    )
+                    f"ok: Output of the command '{self.cmd}' "
+                    f"match the regex '{self.expected_regex}'."
                 )
             else:
                 logs.append(
-                    "nok: Output of the command '{}' does not match"
-                    " the expected regex: '{}'.".format(self.cmd, self.expected_regex)
+                    f"nok: Output of the command '{self.cmd}' does not match"
+                    f" the expected regex: '{self.expected_regex}'."
                 )
 
                 passed = False

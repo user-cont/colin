@@ -115,11 +115,11 @@ def get_target(name, type):
 
 
 def get_skopeo_path(image_name, ostree_path):
-    return "ostree:%s@%s" % (image_name, ostree_path)
+    return f"ostree:{image_name}@{ostree_path}"
 
 
 def get_skopeo_oci_target(image_name, oci_path):
-    return "oci:%s:%s" % (oci_path, image_name)
+    return f"oci:{oci_path}:{image_name}"
 
 
 @pytest.fixture(scope="session", autouse=True)

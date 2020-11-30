@@ -40,7 +40,7 @@ def receive_fmf_metadata(name, path, object_list=False):
             )
         )
     elif not items:
-        raise Exception("Unable to get FMF metadata for: {}".format(name))
+        raise Exception(f"Unable to get FMF metadata for: {name}")
     return output
 
 

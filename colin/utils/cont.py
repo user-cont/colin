@@ -55,10 +55,8 @@ class ImageName(object):
 
     def __str__(self):
         return (
-            "Image: registry='{}' namespace='{}' "
-            "repository='{}' tag='{}' digest='{}'".format(
-                self.registry, self.namespace, self.repository, self.tag, self.digest
-            )
+            f"Image: registry='{self.registry}' namespace='{self.namespace}' "
+            f"repository='{self.repository}' tag='{self.tag}' digest='{self.digest}'"
         )
 
     @property
@@ -81,8 +79,8 @@ class ImageName(object):
         name = "/".join(name_parts)
 
         if self.digest:
-            name += "@{}".format(self.digest)
+            name += f"@{self.digest}"
         elif self.tag:
-            name += ":{}".format(self.tag)
+            name += f":{self.tag}"
 
         return name

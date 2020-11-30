@@ -38,13 +38,11 @@ class FileCheck(ImageAbstractCheck):
         for f in self.files:
             try:
                 f_present = target.file_is_present(f)
-                logs.append(
-                    "File '{}' is {}present.".format(f, "" if f_present else "not ")
-                )
+                logs.append(f"File '{f}' is {'' if f_present else 'not '}present.")
             except IOError as ex:
                 logger.info("File %s is not present, ex: %s", f, ex)
                 f_present = False
-                logs.append("File {} is not present.".format(f))
+                logs.append(f"File {f} is not present.")
             if self.all_must_be_present:
                 passed = f_present and passed
             else:
@@ -71,13 +69,11 @@ class FileCheck(ImageAbstractCheck):
             cmd = ["/bin/ls", "-1", f]
             try:
                 f_present = cont.execute(cmd)
-                logs.append(
-                    "File '{}' is {}present.".format(f, "" if f_present else "not ")
-                )
+                logs.append(f"File '{f}' is {'' if f_present else 'not '}present.")
             except Exception as ex:
                 logger.info("File %s is not present, ex: %s", f, ex)
                 f_present = False
-                logs.append("File {} is not present.".format(f))
+                logs.append(f"File {f} is not present.")
             if self.all_must_be_present:
                 passed = f_present and passed
             else:

@@ -63,7 +63,7 @@ class ExtendedTree(Tree):
             # match same item
             reference_node = None
             for datatree in datatrees:
-                reference_node = datatree.search("[^@]%s" % ref_item_name)
+                reference_node = datatree.search(f"[^@]{ref_item_name}")
                 if reference_node is not None:
                     break
             if not reference_node:
