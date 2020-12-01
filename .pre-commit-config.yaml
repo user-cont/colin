@@ -1,6 +1,6 @@
 # HOWTO: https://pre-commit.com/#usage
 # pip3 install pre-commit
-# pre-commit install
+# pre-commit install -t pre-commit -t pre-push
 
 repos:
   - repo: https://github.com/psf/black
@@ -31,3 +31,10 @@ repos:
     hooks:
       - id: mypy
         args: [--no-strict-optional, --ignore-missing-imports]
+  - repo: https://github.com/packit/pre-commit-hooks
+    rev: 76dd54a98306a9f6ecf6672aa7687d6f07091c4e
+    hooks:
+      - id: check-rebase
+        args:
+          - git://github.com/user-cont/colin.git
+        stages: [manual, push]
