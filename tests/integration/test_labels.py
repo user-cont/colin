@@ -45,10 +45,6 @@ def get_results_from_colin_labels_image(target, parent_target=None):
     )
 
 
-def test_colin_image(target_label):
-    assert get_results_from_colin_labels_image(target=target_label)
-
-
 @pytest.mark.parametrize("same_parent_target", [None, True, False])
 def test_labels_in_image(target_label, same_parent_target):
     parent = None
