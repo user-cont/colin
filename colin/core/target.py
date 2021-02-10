@@ -63,7 +63,7 @@ def inspect_object(obj, refresh=True):
 class Target(object):
     """
     Target is the thing we are going to check; it can be
-    - an image (specified by name, ostree, oci or dockertar)
+    - an image (specified by name, oci or dockertar)
     - dockerfile (specified by path or file-like object)
     """
 
@@ -83,7 +83,7 @@ class Target(object):
 
     def clean_up(self):
         """
-        Perform clean up on the low level objects: atm atomic and skopeo mountpoints
+        Perform clean up on the low level objects: atm oci and skopeo mountpoints
         and data are being cleaned up.
         """
         pass
@@ -99,7 +99,7 @@ class Target(object):
     @staticmethod
     def get_instance(target_type, **kwargs):
         """
-        :param target_type: string, either image, dockertar, ostree, oci or dockerfile
+        :param target_type: string, either image, dockertar, oci or dockerfile
         """
         if target_type in TARGET_TYPES:
             cls = TARGET_TYPES[target_type]
@@ -150,7 +150,7 @@ class DockerfileTarget(Target):
 
 class AbstractImageTarget(Target):
     """
-    Abstract predecessor for the image-target classes. (e.g. ostree and podman image)
+    Abstract predecessor for the image-target classes. (e.g. oci and podman image)
     """
 
     @property
@@ -322,139 +322,6 @@ class ImageTarget(AbstractImageTarget):
         raise NotImplementedError("Unsupported right now.")
 
 
-class OstreeTarget(AbstractImageTarget):
-    """
-    Represents the ostree repository as an image target.
-    """
-
-    target_type = "ostree"
-
-    def __init__(self, target, parent_target=None, **_):
-        super().__init__()
-        logger.debug("Target is an ostree repository.")
-
-        self.target_name = target
-        if self.target_name.startswith("ostree:"):
-            self.target_name = self.target_name[7:]
-
-        try:
-            self.ref_image_name, self._ostree_path = self.target_name.split("@", 1)
-        except ValueError:
-            raise RuntimeError("Invalid ostree target: should be 'image@path'.")
-
-        self.parent_target = parent_target
-        self._tmpdir = None
-        self._mount_point = None
-        self._layers_path = None
-        self._labels = None
-
-    @property
-    def labels(self):
-        """
-        Provide labels without the need of dockerd. Instead skopeo is being used.
-
-        :return: dict
-        """
-        if self._labels is None:
-            cmd = ["skopeo", "inspect", self.skopeo_target]
-            self._labels = json.loads(subprocess.check_output(cmd))["Labels"]
-        return self._labels
-
-    @property
-    def layers_path(self):
-        """ Directory with all the layers (docker save). """
-        if self._layers_path is None:
-            self._layers_path = os.path.join(self.tmpdir, "layers")
-        return self._layers_path
-
-    @property
-    def mount_point(self):
-        """ ostree checkout -- real filesystem """
-        if self._mount_point is None:
-            self._mount_point = os.path.join(self.tmpdir, "checkout")
-            os.makedirs(self._mount_point)
-            self._checkout()
-        return self._mount_point
-
-    @property
-    def ostree_path(self):
-        """ ostree repository -- content """
-        if self._ostree_path is None:
-            self._ostree_path = os.path.join(self.tmpdir, "ostree-repo")
-            subprocess.check_call(
-                [
-                    "ostree",
-                    "init",
-                    "--mode",
-                    "bare-user-only",
-                    "--repo",
-                    self._ostree_path,
-                ]
-            )
-        return self._ostree_path
-
-    @property
-    def skopeo_target(self):
-        """ Skopeo format for the ostree repository. """
-        return f"ostree:{self.ref_image_name}@{self.ostree_path}"
-
-    @property
-    def tmpdir(self):
-        """ Temporary directory holding all the runtime data. """
-        if self._tmpdir is None:
-            self._tmpdir = mkdtemp(prefix="colin-", dir="/var/tmp")
-        return self._tmpdir
-
-    def clean_up(self):
-        cmd = ["atomic", "unmount", self.mount_point]
-        self._run_and_log(cmd, self.ostree_path, "Failed to unmount ostree checkout.")
-        shutil.rmtree(self.tmpdir)
-
-    def _checkout(self):
-        """ check out the image filesystem on self.mount_point """
-        cmd = [
-            "atomic",
-            "mount",
-            "--storage",
-            "ostree",
-            self.ref_image_name,
-            self.mount_point,
-        ]
-        # self.mount_point has to be created by us
-        self._run_and_log(
-            cmd, self.ostree_path, "Failed to mount selected image as an ostree repo."
-        )
-
-    @staticmethod
-    def _run_and_log(cmd, ostree_repo_path, error_msg, wd=None):
-        """ run provided command and log all of its output; set path to ostree repo """
-        logger.debug("running command %s", cmd)
-        kwargs = {
-            "stderr": subprocess.STDOUT,
-            "env": os.environ.copy(),
-        }
-        if ostree_repo_path:
-            # must not exist, ostree will create it
-            kwargs["env"]["ATOMIC_OSTREE_REPO"] = ostree_repo_path
-        if wd:
-            kwargs["cwd"] = wd
-        try:
-            out = subprocess.check_output(cmd, **kwargs)
-        except subprocess.CalledProcessError as ex:
-            logger.error(ex.output)
-            logger.error(error_msg)
-            raise
-        logger.debug("%s", out)
-
-    @property
-    def config_metadata(self):
-        """ metadata from "Config" key """
-        raise NotImplementedError("Skopeo does not provide metadata yet.")
-
-    def get_output(self, cmd):
-        raise NotImplementedError("Unsupported right now.")
-
-
 class OciTarget(AbstractImageTarget):
     """
     Represents the oci repository as an image target.
@@ -573,6 +440,5 @@ class OciTarget(AbstractImageTarget):
 TARGET_TYPES = {
     "image": ImageTarget,
     "dockerfile": DockerfileTarget,
-    "ostree": OstreeTarget,
     "oci": OciTarget,
 }

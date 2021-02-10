@@ -135,8 +135,7 @@ def test_info():
 
     assert output[3].startswith("podman")
     assert output[4].startswith("skopeo")
-    assert output[5].startswith("ostree")
-    assert output[6].startswith("umoci")
+    assert output[5].startswith("umoci")
 
 
 def test_env():
