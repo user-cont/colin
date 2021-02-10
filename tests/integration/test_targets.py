@@ -7,8 +7,6 @@ import pytest
 import colin
 from tests.conftest import (
     LABELS_IMAGE,
-    convert_image_to_ostree,
-    get_skopeo_path,
     convert_image_to_oci,
     get_skopeo_oci_target,
 )
@@ -106,17 +104,6 @@ def ruleset():
 def test_podman_image_target(ruleset):
     results = colin.run(
         LABELS_IMAGE, "image", ruleset=ruleset, logging_level=10, pull=False
-    )
-    assert results.ok
-    assert results.results_per_check["url_label"].ok
-
-
-def test_ostree_target(ruleset):
-    image_name = "colin-labels"
-    ostree_path = convert_image_to_ostree(image_name=image_name)
-    skopeo_target = get_skopeo_path(image_name=image_name, ostree_path=ostree_path)
-    results = colin.run(
-        skopeo_target, "ostree", ruleset=ruleset, logging_level=10, pull=False
     )
     assert results.ok
     assert results.results_per_check["url_label"].ok

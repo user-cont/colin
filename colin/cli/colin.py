@@ -99,7 +99,7 @@ def cli():
     type=click.STRING,
     default="image",
     help="Type of selected target (one of image, dockerfile, "
-    "ostree, oci). For ostree, please specify image name and path like this: image@path",
+    "oci). For oci, please specify image name and path like this: oci:path:image",
 )
 @click.option(
     "--timeout", type=click.INT, help="Timeout for each check in seconds. (default=600)"
@@ -319,11 +319,6 @@ def info():
     )
     click.echo(
         get_version_msg_from_the_cmd(package_name="skopeo", use_rpm=rpm_installed)
-    )
-    click.echo(
-        get_version_msg_from_the_cmd(
-            package_name="ostree", use_rpm=rpm_installed, max_lines_of_the_output=3
-        )
     )
     click.echo(
         get_version_msg_from_the_cmd(package_name="umoci", use_rpm=rpm_installed)

@@ -29,7 +29,7 @@ Functions
 
     :param timeout: timeout per-check (in seconds)
     :param skips: name of checks to skip
-    :param target: str (image name, ostree or dockertar)
+    :param target: str (image name, oci or dockertar)
                     or ImageTarget
                     or path/file-like object for dockerfile
     :param target_type: string, either image, dockerfile, dockertar

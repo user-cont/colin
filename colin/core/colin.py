@@ -43,7 +43,7 @@ def run(
 
     :param timeout: timeout per-check (in seconds)
     :param skips: name of checks to skip
-    :param target: str (image name, ostree, oci, or dockertar)
+    :param target: str (image name, oci, or dockertar)
                     or ImageTarget
                     or path/file-like object for dockerfile
     :param parent_target: Target for parent image

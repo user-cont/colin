@@ -48,9 +48,8 @@ $ dnf install -y colin
 
 - For checking `image` target-type, you have to install [podman](https://github.com/containers/libpod/blob/master/docs/tutorials/podman_tutorial.md). If you need to check local docker images, you need to prefix your images with `docker-daemon` (e.g. `colin check docker-daemon:docker.io/openshift/origin-web-console:v3.11`).
 
-- If you want to use `ostree` target, you need to install following tools:
-  - [ostree](https://github.com/ostreedev/ostree)
-  - [atomic](https://github.com/projectatomic/atomic#atomic-usrbinatomic)
+- If you want to use `oci` target, you need to install following tools:
+  - [umoci](https://github.com/opencontainers/umoci#install)
   - [skopeo](https://github.com/containers/skopeo#skopeo-)
 
 ## Usage
@@ -96,8 +95,8 @@ Options:
                                packages/colin/checks']).
   --pull                       Pull the image from registry.
   --target-type TEXT           Type of selected target (one of image,
-                               dockerfile, ostree). For ostree, please specify
-                               image name and path like this: image@path
+                               dockerfile, oci). For oci, please specify
+                               image name and path like this: oci:path:image
   --timeout INTEGER            Timeout for each check in seconds.
                                (default=600)
   --insecure                   Pull from an insecure registry (HTTP or invalid

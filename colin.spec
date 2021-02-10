@@ -30,7 +30,6 @@ Summary:        %{summary}
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
 Recommends:     moby-engine
-Recommends:     atomic
 
 %description -n python3-%{pypi_name}
 `colin` as a tool to check generic rules/best-practices
