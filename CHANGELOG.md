@@ -1,3 +1,20 @@
+# 0.5.0
+
+## Features
+
+- Result can be converted to xunit xml file. (You can use `--xunit` CLI option to set the file we save the xunit output to.)
+- Support for scanning images in OCI format.
+
+## Breaking changes
+
+- Minimal supported version of Python has been raised to 3.6.
+- Support for images in ostree format has been removed because Fedora 30 was the latest one
+  which had support for ostree in Skopeo. (Replaced by newly added support for OCI format.)
+
+## Minor
+
+- The timeout overwriting now works as expected.
+
 # 0.4.0
 
 ## Features
