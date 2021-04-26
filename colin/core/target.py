@@ -155,12 +155,12 @@ class AbstractImageTarget(Target):
 
     @property
     def config_metadata(self):
-        """ metadata from "Config" key """
+        """metadata from "Config" key"""
         raise NotImplementedError("Unsupported right now.")
 
     @property
     def mount_point(self):
-        """ real filesystem """
+        """real filesystem"""
         raise NotImplementedError("Unsupported right now.")
 
     def get_output(self, cmd):
@@ -270,7 +270,7 @@ class ImageTarget(AbstractImageTarget):
 
     @property
     def mount_point(self):
-        """ podman mount -- real filesystem """
+        """podman mount -- real filesystem"""
         if self._mount_point is None:
             cmd_create = ["podman", "create", self.target_name, "some-cmd"]
             self._mounted_container_id = (
@@ -362,14 +362,14 @@ class OciTarget(AbstractImageTarget):
 
     @property
     def layers_path(self):
-        """ Directory with all the layers (docker save). """
+        """Directory with all the layers (docker save)."""
         if self._layers_path is None:
             self._layers_path = os.path.join(self.tmpdir, "layers")
         return self._layers_path
 
     @property
     def mount_point(self):
-        """ oci checkout -- real filesystem """
+        """oci checkout -- real filesystem"""
         if self._mount_point is None:
             checkout_dir = os.path.join(self.tmpdir, "checkout")
             os.makedirs(checkout_dir)
@@ -380,19 +380,19 @@ class OciTarget(AbstractImageTarget):
 
     @property
     def oci_path(self):
-        """ oci repository -- content """
+        """oci repository -- content"""
         if self._oci_path is None:
             self._oci_path = os.path.join(self.tmpdir, "oci")
         return self._oci_path
 
     @property
     def skopeo_target(self):
-        """ Skopeo format for the oci repository. """
+        """Skopeo format for the oci repository."""
         return f"oci:{self.oci_path}:{self.ref_image_name}"
 
     @property
     def tmpdir(self):
-        """ Temporary directory holding all the runtime data. """
+        """Temporary directory holding all the runtime data."""
         if self._tmpdir is None:
             self._tmpdir = mkdtemp(prefix="colin-", dir="/var/tmp")
         return self._tmpdir
@@ -401,7 +401,7 @@ class OciTarget(AbstractImageTarget):
         shutil.rmtree(self.tmpdir)
 
     def _checkout(self, checkout_dir):
-        """ check out the image filesystem on self.mount_point """
+        """check out the image filesystem on self.mount_point"""
         cmd = [
             "umoci",
             "unpack",
@@ -414,7 +414,7 @@ class OciTarget(AbstractImageTarget):
 
     @staticmethod
     def _run_and_log(cmd, error_msg):
-        """ run provided command and log all of its output"""
+        """run provided command and log all of its output"""
         logger.debug("running command %s", cmd)
         kwargs = {
             "stderr": subprocess.STDOUT,
@@ -430,7 +430,7 @@ class OciTarget(AbstractImageTarget):
 
     @property
     def config_metadata(self):
-        """ metadata from "Config" key """
+        """metadata from "Config" key"""
         raise NotImplementedError("Skopeo does not provide metadata yet.")
 
     def get_output(self, cmd):

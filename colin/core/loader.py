@@ -52,7 +52,7 @@ def _load_module(path):
 
 
 def should_we_load(kls):
-    """ should we load this class as a check? """
+    """should we load this class as a check?"""
     # we don't load abstract classes
     if kls.__name__.endswith("AbstractCheck"):
         return False
@@ -105,7 +105,7 @@ class CheckLoader(object):
         self.paths = checks_paths
 
     def obtain_check_classes(self):
-        """ find children of AbstractCheck class and return them as a list """
+        """find children of AbstractCheck class and return them as a list"""
         check_classes = set()
         for path in self.paths:
             for root, _, files in os.walk(path):
