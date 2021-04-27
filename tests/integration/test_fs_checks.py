@@ -20,7 +20,7 @@ import colin
 
 @pytest.fixture()
 def ruleset():
-    """ simple ruleset as a pytest fixture """
+    """simple ruleset as a pytest fixture"""
     return {
         "version": "1",
         "name": "Laughing out loud ruleset",
@@ -39,7 +39,7 @@ def test_help_file_or_readme_ls(ruleset, target_ls):
 
 
 def help_file_or_readme_test(ruleset, image, should_pass):
-    """ verify that help_file_or_readme check works well """
+    """verify that help_file_or_readme check works well"""
     results = colin.run(
         target=image.target_name,
         target_type=image.target_type,

@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class FileCheck(ImageAbstractCheck):
-    """ Check presence of files; w/o mounting the whole FS """
+    """Check presence of files; w/o mounting the whole FS"""
 
     def __init__(
         self, message, description, reference_url, tags, files, all_must_be_present

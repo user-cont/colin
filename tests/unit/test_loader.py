@@ -22,7 +22,7 @@ from colin.core.loader import CheckLoader
 
 
 def test_upstream_checks_can_be_loaded():
-    """ check whether all upstream checks can be loaded """
+    """check whether all upstream checks can be loaded"""
     colin_checks_path = colin.checks.__file__
     colin_checks_dir = os.path.dirname(colin_checks_path)
     check_loader = CheckLoader([colin_checks_dir])

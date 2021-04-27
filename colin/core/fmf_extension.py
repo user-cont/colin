@@ -82,7 +82,7 @@ class ExtendedTree(Tree):
         self.__remove_append_items(whole=whole)
 
     def search(self, name):
-        """ Search node with given name based on regexp, basic method (find) uses equality"""
+        """Search node with given name based on regexp, basic method (find) uses equality"""
         for node in self.climb():
             if re.search(name, node.name):
                 return node

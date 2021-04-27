@@ -100,7 +100,7 @@ class CheckStruct(object):
 
     @property
     def import_name(self):
-        """ module name + class, e.g. our.colin.checks.CustomCheck """
+        """module name + class, e.g. our.colin.checks.CustomCheck"""
         return self._get(False, "import_name")
 
     @property
@@ -121,7 +121,7 @@ class CheckStruct(object):
 
     @property
     def other_attributes(self):
-        """ return dict with all other data except for the described above"""
+        """return dict with all other data except for the described above"""
         return {
             k: v
             for k, v in self.c.items()

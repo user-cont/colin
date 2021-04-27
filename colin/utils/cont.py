@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class ImageName(object):
-    """ parse image references and access their components easily """
+    """parse image references and access their components easily"""
 
     def __init__(
         self, registry=None, namespace=None, repository=None, tag=None, digest=None

@@ -14,7 +14,7 @@ from tests.conftest import (
 
 @pytest.fixture()
 def ruleset():
-    """ simple ruleset as a pytest fixture """
+    """simple ruleset as a pytest fixture"""
     return {
         "version": "1",
         "name": "Laughing out loud ruleset",
