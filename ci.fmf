@@ -1,7 +1,17 @@
 /test/build:
     /smoke:
       execute:
-        how: shell
         script:
         - colin --version
         - colin --help
+        framework: shell
+    /list-rulesets:
+      execute:
+        script:
+        - sh -c "cd / && colin list-rulesets"
+        framework: shell
+    /list-checks:
+      execute:
+        script:
+        - sh -c "cd / && colin list-checks"
+        framework: shell
