@@ -9,6 +9,7 @@ jobs:
     trigger: commit
   - job: propose_downstream
     trigger: release
+    copy_upstream_release_description: true
     metadata:
       dist-git-branch: fedora-all
   - job: copr_build
