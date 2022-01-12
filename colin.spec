@@ -9,7 +9,7 @@
 %endif
 
 Name:           %{pypi_name}
-Version:        0.5.1
+Version:        0.5.2
 Release:        1%{?dist}
 Summary:        Tool to check generic rules/best-practices for containers/images/dockerfiles.
 
@@ -77,6 +77,9 @@ rm -rf html/.{doctrees,buildinfo}
 %doc html
 
 %changelog
+* Wed Jan 12 09:32:57 CET 2022 Frantisek Lachman <flachman@redhat.com> - 0.5.2-1
+- New upstream release 0.5.2
+
 * Mon Jan 10 09:56:32 CET 2022 Frantisek Lachman <flachman@redhat.com> - 0.5.1-1
 - New upstream release 0.5.1
 
