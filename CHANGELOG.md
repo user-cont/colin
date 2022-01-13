@@ -1,8 +1,13 @@
-# 0.5.1
+# 0.5.2
 
 ## Fixes
 
 - The global location of rulesests is now correctly found.
+
+# 0.5.1
+
+- Badly done release (version not updated everywhere).
+- Replaced by `0.5.2`.
 
 # 0.5.0
 
