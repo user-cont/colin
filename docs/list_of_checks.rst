@@ -48,7 +48,7 @@ and we can use them by name in other commands. (e.g. ``colin check -r fedora``).
 Colin can use ruleset-files in the following directories:
 
 - ``./rulesets/`` (subdirectory of the current working directory)
-- ``~/local/share/colin/rulesets/`` (user installation)
+- ``~/.local/share/colin/rulesets/`` (user installation)
 - `sys.prefix`_\ ``/share/colin/rulesets/`` (system-wide installation)
 
 .. _sys.prefix: https://docs.python.org/3/library/sys.html?highlight=sys%20prefix#sys.prefix
