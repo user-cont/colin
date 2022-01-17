@@ -31,8 +31,8 @@ we can define so-called rulesets, that defines:
     }
 
 
-Rulesets in the *standard* location can be shown with `colin list-rulesets`
-and we can use them by name in other commands. (e.g. `colin check -r fedora`).
+Rulesets in the *standard* location can be shown with ``colin list-rulesets``
+and we can use them by name in other commands. (e.g. ``colin check -r fedora``).
 
 .. code-block:: bash
 
@@ -47,9 +47,11 @@ and we can use them by name in other commands. (e.g. `colin check -r fedora`).
 
 Colin can use ruleset-files in the following directories:
 
-- `./rulesets/` (subdirectory of the current working directory)
-- `~/local/share/colin/rulesets/` (user installation)
-- `/usr/local/share/colin/rulesets/` (system-wide installation)
+- ``./rulesets/`` (subdirectory of the current working directory)
+- ``~/.local/share/colin/rulesets/`` (user installation)
+- `sys.prefix`_\ ``/share/colin/rulesets/`` (system-wide installation)
+
+.. _sys.prefix: https://docs.python.org/3/library/sys.html?highlight=sys%20prefix#sys.prefix
 
 We can easily list the checks with the following command:
 
