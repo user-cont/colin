@@ -311,8 +311,6 @@ def info():
     click.echo(f"colin {__version__} {installation_path}")
     click.echo(f"colin-cli {os.path.realpath(__file__)}\n")
 
-    # click.echo(get_version_of_the_python_package(module=conu))
-
     rpm_installed = is_rpm_installed()
     click.echo(
         get_version_msg_from_the_cmd(package_name="podman", use_rpm=rpm_installed)

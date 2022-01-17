@@ -1,7 +1,6 @@
 """
 This is a temporary module to support unpriv way of interacting with container images.
 
-It will be migrated to conu sooner or later.
 """
 import logging
 
