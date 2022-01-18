@@ -1,0 +1,6 @@
+summary:
+  Basic smoke test.
+execute:
+  script:
+    - sh -c "cd / && colin list-rulesets"
+    - sh -c "cd / && colin list-checks"

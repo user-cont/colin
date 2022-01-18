@@ -1,0 +1,19 @@
+---
+- name: Install test dependencies
+  dnf:
+    name:
+      - python3-setuptools
+      - python3-pytest
+      - python3-pytest-cov
+      - python3-pyxattr
+      - moby-engine
+      - podman
+      - buildah
+      - skopeo
+      - runc
+    state: present
+  become: true
+- name: Download umoci
+  get_url: url="https://github.com/opencontainers/umoci/releases/download/v0.4.6/umoci.amd64" dest=/usr/local/bin/umoci
+- name: Make umoci executable
+  file: dest=/usr/local/bin/umoci mode=a+x
