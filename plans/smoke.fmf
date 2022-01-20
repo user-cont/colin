@@ -1,0 +1,6 @@
+summary:
+  Basic smoke test.
+execute:
+  script:
+    - colin --version
+    - colin --help
