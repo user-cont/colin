@@ -44,22 +44,6 @@ def is_compatible(target_type, check_instance):
     return isinstance(check_instance, target_type.get_compatible_check_class())
 
 
-# we've introduced an API-breaking change in conu, we need to solve this at conu level:
-# https://github.com/user-cont/conu/issues/220
-# in the meantime, let's workaround here
-def inspect_object(obj, refresh=True):
-    """
-    inspect provided object (container, image) and return raw dict with the metadata
-
-    :param obj: instance of Container or an Image
-    :param refresh: bool, refresh the metadata or return cached?
-    :return: dict
-    """
-    if hasattr(obj, "inspect"):
-        return obj.inspect(refresh=refresh)
-    return obj.get_metadata(refresh=refresh)
-
-
 class Target(object):
     """
     Target is the thing we are going to check; it can be

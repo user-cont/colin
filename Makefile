@@ -30,9 +30,6 @@ check-code-style: check-pylint check-bandit
 check-pylint:
 	pylint colin || true
 
-check-bandit:
-	bandit . -r || true
-
 clean:
 	python3 setup.py clean
 	rm -rf build/* dist/*
