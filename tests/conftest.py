@@ -99,14 +99,12 @@ def label_image():
 
 @pytest.fixture(scope="session", params=["image", "oci", "dockerfile"])
 def target_label(request, label_image):
-    for t in get_target(name=LABELS_IMAGE, type=request.param):
-        yield t
+    yield from get_target(name=LABELS_IMAGE, type=request.param)
 
 
 @pytest.fixture(scope="session", params=["image", "oci", "dockerfile"])
 def target_label_image_and_dockerfile(request, label_image):
-    for t in get_target(name=LABELS_IMAGE, type=request.param):
-        yield t
+    yield from get_target(name=LABELS_IMAGE, type=request.param)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -116,8 +114,7 @@ def target_bash_image():
 
 @pytest.fixture(scope="session", params=["image", "oci"])
 def target_bash(request, target_bash_image):
-    for t in get_target(name=BASH_IMAGE, type=request.param):
-        yield t
+    yield from get_target(name=BASH_IMAGE, type=request.param)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -127,8 +124,7 @@ def target_ls_image():
 
 @pytest.fixture(scope="session", params=["image", "oci"])
 def target_ls(request, target_ls_image):
-    for t in get_target(name=LS_IMAGE, type=request.param):
-        yield t
+    yield from get_target(name=LS_IMAGE, type=request.param)
 
 
 @pytest.fixture(scope="session", params=[LS_IMAGE, BASH_IMAGE])
@@ -146,5 +142,4 @@ def target_busybox_image():
 
 @pytest.fixture(scope="session", params=["image", "oci"])
 def target_busybox(request, target_busybox_image):
-    for t in get_target(name=BUSYBOX_IMAGE, type=request.param):
-        yield t
+    yield from get_target(name=BUSYBOX_IMAGE, type=request.param)

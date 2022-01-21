@@ -100,9 +100,7 @@ def test_specific_ruleset_as_fileobj(tmpdir, ruleset, expected_dict, target_labe
     with open(t, "r") as f:
         result = get_results_from_colin_labels_image(image=target_label, ruleset_file=f)
     assert result
-    labels_dict = {}
-    for res in result.results:
-        labels_dict[res.check_name] = res.status
+    labels_dict = {res.check_name: res.status for res in result.results}
     for key in expected_dict.keys():
         assert labels_dict[key] == expected_dict[key]
 
@@ -110,9 +108,7 @@ def test_specific_ruleset_as_fileobj(tmpdir, ruleset, expected_dict, target_labe
 def test_specific_ruleset_directly(ruleset, expected_dict, target_label):
     result = get_results_from_colin_labels_image(image=target_label, ruleset=ruleset)
     assert result
-    labels_dict = {}
-    for res in result.results:
-        labels_dict[res.check_name] = res.status
+    labels_dict = {res.check_name: res.status for res in result.results}
     for key in expected_dict.keys():
         assert labels_dict[key] == expected_dict[key]
 

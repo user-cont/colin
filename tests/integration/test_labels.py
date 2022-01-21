@@ -98,9 +98,7 @@ def test_labels_in_image(target_label, same_parent_target):
         del expected_dict["help_file_or_readme"]
         del expected_dict["run_or_usage_label"]
         del expected_dict["inherited_labels"]
-    labels_dict = {}
-    for res in result.results:
-        labels_dict[res.check_name] = res.status
+    labels_dict = {res.check_name: res.status for res in result.results}
     assert labels_dict == expected_dict
 
 

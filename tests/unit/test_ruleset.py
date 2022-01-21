@@ -85,10 +85,7 @@ def test_ruleset_tags_filtering(tags, expected_check_name):
     ],
 )
 def test_ruleset_version(version, should_raise):
-    if version == "<blank>":
-        r = {"banana": 123}
-    else:
-        r = {"version": version}
+    r = {"banana": 123} if version == "<blank>" else {"version": version}
     if should_raise:
         with pytest.raises(ColinRulesetException):
             Ruleset(ruleset=r)

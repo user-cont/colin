@@ -74,23 +74,19 @@ class CheckResults(object):
 
         :return: dict (str -> dict (str -> str))
         """
-        result_json = {}
-
-        result_list = []
-        for r in self.results:
-            result_list.append(
-                {
-                    "name": r.check_name,
-                    "ok": r.ok,
-                    "status": r.status,
-                    "description": r.description,
-                    "message": r.message,
-                    "reference_url": r.reference_url,
-                    "logs": r.logs,
-                }
-            )
-        result_json["checks"] = result_list
-        return result_json
+        result_list = [
+            {
+                "name": r.check_name,
+                "ok": r.ok,
+                "status": r.status,
+                "description": r.description,
+                "message": r.message,
+                "reference_url": r.reference_url,
+                "logs": r.logs,
+            }
+            for r in self.results
+        ]
+        return {"checks": result_list}
 
     @property
     def json(self):

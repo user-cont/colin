@@ -89,8 +89,7 @@ def run(
         checks_paths=checks_paths,
         skips=skips,
     )
-    result = go_through_checks(target=target, checks=checks_to_run, timeout=timeout)
-    return result
+    return go_through_checks(target=target, checks=checks_to_run, timeout=timeout)
 
 
 def get_checks(

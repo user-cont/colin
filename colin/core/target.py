@@ -272,25 +272,20 @@ class ImageTarget(AbstractImageTarget):
             self.image_id = result.stdout.decode().rstrip()
             logger.debug("Image found with id: '%s'.", self.image_id)
         else:
-            if "unable to find" in result.stderr.decode():
-                if self.pull:
-                    logger.debug("Pulling an image.")
-                    cmd_pull = ["podman", "pull", "--quiet", self.target_name]
-                    result_pull = subprocess.run(
-                        cmd_pull, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-                    )
-                    if result_pull.returncode == 0:
-                        self.image_id = result_pull.stdout.decode().rstrip()
-                        logger.debug("Image pulled with id: '%s'.", self.image_id)
-                    else:
-                        raise ColinException(
-                            f"Cannot pull an image: '{self.target_name}'."
-                        )
-
-                else:
-                    raise ColinException(f"Image '{self.target_name}' not found.")
-            else:
+            if "unable to find" not in result.stderr.decode():
                 raise ColinException(f"Podman error: {result.stderr}")
+            if not self.pull:
+                raise ColinException(f"Image '{self.target_name}' not found.")
+            logger.debug("Pulling an image.")
+            cmd_pull = ["podman", "pull", "--quiet", self.target_name]
+            result_pull = subprocess.run(
+                cmd_pull, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
+            if result_pull.returncode == 0:
+                self.image_id = result_pull.stdout.decode().rstrip()
+                logger.debug("Image pulled with id: '%s'.", self.image_id)
+            else:
+                raise ColinException(f"Cannot pull an image: '{self.target_name}'.")
 
     def clean_up(self):
         if self._mount_point:

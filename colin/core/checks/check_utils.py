@@ -19,21 +19,19 @@ def check_label(labels, required, value_regex, target_labels):
         set(target_labels)
     )
 
-    if present:
-        if required and not value_regex:
-            return True
-        elif value_regex:
-            pattern = re.compile(value_regex)
-            present_labels = set(labels) & set(target_labels)
-            for label in present_labels:
-                if not bool(pattern.search(target_labels[label])):
-                    return False
-            return True
-        else:
-            return False
+    if not present:
+        return not required
+    if required and not value_regex:
+        return True
+    elif value_regex:
+        pattern = re.compile(value_regex)
+        present_labels = set(labels) & set(target_labels)
+        return all(
+            bool(pattern.search(target_labels[label])) for label in present_labels
+        )
 
     else:
-        return not required
+        return False
 
 
 class NotLoadedCheck(DockerfileAbstractCheck, ImageAbstractCheck):

@@ -125,14 +125,13 @@ class Ruleset(object):
                     f"{target_type.get_compatible_check_class().check_type}"
                 )
 
-            if tags:
-                if not set(tags) < set(check_instance.tags):
-                    logger.debug(
-                        "Check '%s' not passed the tag control: %s",
-                        check_instance.name,
-                        tags,
-                    )
-                    continue
+            if tags and not set(tags) < set(check_instance.tags):
+                logger.debug(
+                    "Check '%s' not passed the tag control: %s",
+                    check_instance.name,
+                    tags,
+                )
+                continue
 
             # and finally, attach attributes from ruleset to the check instance
             for k, v in check_struct.other_attributes.items():
