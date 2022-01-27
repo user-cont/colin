@@ -60,11 +60,7 @@ def should_we_load(kls):
     if not kls.__name__.endswith("Check"):
         return False
     mro = kls.__mro__
-    # and the class needs to be a child of AbstractCheck
-    for m in mro:
-        if m.__name__ == "AbstractCheck":
-            return True
-    return False
+    return any(m.__name__ == "AbstractCheck" for m in mro)
 
 
 def load_check_classes_from_file(path):
@@ -141,7 +137,5 @@ class CheckLoader(object):
     @property
     def mapping(self):
         if self._mapping is None:
-            self._mapping = {}
-            for c in self.check_classes:
-                self._mapping[c.name] = c
+            self._mapping = {c.name: c for c in self.check_classes}
         return self._mapping

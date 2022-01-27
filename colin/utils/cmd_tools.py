@@ -65,16 +65,15 @@ def get_version_msg_from_the_cmd(
         version_result = subprocess.run(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
-        if version_result.returncode == 0:
-            version_output = version_result.stdout.decode().rstrip()
-            if max_lines_of_the_output:
-                version_output = " ".join(
-                    version_output.split("\n")[:max_lines_of_the_output]
-                )
-            return version_output
-
-        else:
+        if version_result.returncode != 0:
             return f"{package_name}: cannot get version with {cmd}"
+        version_output = version_result.stdout.decode().rstrip()
+        if max_lines_of_the_output:
+            version_output = " ".join(
+                version_output.split("\n")[:max_lines_of_the_output]
+            )
+        return version_output
+
     except FileNotFoundError:
         return f"{package_name} not accessible!"
 

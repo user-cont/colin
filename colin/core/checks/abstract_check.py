@@ -62,10 +62,7 @@ class AbstractCheck:
         result_json = {}
         for (group, group_checks) in iteritems(checks):
 
-            result_list = []
-            for check in group_checks:
-                result_list.append(check.json)
-
+            result_list = [check.json for check in group_checks]
             result_json[group] = result_list
         return result_json
 

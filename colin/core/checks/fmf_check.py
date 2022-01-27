@@ -74,10 +74,7 @@ class FMFAbstractCheck(AbstractCheck):
         kwargs = {}
         try:
             # this is not available in python2, but second function is deprecated
-            args_names = [
-                argument
-                for argument in inspect.signature(master_class.__init__).parameters
-            ]
+            args_names = list(inspect.signature(master_class.__init__).parameters)
         except NameError:
             args_names = inspect.getargspec(master_class.__init__).args
         for arg in args_names:
