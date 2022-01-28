@@ -22,3 +22,9 @@ jobs:
     metadata:
       targets:
         - fedora-all
+  # downstream Koji build
+  - job: koji_build
+    trigger: commit
+    metadata:
+      dist_git_branches:
+        - fedora-all
