@@ -50,8 +50,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"colin"
-copyright = u"2017-2018, Red Hat"
+project = "colin"
+copyright = "2017-2018, Red Hat"
 
 
 # List of patterns, relative to source directory, that match files and
