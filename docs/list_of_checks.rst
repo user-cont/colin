@@ -49,6 +49,7 @@ Colin can use ruleset-files in the following directories:
 
 - ``./rulesets/`` (subdirectory of the current working directory)
 - ``~/.local/share/colin/rulesets/`` (user installation)
+- ``/usr/local/share/colin/rulesets/`` (system-wide installation if `sys.prefix` is not `/usr/local`)
 - `sys.prefix`_\ ``/share/colin/rulesets/`` (system-wide installation)
 
 .. _sys.prefix: https://docs.python.org/3/library/sys.html?highlight=sys%20prefix#sys.prefix

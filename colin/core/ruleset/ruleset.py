@@ -216,10 +216,16 @@ def get_ruleset_dirs():
         logger.debug("Local ruleset directory found ('%s').", local_share)
         ruleset_dirs.append(local_share)
 
-    usr_local_share = os.path.join(sys.prefix, RULESET_DIRECTORY)
+    usr_local_share = os.path.join("/usr/local", RULESET_DIRECTORY)
     if os.path.isdir(usr_local_share):
         logger.debug("Global ruleset directory found ('%s').", usr_local_share)
         ruleset_dirs.append(usr_local_share)
+
+    if sys.prefix != "/usr/local":
+        global_share = os.path.join(sys.prefix, RULESET_DIRECTORY)
+        if os.path.isdir(global_share):
+            logger.debug("Global ruleset directory found ('%s').", global_share)
+            ruleset_dirs.append(global_share)
 
     if not ruleset_dirs:
         msg = "Ruleset directory cannot be found."
