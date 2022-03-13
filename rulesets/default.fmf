@@ -1,0 +1,16 @@
+/default:
+  version: 1
+  name: "Default ruleset for checking containers/images/dockerfiles."
+  description: "This set contains general checks applicable to any target."
+  contact_email: "user-cont-team@redhat.com"
+  names:
+
+  /checks:
+    /check@maintainer_label:
+      tags+: ["required"]
+    /check@from_tag_not_latest:
+      tags+: ["required"]
+      usable_targets: ["dockerfile"]
+    /check@maintainer_deprecated:
+      tags+: ["required"]
+      usable_targets: ["dockerfile"]
