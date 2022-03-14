@@ -1,3 +1,14 @@
+# 0.5.3
+
+## Fixes
+
+- Add additional global location of rulesets for default installation from PyPI
+
+## Minor
+
+- Run tests in upstream on the Testing Farm via Packit
+- Few code-style changes suggested by Sourcery
+
 # 0.5.2
 
 ## Fixes
