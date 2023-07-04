@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,9 +45,7 @@ class InstructionAbstractCheck(DockerfileAbstractCheck):
         value_regex,
         required,
     ):
-        super(InstructionAbstractCheck, self).__init__(
-            message, description, reference_url, tags
-        )
+        super().__init__(message, description, reference_url, tags)
         self.instruction = instruction
         self.value_regex = value_regex
         self.required = required
@@ -90,9 +87,7 @@ class InstructionCountAbstractCheck(DockerfileAbstractCheck):
         min_count=None,
         max_count=None,
     ):
-        super(InstructionCountAbstractCheck, self).__init__(
-            message, description, reference_url, tags
-        )
+        super().__init__(message, description, reference_url, tags)
         self.instruction = instruction
         self.min_count = min_count
         self.max_count = max_count
@@ -133,9 +128,7 @@ class DockerfileLabelAbstractCheck(DockerfileAbstractCheck):
         required,
         value_regex=None,
     ):
-        super(DockerfileLabelAbstractCheck, self).__init__(
-            message, description, reference_url, tags
-        )
+        super().__init__(message, description, reference_url, tags)
         self.label = label
         self.required = required
         self.value_regex = value_regex

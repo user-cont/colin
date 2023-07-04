@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +30,7 @@ from ..target import is_compatible
 logger = logging.getLogger(__name__)
 
 
-class Ruleset(object):
+class Ruleset:
     def __init__(
         self, ruleset_name=None, ruleset_file=None, ruleset=None, checks_paths=None
     ):

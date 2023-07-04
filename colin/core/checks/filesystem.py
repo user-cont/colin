@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +26,7 @@ class FileCheck(ImageAbstractCheck):
     def __init__(
         self, message, description, reference_url, tags, files, all_must_be_present
     ):
-        super(FileCheck, self).__init__(message, description, reference_url, tags)
+        super().__init__(message, description, reference_url, tags)
         self.files = files
         self.all_must_be_present = all_must_be_present
 
@@ -39,7 +38,7 @@ class FileCheck(ImageAbstractCheck):
             try:
                 f_present = target.file_is_present(f)
                 logs.append(f"File '{f}' is {'' if f_present else 'not '}present.")
-            except IOError as ex:
+            except OSError as ex:
                 logger.info("File %s is not present, ex: %s", f, ex)
                 f_present = False
                 logs.append(f"File {f} is not present.")

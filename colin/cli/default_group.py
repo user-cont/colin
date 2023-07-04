@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +14,6 @@
 #
 
 import click
-import six
 
 
 class DefaultGroup(click.Group):
@@ -27,13 +25,13 @@ class DefaultGroup(click.Group):
 
     def __init__(self, *args, **kwargs):
         default_command = kwargs.pop("default_command", None)
-        super(DefaultGroup, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.default_cmd_name = None
         if default_command is not None:
             self.set_default_command(default_command)
 
     def set_default_command(self, command):
-        if isinstance(command, six.string_types):
+        if isinstance(command, str):
             cmd_name = command
         else:
             cmd_name = command.name
@@ -43,16 +41,16 @@ class DefaultGroup(click.Group):
     def parse_args(self, ctx, args):
         if not args and self.default_cmd_name is not None:
             args.insert(0, self.default_cmd_name)
-        return super(DefaultGroup, self).parse_args(ctx, args)
+        return super().parse_args(ctx, args)
 
     def get_command(self, ctx, cmd_name):
         if cmd_name not in self.commands and self.default_cmd_name is not None:
             ctx.args0 = cmd_name
             cmd_name = self.default_cmd_name
-        return super(DefaultGroup, self).get_command(ctx, cmd_name)
+        return super().get_command(ctx, cmd_name)
 
     def resolve_command(self, ctx, args):
-        cmd_name, cmd, args = super(DefaultGroup, self).resolve_command(ctx, args)
+        cmd_name, cmd, args = super().resolve_command(ctx, args)
         args0 = getattr(ctx, "args0", None)
         if args0 is not None:
             args.insert(0, args0)

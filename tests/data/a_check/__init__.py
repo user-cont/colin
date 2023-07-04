@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +20,7 @@ class FunkyCheck(AbstractCheck):
     name = "this-is-a-funky-check"
 
     def __init__(self):
-        super(FunkyCheck, self).__init__(
+        super().__init__(
             message="yes!",
             description="no",
             reference_url="https://nope.example.com/",
@@ -33,7 +32,7 @@ class ThisIsNotAChekk(AbstractCheck):
     name = "this-is-not-a-check"
 
     def __init__(self):
-        super(ThisIsNotAChekk, self).__init__(
+        super().__init__(
             message="yes!",
             description="no",
             reference_url="https://nope.example.com/",
@@ -41,11 +40,11 @@ class ThisIsNotAChekk(AbstractCheck):
         )
 
 
-class ThisIsAlsoNotAChekk(object):
+class ThisIsAlsoNotAChekk:
     name = "this-is-also-not-a-check"
 
     def __init__(self):
-        super(ThisIsAlsoNotAChekk, self).__init__(
+        super().__init__(
             message="yes!",
             description="no",
             reference_url="https://nope.example.com/",

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,7 +43,7 @@ def is_compatible(target_type, check_instance):
     return isinstance(check_instance, target_type.get_compatible_check_class())
 
 
-class Target(object):
+class Target:
     """
     Target is the thing we are going to check; it can be
     - an image (specified by name, oci or dockertar)
@@ -165,7 +164,7 @@ class AbstractImageTarget(Target):
         try:
             with open(self.cont_path(file_path)) as fd:
                 return fd.read()
-        except IOError as ex:
+        except OSError as ex:
             logger.error("error while accessing file %s: %r", file_path, ex)
             raise ColinException(
                 f"There was an error while accessing file {file_path}: {ex!r}"
@@ -191,7 +190,7 @@ class AbstractImageTarget(Target):
         if not os.path.exists(real_path):
             return False
         if not os.path.isfile(real_path):
-            raise IOError(f"{file_path} is not a file")
+            raise OSError(f"{file_path} is not a file")
         return True
 
     def cont_path(self, path):

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +24,7 @@ from colin.core.ruleset.ruleset import Ruleset
 def test_ruleset_yaml():
     tests_dir = os.path.dirname(os.path.dirname(__file__))
     lol_ruleset_path = os.path.join(tests_dir, "data", "lol-ruleset.yaml")
-    with open(lol_ruleset_path, "r") as fd:
+    with open(lol_ruleset_path) as fd:
         r = Ruleset(ruleset_file=fd)
         checks = r.get_checks(None)
     assert len(checks) == 1
@@ -34,7 +33,7 @@ def test_ruleset_yaml():
 def test_ruleset_json():
     tests_dir = os.path.dirname(os.path.dirname(__file__))
     lol_ruleset_path = os.path.join(tests_dir, "data", "lol-ruleset.json")
-    with open(lol_ruleset_path, "r") as fd:
+    with open(lol_ruleset_path) as fd:
         r = Ruleset(ruleset_file=fd)
         checks = r.get_checks(None)
     assert len(checks) == 1

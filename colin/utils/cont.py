@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class ImageName(object):
+class ImageName:
     """parse image references and access their components easily"""
 
     def __init__(

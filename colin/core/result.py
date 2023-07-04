@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,13 +17,11 @@ import json
 from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom import minidom
 
-import six
-
 from .constant import COLOURS, ERROR, FAILED, OUTPUT_CHARS, PASSED
 from ..utils.caching_iterable import CachingIterable
 
 
-class CheckResult(object):
+class CheckResult:
     def __init__(self, ok, description, message, reference_url, check_name, logs):
         self.ok = ok
         self.description = description
@@ -52,14 +49,12 @@ class DockerfileCheckResult(CheckResult):
         lines=None,
         correction_diff=None,
     ):
-        super(DockerfileCheckResult, self).__init__(
-            ok, description, message, reference_url, check_name
-        )
+        super().__init__(ok, description, message, reference_url, check_name)
         self.lines = lines
         self.correction_diff = correction_diff
 
 
-class CheckResults(object):
+class CheckResults:
     def __init__(self, results):
         self.results = CachingIterable(results)
 
@@ -214,7 +209,7 @@ class CheckResults(object):
             output_function("")
         else:
             output_function("")
-            for status, count in six.iteritems(self.statistics):
+            for status, count in self.statistics.items():
                 output_function(f"{status}:{count} ", nl=False)
             output_function("")
 
@@ -235,7 +230,7 @@ class CheckResults(object):
 
 class FailedCheckResult(CheckResult):
     def __init__(self, check, logs=None):
-        super(FailedCheckResult, self).__init__(
+        super().__init__(
             ok=False,
             message=check.message,
             description=check.description,
@@ -249,7 +244,7 @@ class FailedCheckResult(CheckResult):
         return ERROR
 
 
-class _PrettyOutputToStr(object):
+class _PrettyOutputToStr:
     def __init__(self):
         self.result = ""
 
