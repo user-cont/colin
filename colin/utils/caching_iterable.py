@@ -1,7 +1,7 @@
 import itertools
 
 
-class CachingIterable(object):
+class CachingIterable:
     def __init__(self, iterable):
         self.iterable = iterable
         self.iter = iter(iterable)

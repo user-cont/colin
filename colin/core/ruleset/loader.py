@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,7 +36,7 @@ def get_ruleset_struct_from_fileobj(fileobj):
 
 def get_ruleset_struct_from_file(file_path):
     try:
-        with open(file_path, "r") as fd:
+        with open(file_path) as fd:
             return get_ruleset_struct_from_fileobj(fd)
     except ColinRulesetException as ex:
         raise ex
@@ -77,7 +76,7 @@ def nicer_get(di, required, *path):
     return r
 
 
-class CheckStruct(object):
+class CheckStruct:
     """
     {
       "name": "label_name",
@@ -129,7 +128,7 @@ class CheckStruct(object):
         }
 
 
-class RulesetStruct(object):
+class RulesetStruct:
     """
     {
       "version": "1",

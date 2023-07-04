@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -97,7 +96,7 @@ def test_specific_ruleset_as_fileobj(tmpdir, ruleset, expected_dict, target_labe
 
     with open(t, "w") as f:
         yaml.dump(ruleset, f)
-    with open(t, "r") as f:
+    with open(t) as f:
         result = get_results_from_colin_labels_image(image=target_label, ruleset_file=f)
     assert result
     labels_dict = {res.check_name: res.status for res in result.results}

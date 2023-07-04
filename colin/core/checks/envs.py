@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +30,7 @@ class EnvCheck(ImageAbstractCheck):
         required,
         value_regex=None,
     ):
-        super(EnvCheck, self).__init__(message, description, reference_url, tags)
+        super().__init__(message, description, reference_url, tags)
         self.env_var = env_var
         self.required = required
         self.value_regex = value_regex
@@ -49,7 +48,6 @@ class EnvCheck(ImageAbstractCheck):
             present = False
 
         if present:
-
             if self.required and not self.value_regex:
                 passed = True
             elif self.value_regex:

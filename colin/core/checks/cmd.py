@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,16 +31,13 @@ class CmdAbstractCheck(ImageAbstractCheck):
         expected_regex=None,
         substring=None,
     ):
-        super(CmdAbstractCheck, self).__init__(
-            message, description, reference_url, tags
-        )
+        super().__init__(message, description, reference_url, tags)
         self.cmd = cmd
         self.expected_output = expected_output
         self.expected_regex = expected_regex
         self.substring = substring
 
     def check(self, target):
-
         try:
             output = target.get_output(cmd=self.cmd)
 

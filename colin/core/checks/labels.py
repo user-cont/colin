@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,9 +43,7 @@ class LabelAbstractCheck(ImageAbstractCheck, DockerfileAbstractCheck):
         :param required: bool
         :param value_regex: str (using search method)
         """
-        super(LabelAbstractCheck, self).__init__(
-            message, description, reference_url, tags
-        )
+        super().__init__(message, description, reference_url, tags)
         self.labels = labels
         self.required = required
         self.value_regex = value_regex
@@ -71,9 +68,7 @@ class LabelAbstractCheck(ImageAbstractCheck, DockerfileAbstractCheck):
 
 class DeprecatedLabelAbstractCheck(ImageAbstractCheck, DockerfileAbstractCheck):
     def __init__(self, message, description, reference_url, tags, old_label, new_label):
-        super(DeprecatedLabelAbstractCheck, self).__init__(
-            message, description, reference_url, tags
-        )
+        super().__init__(message, description, reference_url, tags)
         self.old_label = old_label
         self.new_label = new_label
 
@@ -103,9 +98,7 @@ class InheritedOptionalLabelAbstractCheck(ImageAbstractCheck):
         :param reference_url: str
         :param tags: [str]
         """
-        super(InheritedOptionalLabelAbstractCheck, self).__init__(
-            message, description, reference_url, tags
-        )
+        super().__init__(message, description, reference_url, tags)
         self.labels_list = []
 
     def check(self, target):

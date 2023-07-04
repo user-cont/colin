@@ -64,13 +64,11 @@ def convert_image_to_oci(image_name):
 
 def get_target(name, type):
     if type == "image":
-
         target = ImageTarget(target=name, pull=False)
         yield target
         target.clean_up()
 
     elif type == "oci":
-
         oci_path = convert_image_to_oci(name)
         skopeo_target = get_skopeo_oci_target(image_name=name, oci_path=oci_path)
 
@@ -80,7 +78,6 @@ def get_target(name, type):
         shutil.rmtree(oci_path)
 
     elif type == "dockerfile":
-
         this_dir = os.path.abspath(os.path.dirname(__file__))
         data_dir = os.path.join(this_dir, "data")
         dockerfile_path = os.path.join(data_dir, IMAGES[name]["dockerfile_path"])

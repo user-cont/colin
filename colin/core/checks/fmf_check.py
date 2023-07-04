@@ -70,7 +70,7 @@ class FMFAbstractCheck(AbstractCheck):
             self.metadata = receive_fmf_metadata(
                 name=self.name, path=self.fmf_metadata_path
             )
-        master_class = super(FMFAbstractCheck, self)
+        master_class = super()
         kwargs = {}
         try:
             # this is not available in python2, but second function is deprecated

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -83,7 +82,7 @@ def load_check_classes_from_file(path):
     return check_classes
 
 
-class CheckLoader(object):
+class CheckLoader:
     """
     find recursively all checks on a given path
     """

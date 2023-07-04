@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -60,8 +59,7 @@ class AbstractCheck:
     @staticmethod
     def json_from_all_checks(checks):
         result_json = {}
-        for (group, group_checks) in iteritems(checks):
-
+        for group, group_checks in checks.items():
             result_list = [check.json for check in group_checks]
             result_json[group] = result_list
         return result_json

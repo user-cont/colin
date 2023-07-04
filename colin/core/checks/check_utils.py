@@ -37,7 +37,7 @@ def check_label(labels, required, value_regex, target_labels):
 class NotLoadedCheck(DockerfileAbstractCheck, ImageAbstractCheck):
     def __init__(self, check_name, reason):
         self.name = check_name
-        super(NotLoadedCheck, self).__init__(
+        super().__init__(
             message=f"Check code '{check_name}' {reason}.",
             description="Did you set the right name in the ruleset file?",
             reference_url="",
