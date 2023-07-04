@@ -15,8 +15,6 @@
 import json
 from typing import Optional
 
-from six import iteritems
-
 
 class AbstractCheck:
     name: Optional[str] = None

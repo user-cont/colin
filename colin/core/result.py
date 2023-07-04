@@ -17,8 +17,6 @@ import json
 from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom import minidom
 
-import six
-
 from .constant import COLOURS, ERROR, FAILED, OUTPUT_CHARS, PASSED
 from ..utils.caching_iterable import CachingIterable
 

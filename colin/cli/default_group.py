@@ -14,7 +14,6 @@
 #
 
 import click
-import six
 
 
 class DefaultGroup(click.Group):
