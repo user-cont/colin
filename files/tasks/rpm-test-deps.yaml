@@ -11,9 +11,11 @@
       - buildah
       - skopeo
       - runc
+      - wget
     state: present
   become: true
 - name: Download umoci
-  get_url: url="https://github.com/opencontainers/umoci/releases/download/v0.4.6/umoci.amd64" dest=/usr/local/bin/umoci
+  command:
+    cmd: wget -O /usr/local/bin/umoci "https://github.com/opencontainers/umoci/releases/download/v0.4.7/umoci.amd64"
 - name: Make umoci executable
   file: dest=/usr/local/bin/umoci mode=a+x
