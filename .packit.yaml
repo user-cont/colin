@@ -1,5 +1,5 @@
 specfile_path: colin.spec
-synced_files:
+files_to_sync:
   - colin.spec
   - .packit.yaml
 upstream_package_name: colin
