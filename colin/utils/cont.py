@@ -2,6 +2,7 @@
 This is a temporary module to support unpriv way of interacting with container images.
 
 """
+
 import logging
 
 logger = logging.getLogger(__name__)
