@@ -92,7 +92,7 @@ def get_results_from_colin_labels_image(
 
 
 def test_specific_ruleset_as_fileobj(tmpdir, ruleset, expected_dict, target_label):
-    (_, t) = tempfile.mkstemp(dir=str(tmpdir))
+    _, t = tempfile.mkstemp(dir=str(tmpdir))
 
     with open(t, "w") as f:
         yaml.dump(ruleset, f)
