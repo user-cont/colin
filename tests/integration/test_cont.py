@@ -1,6 +1,7 @@
 """
 Testing of low level interaction with images.
 """
+
 import pytest
 
 
